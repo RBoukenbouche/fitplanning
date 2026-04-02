@@ -17,20 +17,17 @@
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
 
 /* HEADER */
-.header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 60%,var(--blue) 100%);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:56px;box-shadow:0 2px 12px rgba(15,39,68,.18);}
-.header-left{display:flex;align-items:center;gap:12px;}
-.header-logo{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--navy);}
-.header-title{color:white;font-size:16px;font-weight:600;letter-spacing:.5px;}
-.header-subtitle{color:rgba(255,255,255,.55);font-size:11px;margin-top:1px;}
-.sync-badge{background:rgba(61,184,245,.15);border:1px solid rgba(61,184,245,.3);color:var(--accent);font-size:11px;padding:3px 10px;border-radius:20px;display:flex;align-items:center;gap:5px;}
+.header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 60%,var(--blue) 100%);padding:0 20px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:52px;box-shadow:0 2px 12px rgba(15,39,68,.18);position:sticky;top:0;z-index:200;}
+.header-left{display:flex;align-items:center;gap:10px;}
+.header-title{color:white;font-size:15px;font-weight:600;letter-spacing:.5px;}
+.header-subtitle{color:rgba(255,255,255,.55);font-size:10px;margin-top:1px;}
+.header-tabs{display:flex;gap:0;justify-content:center;}
+.htab{padding:8px 18px;color:rgba(255,255,255,.6);font-size:12px;font-weight:500;cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap;height:52px;display:flex;align-items:center;}
+.htab:hover{color:white;}
+.htab.active{color:white;border-bottom-color:var(--accent);}
+.sync-badge{background:rgba(61,184,245,.15);border:1px solid rgba(61,184,245,.3);color:var(--accent);font-size:11px;padding:3px 10px;border-radius:20px;display:flex;align-items:center;gap:5px;justify-content:flex-end;}
 .sync-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-
-/* TABS */
-.tabs{display:flex;gap:0;background:var(--navy);padding:0 24px;}
-.tab{padding:10px 20px;color:rgba(255,255,255,.6);font-size:13px;font-weight:500;cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap;}
-.tab:hover{color:white;}
-.tab.active{color:white;border-bottom-color:var(--accent);}
 
 /* MAIN */
 .main{padding:16px 20px;max-width:1400px;margin:0 auto;}
@@ -56,7 +53,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .form-group input:focus,.form-group select:focus{border-color:var(--blue2);box-shadow:0 0 0 2px rgba(41,121,200,.1);background:white;}
 
 /* BUTTONS */
-.btn-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.pill.pill-ann.active{background:#ef4444;border-color:#ef4444;}
+.btn-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:2px 0;}
 .btn{height:28px;padding:0 14px;border-radius:6px;font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;display:flex;align-items:center;gap:5px;transition:all .15s;white-space:nowrap;}
 .btn-green{background:var(--green);color:white;}
 .btn-green:hover{background:#16a34a;transform:translateY(-1px);}
@@ -176,19 +174,20 @@ tbody td{padding:7px 10px;color:var(--text);white-space:nowrap;max-width:200px;o
 
 <div class="header">
   <div class="header-left">
-    <div class="header-logo">FP</div>
+    <img src="https://www.visitmoroccodmc.com/wp-content/uploads/2022/03/logo-visit-morocco.png" 
+         onerror="this.style.display='none'" 
+         style="height:36px;object-fit:contain;filter:brightness(0) invert(1);margin-right:4px;">
     <div>
       <div class="header-title">FIT PLANNING</div>
       <div class="header-subtitle">Visit Morocco DMC</div>
     </div>
   </div>
+  <div class="header-tabs">
+    <div class="htab active" onclick="switchTab('planning',this)">📋 Planning</div>
+    <div class="htab" onclick="switchTab('confirmes',this)">✅ Confirmés</div>
+    <div class="htab" onclick="switchTab('stats',this)">📊 Statistiques</div>
+  </div>
   <div class="sync-badge"><div class="sync-dot"></div>Google Sheets</div>
-</div>
-
-<div class="tabs">
-  <div class="tab active" onclick="switchTab('planning')">📋 Planning</div>
-  <div class="tab" onclick="switchTab('confirmes')">✅ Confirmés</div>
-  <div class="tab" onclick="switchTab('stats')">📊 Statistiques</div>
 </div>
 
 <div class="main">
@@ -223,11 +222,12 @@ tbody td{padding:7px 10px;color:var(--text);white-space:nowrap;max-width:200px;o
           <label>État</label>
           <select id="f-etat">
             <option value="">-- État --</option>
-            <option value="OE">OE</option>
-            <option value="O E">O E</option>
             <option value="CT">CT</option>
+            <option value="O E">O E</option>
+            <option value="O active">O active</option>
+            <option value="Confirmee">Confirmee</option>
+            <option value="Annulee">Annulee</option>
             <option value="AT">AT</option>
-            <option value="CONFIRME">CONFIRMÉ</option>
           </select>
         </div>
         <div class="form-group">
@@ -271,38 +271,26 @@ tbody td{padding:7px 10px;color:var(--text);white-space:nowrap;max-width:200px;o
         <button class="btn btn-edit" onclick="modifier()">✎ Modifier</button>
         <button class="btn btn-delete" onclick="effacer()">✕ Effacer</button>
         <button class="btn btn-clear" onclick="viderFormulaire()">↺ Vider</button>
+        <div style="width:1px;background:var(--border);height:24px;margin:0 4px;"></div>
+        <span class="filter-label">Filtrer :</span>
+        <div class="pill active" onclick="filterEtat('ALL',this)">Tous</div>
+        <div class="pill pill-oe" onclick="filterEtat('OE',this)">O E</div>
+        <div class="pill pill-oe" onclick="filterEtat('OACTIVE',this)">O active</div>
+        <div class="pill pill-ct" onclick="filterEtat('CT',this)">CT</div>
+        <div class="pill pill-at" onclick="filterEtat('AT',this)">AT</div>
+        <div class="pill pill-conf" onclick="filterEtat('CONFIRME',this)">Confirmée</div>
+        <div class="pill pill-ann" onclick="filterEtat('ANNULEE',this)">Annulée</div>
+        <div style="flex:1"></div>
+        <select id="agent-filter" onchange="filterAgent()" style="height:26px;border:1px solid var(--border);border-radius:6px;padding:0 8px;font-size:11px;background:white;outline:none;">
+          <option value="ALL">Tous agents</option>
+          <option value="SIHAM">SIHAM</option>
+          <option value="Imane">Imane</option>
+          <option value="Abdelhay">Abdelhay</option>
+          <option value="Med">Med</option>
+          <option value="HEATHER">HEATHER</option>
+        </select>
       </div>
     </div>
-  </div>
-
-  <!-- FILTERS -->
-  <div class="filter-bar">
-    <span class="filter-label">Filtrer :</span>
-    <div class="pill active" onclick="filterEtat('ALL',this)">Tous</div>
-    <div class="pill pill-oe" onclick="filterEtat('OE',this)">O E</div>
-    <div class="pill pill-ct" onclick="filterEtat('CT',this)">CT</div>
-    <div class="pill pill-at" onclick="filterEtat('AT',this)">AT</div>
-    <div class="pill pill-conf" onclick="filterEtat('CONFIRME',this)">CONFIRMÉ</div>
-    <div style="flex:1"></div>
-    <span class="filter-label">Agent :</span>
-    <select id="agent-filter" onchange="filterAgent()" style="height:32px;border:1px solid var(--border);border-radius:6px;padding:0 10px;font-size:12px;background:white;outline:none;">
-      <option value="ALL">Tous les agents</option>
-      <option value="SIHAM">SIHAM</option>
-      <option value="Imane">Imane</option>
-      <option value="Abdelhay">Abdelhay</option>
-      <option value="Med">Med</option>
-      <option value="HEATHER">HEATHER</option>
-    </select>
-  </div>
-
-  <!-- SEARCH -->
-  <div class="search-bar">
-    <span class="search-label">Recherche :</span>
-    <input type="text" id="s-ref" placeholder="Référence...">
-    <input type="text" id="s-client" placeholder="Client...">
-    <input type="text" id="s-pmclient" placeholder="PM Client...">
-    <button class="btn btn-search" onclick="rechercher()">🔍 Rechercher</button>
-    <button class="btn btn-clear" onclick="resetRecherche()">✕ Reset</button>
   </div>
 
   <!-- TABLE -->
@@ -452,16 +440,21 @@ function parseDate(str) {
   return null;
 }
 function badgeEtat(etat) {
-  const e = (etat||'').toUpperCase().trim().replace(' ','');
+  const e = normalizeEtat(etat);
   if (e==='CT') return `<span class="badge badge-ct">CT</span>`;
   if (e==='OE') return `<span class="badge badge-oe">O E</span>`;
+  if (e==='OACTIVE') return `<span class="badge badge-oe" style="background:#fde68a;color:#78350f">O active</span>`;
   if (e==='AT') return `<span class="badge badge-at">AT</span>`;
-  if (e==='CONFIRME') return `<span class="badge badge-conf">CONFIRMÉ</span>`;
+  if (e==='CONFIRME') return `<span class="badge badge-conf">Confirmée</span>`;
+  if (e==='ANNULEE') return `<span class="badge" style="background:#fee2e2;color:#991b1b">Annulée</span>`;
   return `<span class="badge badge-other">${etat||''}</span>`;
 }
 function normalizeEtat(e) {
-  const s = (e||'').toUpperCase().trim().replace(/\s+/g,'').replace(/É/g,'E').replace(/È/g,'E').replace(/Ê/g,'E');
+  const s = (e||'').toUpperCase().trim().replace(/\s+/g,'').replace(/[ÉÈÊ]/g,'E').replace(/[ÀÂ]/g,'A');
   if (s.startsWith('CONFIRM')) return 'CONFIRME';
+  if (s.startsWith('ANNUL')) return 'ANNULEE';
+  if (s==='OACTIVE') return 'OACTIVE';
+  if (s==='OE') return 'OE';
   return s;
 }
 function avatarColor(name) {
