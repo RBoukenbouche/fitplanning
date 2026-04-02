@@ -481,38 +481,47 @@ function switchTab(tab) {
   if (tab === 'confirmes') renderConfirmes();
 }
 
-// ---- LOAD DATA ----
-async function loadData() {
+// function loadData() {
   showLoading('Chargement des données...');
-  try {
-    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}&range=A12:L`;
-    const res = await fetch(url);
-    const text = await res.text();
-    const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)[1]);
-    const rows = json.table.rows || [];
-    allData = rows.map((r,i) => ({
-      _index: i,
-      recu: r.c[0]?.v ? formatDateFromGviz(r.c[0].v) : '',
-      ref: r.c[1]?.v || '',
-      du: r.c[2]?.v ? formatDateFromGviz(r.c[2].v) : '',
-      au: r.c[3]?.v ? formatDateFromGviz(r.c[3].v) : '',
-      client: r.c[4]?.v || '',
-      pmclient: r.c[5]?.v || '',
-      etat: r.c[6]?.v || '',
-      pmvisit: r.c[7]?.v || '',
-      deadline: r.c[8]?.v ? formatDateFromGviz(r.c[8].v) : '',
-      datesortie: r.c[9]?.v ? formatDateFromGviz(r.c[9].v) : '',
-      commentaires: r.c[10]?.v || '',
-      guide: r.c[11]?.v || '',
-    })).filter(r => r.ref || r.client);
-    filteredData = [...allData];
-    renderTable(filteredData);
-  } catch(e) {
-    showToast('Erreur de chargement', 'error');
-  }
-  hideLoading();
+  jsonpCall(
+    { action: 'read' },
+    (json) => {
+      allData = (json.data || []).map((r, i) => ({
+        _index: i,
+        recu: formatDateVal(r[0]),
+        ref: String(r[1]||''),
+        du: formatDateVal(r[2]),
+        au: formatDateVal(r[3]),
+        client: String(r[4]||''),
+        pmclient: String(r[5]||''),
+        etat: String(r[6]||''),
+        pmvisit: String(r[7]||''),
+        deadline: formatDateVal(r[8]),
+        datesortie: formatDateVal(r[9]),
+        commentaires: String(r[10]||''),
+        guide: String(r[11]||''),
+      })).filter(r => r.ref || r.client);
+      filteredData = [...allData];
+      renderTable(filteredData);
+      hideLoading();
+    },
+    (err) => { showToast('Erreur: '+err, 'error'); hideLoading(); }
+  );
 }
 
+function formatDateVal(v) {
+  if (!v) return '';
+  if (typeof v === 'string') {
+    const m = v.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (m) return m[3]+'/'+m[2]+'/'+m[1];
+    return v;
+  }
+  if (typeof v === 'number') {
+    const d = new Date(Math.round((v-25569)*86400*1000));
+    return String(d.getUTCDate()).padStart(2,'0')+'/'+String(d.getUTCMonth()+1).padStart(2,'0')+'/'+d.getUTCFullYear();
+  }
+  return String(v);
+}
 // ---- FILTERS ----
 function filterEtat(etat, el) {
   currentEtatFilter = etat;
