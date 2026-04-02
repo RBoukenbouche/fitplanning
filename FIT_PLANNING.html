@@ -469,11 +469,12 @@ function badgeEtat(etat) {
   return `<span class="badge badge-other">${etat||''}</span>`;
 }
 function normalizeEtat(e) {
-  const s = (e||'').toUpperCase().trim().replace(/\s+/g,'').replace(/É/g,'E').replace(/È/g,'E').replace(/Ê/g,'E');
+  const s = (e||'').toUpperCase().trim().replace(/\s+/g,'').replace(/[ÉÈÊ]/g,'E').replace(/[ÀÂ]/g,'A');
   if (s.startsWith('CONFIRM')) return 'CONFIRME';
+  if (s.startsWith('ANNUL')) return 'ANNULEE';
+  if (s === 'OACTIVE') return 'OACTIVE';
   return s;
-}
-function avatarColor(name) {
+}function avatarColor(name) {
   const colors = ['#1e5fa8','#22c55e','#f97316','#8b5cf6','#ef4444','#0f2744','#0891b2'];
   let h = 0; for (let c of (name||'')) h = (h*31+c.charCodeAt(0))%colors.length;
   return colors[Math.abs(h)];
@@ -525,9 +526,9 @@ function formatDateVal(v) {
     if (m) return m[3]+'/'+m[2]+'/'+m[1];
     return v;
   }
-  if (typeof v === 'number') {
+ if (typeof v === 'number') {
     const d = new Date(Math.round((v-25569)*86400*1000));
-    return String(d.getUTCDate()).padStart(2,'0')+'/'+String(d.getUTCMonth()+1).padStart(2,'0')+'/'+d.getUTCFullYear();
+    return String(d.getUTCDate()+1).padStart(2,'0')+'/'+String(d.getUTCMonth()+1).padStart(2,'0')+'/'+d.getUTCFullYear();
   }
   return String(v);
 }
