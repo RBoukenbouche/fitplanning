@@ -174,64 +174,63 @@ tbody td{padding:7px 10px;color:var(--text);white-space:nowrap;max-width:200px;o
 </head>
 <body>
 
-<="header">
-  <="header-left">
-    <="header-logo">FP</div>
+<div class="header">
+  <div class="header-left">
+    <div class="header-logo">FP</div>
     <div>
-      <="header-title">FIT PLANNING</div>
-      <="header-subtitle">Visit Morocco DMC</div>
+      <div class="header-title">FIT PLANNING</div>
+      <div class="header-subtitle">Visit Morocco DMC</div>
     </div>
   </div>
-  <="sync-badge"><="sync-dot"></div>Google Sheets</div>
+  <div class="sync-badge"><div class="sync-dot"></div>Google Sheets</div>
 </div>
 
-<div class="header-tabs">
-  <div class="htab active" id="htab-planning" onclick="switchTab('planning')">📋 Planning</div>
-  <div class="htab" id="htab-confirmes" onclick="switchTab('confirmes')">✅ Confirmés</div>
-  <div class="htab" id="htab-stats" onclick="switchTab('stats')">📊 Statistiques</div>
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('planning')">📋 Planning</div>
+  <div class="tab" onclick="switchTab('confirmes')">✅ Confirmés</div>
+  <div class="tab" onclick="switchTab('stats')">📊 Statistiques</div>
 </div>
-    
-<="main">
+
+<div class="main">
 
 <!-- ===== TAB PLANNING ===== -->
-<="tab-content active" id="tab-planning">
+<div class="tab-content active" id="tab-planning">
 
-  <="form-card sticky-form">
-    <="card-header">
+  <div class="form-card sticky-form">
+    <div class="card-header">
       <span class="card-header-title">Formulaire</span>
       <span id="form-mode-badge" style="background:rgba(255,255,255,.15);color:white;font-size:10px;padding:2px 10px;border-radius:20px;">Nouveau</span>
     </div>
-    <="card-body">
-      <="form-grid">
-        <="form-group">
+    <div class="card-body">
+      <div class="form-grid">
+        <div class="form-group">
           <label>Reçu le</label>
           <input type="date" id="f-recu">
         </div>
-        <="form-group span2">
+        <div class="form-group span2">
           <label>Référence</label>
           <input type="text" id="f-ref" placeholder="Référence">
         </div>
-        <="form-group">
+        <div class="form-group">
           <label>Du</label>
           <input type="date" id="f-du">
         </div>
-        <="form-group">
+        <div class="form-group">
           <label>Au</label>
           <input type="date" id="f-au">
         </div>
-        <="form-group">
+        <div class="form-group">
           <label>État</label>
           <select id="f-etat">
-  <option value="">-- État --</option>
-  <option value="CT">CT</option>
-  <option value="OE">OE</option>
-  <option value="O active">O active</option>
-  <option value="Confirmee">Confirmee</option>
-  <option value="Annulee">Annulee</option>
-  <option value="AT">AT</option>
-</select>
+            <option value="">-- État --</option>
+            <option value="OE">OE</option>
+            <option value="O E">O E</option>
+            <option value="CT">CT</option>
+            <option value="AT">AT</option>
+            <option value="CONFIRME">CONFIRMÉ</option>
+          </select>
         </div>
-        <="form-group">
+        <div class="form-group">
           <label>PM Visit</label>
           <select id="f-pmvisit">
             <option value="">-- PM --</option>
@@ -242,32 +241,32 @@ tbody td{padding:7px 10px;color:var(--text);white-space:nowrap;max-width:200px;o
             <option value="HEATHER">HEATHER</option>
           </select>
         </div>
-        <="form-group">
+        <div class="form-group">
           <label>Deadline</label>
           <input type="date" id="f-deadline">
         </div>
-        <="form-group span2">
+        <div class="form-group span2">
           <label>Client</label>
           <input type="text" id="f-client" placeholder="Client">
         </div>
-        <="form-group span2">
+        <div class="form-group span2">
           <label>PM Client</label>
           <input type="text" id="f-pmclient" placeholder="PM Client">
         </div>
-        <="form-group">
+        <div class="form-group">
           <label>Date Sortie</label>
           <input type="date" id="f-datesortie">
         </div>
-        <="form-group span2">
+        <div class="form-group span2">
           <label>Commentaires</label>
           <input type="text" id="f-commentaires" placeholder="Commentaires">
         </div>
-        <="form-group">
+        <div class="form-group">
           <label>Guide</label>
           <input type="text" id="f-guide" placeholder="Guide">
         </div>
       </div>
-      <="btn-row">
+      <div class="btn-row">
         <button class="btn btn-green" onclick="enregistrer()">✚ Enregistrer</button>
         <button class="btn btn-edit" onclick="modifier()">✎ Modifier</button>
         <button class="btn btn-delete" onclick="effacer()">✕ Effacer</button>
@@ -479,51 +478,40 @@ function switchTab(tab) {
   document.getElementById('tab-'+tab).classList.add('active');
   if (tab === 'stats') renderStats();
   if (tab === 'confirmes') renderConfirmes();
-;
-};
 }
 
-// function loadData() {
+// ---- LOAD DATA ----
+async function loadData() {
   showLoading('Chargement des données...');
-  jsonpCall(
-    { action: 'read' },
-    (json) => {
-      allData = (json.data || []).map((r, i) => ({
-        _index: i,
-        recu: formatDateVal(r[0]),
-        ref: String(r[1]||''),
-        du: formatDateVal(r[2]),
-        au: formatDateVal(r[3]),
-        client: String(r[4]||''),
-        pmclient: String(r[5]||''),
-        etat: String(r[6]||''),
-        pmvisit: String(r[7]||''),
-        deadline: formatDateVal(r[8]),
-        datesortie: formatDateVal(r[9]),
-        commentaires: String(r[10]||''),
-        guide: String(r[11]||''),
-      })).filter(r => r.ref || r.client);
-      filteredData = [...allData];
-      renderTable(filteredData);
-      hideLoading();
-    },
-    (err) => { showToast('Erreur: '+err, 'error'); hideLoading(); }
-  );
+  try {
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}&range=A12:L`;
+    const res = await fetch(url);
+    const text = await res.text();
+    const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)[1]);
+    const rows = json.table.rows || [];
+    allData = rows.map((r,i) => ({
+      _index: i,
+      recu: r.c[0]?.v ? formatDateFromGviz(r.c[0].v) : '',
+      ref: r.c[1]?.v || '',
+      du: r.c[2]?.v ? formatDateFromGviz(r.c[2].v) : '',
+      au: r.c[3]?.v ? formatDateFromGviz(r.c[3].v) : '',
+      client: r.c[4]?.v || '',
+      pmclient: r.c[5]?.v || '',
+      etat: r.c[6]?.v || '',
+      pmvisit: r.c[7]?.v || '',
+      deadline: r.c[8]?.v ? formatDateFromGviz(r.c[8].v) : '',
+      datesortie: r.c[9]?.v ? formatDateFromGviz(r.c[9].v) : '',
+      commentaires: r.c[10]?.v || '',
+      guide: r.c[11]?.v || '',
+    })).filter(r => r.ref || r.client);
+    filteredData = [...allData];
+    renderTable(filteredData);
+  } catch(e) {
+    showToast('Erreur de chargement', 'error');
+  }
+  hideLoading();
 }
 
-function formatDateVal(v) {
-  if (!v) return '';
-  if (typeof v === 'string') {
-    const m = v.match(/^(\d{4})-(\d{2})-(\d{2})/);
-    if (m) return m[3]+'/'+m[2]+'/'+m[1];
-    return v;
-  }
-  if (typeof v === 'number') {
-    const d = new Date(Math.round((v-25569)*86400*1000));
-    return String(d.getUTCDate()).padStart(2,'0')+'/'+String(d.getUTCMonth()+1).padStart(2,'0')+'/'+d.getUTCFullYear();
-  }
-  return String(v);
-}
 // ---- FILTERS ----
 function filterEtat(etat, el) {
   currentEtatFilter = etat;
