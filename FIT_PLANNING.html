@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FIT PLANNING</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0f2744;
+    --navy2: #1a3a5c;
+    --blue: #1e5fa8;
+    --blue2: #2979c8;
+    --accent: #3db8f5;
+    --gold: #f5c842;
+    --green: #22c55e;
+    --red: #ef4444;
+    --orange: #f97316;
+    --bg: #f0f4f8;
+    --card: #ffffff;
+    --text: #1a2332;
+    --muted: #6b7a99;
+    --border: #dde3ef;
+    --row-even: #f7f9fc;
+    --highlight: #fff8d6;
+    --highlight-border: #f5c842;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 60%, var(--blue) 100%);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    box-shadow: 0 2px 12px rgba(15,39,68,0.18);
+  }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  .header-logo {
+    width: 32px; height: 32px; background: var(--accent);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 700; color: var(--navy);
+  }
+  .header-title { color: white; font-size: 16px; font-weight: 600; letter-spacing: 0.5px; }
+  .header-subtitle { color: rgba(255,255,255,0.55); font-size: 11px; margin-top: 1px; }
+  .header-right { display: flex; align-items: center; gap: 8px; }
+  .sync-badge {
+    background: rgba(61,184,245,0.15); border: 1px solid rgba(61,184,245,0.3);
+    color: var(--accent); font-size: 11px; padding: 3px 10px; border-radius: 20px;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* MAIN LAYOUT */
+  .main { padding: 16px 20px; max-width: 1400px; margin: 0 auto; }
+
+  /* FORM CARD */
+  .form-card {
+    background: var(--card);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    margin-bottom: 16px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(15,39,68,0.06);
+  }
+  .form-header {
+    background: var(--navy);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .form-header-title { color: white; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+  .form-body { padding: 14px 16px; }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .form-group { display: flex; flex-direction: column; gap: 4px; }
+  .form-group.span2 { grid-column: span 2; }
+  .form-group label {
+    font-size: 10px; font-weight: 600; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.6px;
+  }
+  .form-group input, .form-group select {
+    height: 34px; border: 1px solid var(--border);
+    border-radius: 6px; padding: 0 10px;
+    font-size: 13px; font-family: 'DM Sans', sans-serif;
+    color: var(--text); background: #fafbfd;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+  }
+  .form-group input:focus, .form-group select:focus {
+    border-color: var(--blue2);
+    box-shadow: 0 0 0 3px rgba(41,121,200,0.1);
+    background: white;
+  }
+  .form-group textarea {
+    border: 1px solid var(--border); border-radius: 6px;
+    padding: 8px 10px; font-size: 13px; font-family: 'DM Sans', sans-serif;
+    color: var(--text); background: #fafbfd; resize: none; outline: none;
+    transition: border-color 0.15s;
+  }
+  .form-group textarea:focus { border-color: var(--blue2); background: white; }
+
+  /* BUTTONS */
+  .btn-row { display: flex; gap: 8px; align-items: center; }
+  .btn {
+    height: 34px; padding: 0 18px; border-radius: 7px;
+    font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif;
+    cursor: pointer; border: none; display: flex; align-items: center; gap: 6px;
+    transition: all 0.15s; white-space: nowrap;
+  }
+  .btn-primary { background: var(--green); color: white; }
+  .btn-primary:hover { background: #16a34a; transform: translateY(-1px); }
+  .btn-edit { background: var(--blue); color: white; }
+  .btn-edit:hover { background: var(--blue2); transform: translateY(-1px); }
+  .btn-delete { background: var(--red); color: white; }
+  .btn-delete:hover { background: #dc2626; transform: translateY(-1px); }
+  .btn-clear { background: var(--bg); color: var(--muted); border: 1px solid var(--border); }
+  .btn-clear:hover { background: var(--border); }
+  .btn-search { background: var(--navy); color: white; }
+  .btn-search:hover { background: var(--navy2); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+
+  /* SEARCH BAR */
+  .search-bar {
+    display: flex; gap: 8px; align-items: center;
+    background: var(--card); border-radius: 10px;
+    border: 1px solid var(--border); padding: 10px 14px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 4px rgba(15,39,68,0.04);
+  }
+  .search-bar input {
+    flex: 1; height: 32px; border: 1px solid var(--border);
+    border-radius: 6px; padding: 0 10px; font-size: 13px;
+    font-family: 'DM Sans', sans-serif; outline: none;
+    background: #fafbfd;
+  }
+  .search-bar input:focus { border-color: var(--blue2); background: white; }
+  .search-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+
+  /* TABLE */
+  .table-card {
+    background: var(--card); border-radius: 12px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(15,39,68,0.06);
+  }
+  .table-header {
+    background: var(--navy); padding: 10px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .table-header-title { color: white; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+  .table-count { background: rgba(61,184,245,0.2); color: var(--accent); font-size: 11px; padding: 2px 10px; border-radius: 20px; font-weight: 600; }
+
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  thead tr { background: var(--navy2); }
+  thead th {
+    color: rgba(255,255,255,0.85); font-weight: 500;
+    padding: 9px 10px; text-align: left;
+    font-size: 11px; letter-spacing: 0.4px; white-space: nowrap;
+    border-bottom: 2px solid var(--blue);
+  }
+  tbody tr { cursor: pointer; transition: background 0.1s; border-bottom: 1px solid var(--border); }
+  tbody tr:nth-child(even) { background: var(--row-even); }
+  tbody tr:hover { background: #e8f0fb; }
+  tbody tr.selected { background: var(--highlight) !important; border-left: 3px solid var(--gold); }
+  tbody td { padding: 8px 10px; color: var(--text); white-space: nowrap; }
+
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 20px;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.3px;
+  }
+  .badge-ct { background: #dbeafe; color: #1e40af; }
+  .badge-oe { background: #fef3c7; color: #92400e; }
+  .badge-at { background: #dcfce7; color: #166534; }
+  .badge-conf { background: #d1fae5; color: #065f46; }
+  .badge-other { background: #f1f5f9; color: #475569; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 24px; right: 24px;
+    padding: 12px 20px; border-radius: 10px;
+    font-size: 13px; font-weight: 500; color: white;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    z-index: 1000; transform: translateY(80px); opacity: 0;
+    transition: all 0.3s; pointer-events: none;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.success { background: var(--green); }
+  .toast.error { background: var(--red); }
+  .toast.info { background: var(--blue); }
+
+  /* LOADING */
+  .loading-overlay {
+    position: fixed; inset: 0; background: rgba(15,39,68,0.4);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 999; opacity: 0; pointer-events: none; transition: opacity 0.2s;
+  }
+  .loading-overlay.show { opacity: 1; pointer-events: all; }
+  .loading-box {
+    background: white; border-radius: 12px; padding: 24px 32px;
+    display: flex; align-items: center; gap: 14px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  }
+  .spinner {
+    width: 24px; height: 24px; border: 3px solid var(--border);
+    border-top-color: var(--blue); border-radius: 50%; animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* EMPTY STATE */
+  .empty-state { text-align: center; padding: 40px; color: var(--muted); }
+  .empty-state-icon { font-size: 36px; margin-bottom: 10px; }
+  .empty-state-text { font-size: 14px; }
+
+  @media (max-width: 900px) {
+    .form-grid { grid-template-columns: repeat(3, 1fr); }
+    .form-group.span2 { grid-column: span 1; }
+  }
+  @media (max-width: 600px) {
+    .form-grid { grid-template-columns: repeat(2, 1fr); }
+    .main { padding: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="header-logo">FP</div>
+    <div>
+      <div class="header-title">FIT PLANNING</div>
+      <div class="header-subtitle">Visit Morocco DMC</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="sync-badge">
+      <div class="sync-dot"></div>
+      Connecté à Google Sheets
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- FORM -->
+  <div class="form-card">
+    <div class="form-header">
+      <span class="form-header-title">Formulaire</span>
+      <span id="form-mode-badge" style="background:rgba(255,255,255,0.15);color:white;font-size:10px;padding:2px 10px;border-radius:20px;">Nouveau</span>
+    </div>
+    <div class="form-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Reçu le</label>
+          <input type="date" id="f-recu">
+        </div>
+        <div class="form-group span2">
+          <label>Référence</label>
+          <input type="text" id="f-ref" placeholder="Ex: COCA COLA">
+        </div>
+        <div class="form-group">
+          <label>Du</label>
+          <input type="date" id="f-du">
+        </div>
+        <div class="form-group">
+          <label>Au</label>
+          <input type="date" id="f-au">
+        </div>
+        <div class="form-group">
+          <label>État</label>
+          <select id="f-etat">
+            <option value="">-- Choisir --</option>
+            <option value="CT">CT</option>
+            <option value="O E">O E</option>
+            <option value="AT">AT</option>
+            <option value="OE">OE</option>
+            <option value="CONFIRME">CONFIRME</option>
+          </select>
+        </div>
+        <div class="form-group span2">
+          <label>Client</label>
+          <input type="text" id="f-client" placeholder="Nom du client">
+        </div>
+        <div class="form-group span2">
+          <label>PM Client</label>
+          <input type="text" id="f-pmclient" placeholder="Nom PM Client">
+        </div>
+        <div class="form-group">
+          <label>PM Visit</label>
+          <select id="f-pmvisit">
+            <option value="">-- Choisir --</option>
+            <option value="SIHAM">SIHAM</option>
+            <option value="Imane">Imane</option>
+            <option value="Abdelhay">Abdelhay</option>
+            <option value="Med">Med</option>
+            <option value="HEATHER">HEATHER</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Deadline</label>
+          <input type="date" id="f-deadline">
+        </div>
+        <div class="form-group">
+          <label>Date Sortie</label>
+          <input type="date" id="f-datesortie">
+        </div>
+        <div class="form-group span2">
+          <label>Commentaires</label>
+          <input type="text" id="f-commentaires" placeholder="Commentaires...">
+        </div>
+        <div class="form-group">
+          <label>Guide</label>
+          <input type="text" id="f-guide" placeholder="Guide">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="enregistrer()">✚ Enregistrer</button>
+        <button class="btn btn-edit" onclick="modifier()">✎ Modifier</button>
+        <button class="btn btn-delete" onclick="effacer()">✕ Effacer</button>
+        <button class="btn btn-clear" onclick="viderFormulaire()">↺ Vider</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-bar">
+    <span class="search-label">Recherche :</span>
+    <input type="text" id="s-ref" placeholder="Référence...">
+    <input type="text" id="s-client" placeholder="Client...">
+    <input type="text" id="s-pmclient" placeholder="PM Client...">
+    <button class="btn btn-search" onclick="rechercher()">🔍 Rechercher</button>
+    <button class="btn btn-clear" onclick="resetRecherche()">✕ Reset</button>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-card">
+    <div class="table-header">
+      <span class="table-header-title">Enregistrements</span>
+      <span class="table-count" id="row-count">0 lignes</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Reçu le</th>
+            <th>Référence</th>
+            <th>Du</th>
+            <th>Au</th>
+            <th>Client</th>
+            <th>PM Client</th>
+            <th>État</th>
+            <th>PM Visit</th>
+            <th>Deadline</th>
+            <th>Date Sortie</th>
+            <th>Commentaires</th>
+            <th>Guide</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          <tr><td colspan="12"><div class="empty-state"><div class="empty-state-icon">⏳</div><div class="empty-state-text">Chargement des données...</div></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- LOADING -->
+<div class="loading-overlay" id="loading">
+  <div class="loading-box">
+    <div class="spinner"></div>
+    <span id="loading-text" style="font-size:14px;color:#1a2332;">Chargement...</span>
+  </div>
+</div>
+
+<script>
+const SHEET_ID = '1nIwenjf2I1UQxIjFrqq2tGYDBHQUK_bTVTrLWe-ghlU';
+const SHEET_NAME = 'Feuille 1';
+const API_BASE = `https://script.google.com/macros/s/AKfycbzK-zEce5d4qHkxnrGLen7TmZ9K6JK8sucoDD1ubHZ4GqEA6X3-p235L0V3HpLhixwy/exec`;
+
+let allData = [];
+let selectedRow = null;
+let selectedIndex = null;
+
+// ---- UTILS ----
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(() => t.className = 'toast', 3000);
+}
+
+function showLoading(msg='Chargement...') {
+  document.getElementById('loading-text').textContent = msg;
+  document.getElementById('loading').classList.add('show');
+}
+
+function hideLoading() {
+  document.getElementById('loading').classList.remove('show');
+}
+
+function formatDate(val) {
+  if (!val) return '';
+  if (val.includes('/')) return val;
+  const d = new Date(val);
+  if (isNaN(d)) return val;
+  return d.toLocaleDateString('fr-FR');
+}
+
+function toInputDate(val) {
+  if (!val) return '';
+  if (val.includes('-')) return val;
+  const parts = val.split('/');
+  if (parts.length === 3) return `${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}`;
+  return '';
+}
+
+function badgeEtat(etat) {
+  const e = (etat||'').toUpperCase().trim();
+  if (e === 'CT') return `<span class="badge badge-ct">CT</span>`;
+  if (e === 'O E' || e === 'OE') return `<span class="badge badge-oe">O E</span>`;
+  if (e === 'AT') return `<span class="badge badge-at">AT</span>`;
+  if (e === 'CONFIRME') return `<span class="badge badge-conf">CONFIRMÉ</span>`;
+  return `<span class="badge badge-other">${etat||''}</span>`;
+}
+
+// ---- LOAD DATA ----
+async function loadData() {
+  showLoading('Chargement des données...');
+  try {
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}&range=A12:L`;
+    const res = await fetch(url);
+    const text = await res.text();
+    const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)[1]);
+    const rows = json.table.rows || [];
+    allData = rows.map((r, i) => ({
+      _index: i,
+      recu: r.c[0]?.v ? formatDateFromGviz(r.c[0].v) : '',
+      ref: r.c[1]?.v || '',
+      du: r.c[2]?.v ? formatDateFromGviz(r.c[2].v) : '',
+      au: r.c[3]?.v ? formatDateFromGviz(r.c[3].v) : '',
+      client: r.c[4]?.v || '',
+      pmclient: r.c[5]?.v || '',
+      etat: r.c[6]?.v || '',
+      pmvisit: r.c[7]?.v || '',
+      deadline: r.c[8]?.v ? formatDateFromGviz(r.c[8].v) : '',
+      datesortie: r.c[9]?.v ? formatDateFromGviz(r.c[9].v) : '',
+      commentaires: r.c[10]?.v || '',
+      guide: r.c[11]?.v || '',
+    })).filter(r => r.ref || r.client);
+    renderTable(allData);
+  } catch(e) {
+    showToast('Erreur de chargement. Vérifiez la connexion.', 'error');
+    document.getElementById('table-body').innerHTML = `<tr><td colspan="12"><div class="empty-state"><div class="empty-state-icon">⚠️</div><div class="empty-state-text">Impossible de charger les données</div></div></td></tr>`;
+  }
+  hideLoading();
+}
+
+function formatDateFromGviz(val) {
+  if (!val) return '';
+  if (typeof val === 'string') {
+    const m = val.match(/Date\((\d+),(\d+),(\d+)\)/);
+    if (m) {
+      const d = new Date(parseInt(m[1]), parseInt(m[2]), parseInt(m[3]));
+      return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+    }
+    return val;
+  }
+  return val;
+}
+
+// ---- RENDER TABLE ----
+function renderTable(data) {
+  const tbody = document.getElementById('table-body');
+  document.getElementById('row-count').textContent = `${data.length} ligne${data.length>1?'s':''}`;
+  if (!data.length) {
+    tbody.innerHTML = `<tr><td colspan="12"><div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-text">Aucun enregistrement trouvé</div></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = data.map((row, i) => `
+    <tr onclick="selectRow(${i})" id="row-${i}" ${selectedIndex===i?'class="selected"':''}>
+      <td>${row.recu}</td>
+      <td style="font-weight:500">${row.ref}</td>
+      <td>${row.du}</td>
+      <td>${row.au}</td>
+      <td>${row.client}</td>
+      <td>${row.pmclient}</td>
+      <td>${badgeEtat(row.etat)}</td>
+      <td>${row.pmvisit}</td>
+      <td>${row.deadline}</td>
+      <td>${row.datesortie}</td>
+      <td style="color:var(--muted);max-width:150px;overflow:hidden;text-overflow:ellipsis">${row.commentaires}</td>
+      <td>${row.guide}</td>
+    </tr>
+  `).join('');
+}
+
+// ---- SELECT ROW ----
+function selectRow(i) {
+  selectedIndex = i;
+  selectedRow = allData[i];
+  document.getElementById('f-recu').value = toInputDate(selectedRow.recu);
+  document.getElementById('f-ref').value = selectedRow.ref;
+  document.getElementById('f-du').value = toInputDate(selectedRow.du);
+  document.getElementById('f-au').value = toInputDate(selectedRow.au);
+  document.getElementById('f-client').value = selectedRow.client;
+  document.getElementById('f-pmclient').value = selectedRow.pmclient;
+  document.getElementById('f-etat').value = selectedRow.etat;
+  document.getElementById('f-pmvisit').value = selectedRow.pmvisit;
+  document.getElementById('f-deadline').value = toInputDate(selectedRow.deadline);
+  document.getElementById('f-datesortie').value = toInputDate(selectedRow.datesortie);
+  document.getElementById('f-commentaires').value = selectedRow.commentaires;
+  document.getElementById('f-guide').value = selectedRow.guide;
+  document.getElementById('form-mode-badge').textContent = 'Modification';
+  document.getElementById('form-mode-badge').style.background = 'rgba(245,200,66,0.25)';
+  document.getElementById('form-mode-badge').style.color = '#f5c842';
+  renderTable(allData);
+  document.querySelector('.form-card').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// ---- GET FORM DATA ----
+function getFormData() {
+  return {
+    recu: document.getElementById('f-recu').value,
+    ref: document.getElementById('f-ref').value,
+    du: document.getElementById('f-du').value,
+    au: document.getElementById('f-au').value,
+    client: document.getElementById('f-client').value,
+    pmclient: document.getElementById('f-pmclient').value,
+    etat: document.getElementById('f-etat').value,
+    pmvisit: document.getElementById('f-pmvisit').value,
+    deadline: document.getElementById('f-deadline').value,
+    datesortie: document.getElementById('f-datesortie').value,
+    commentaires: document.getElementById('f-commentaires').value,
+    guide: document.getElementById('f-guide').value,
+  };
+}
+
+// ---- ENREGISTRER ----
+async function enregistrer() {
+  const data = getFormData();
+  if (!data.ref) { showToast('Veuillez entrer une Référence', 'error'); return; }
+  showLoading('Enregistrement...');
+  try {
+    const row = selectedRow ? selectedRow._index + 12 : null;
+    const params = new URLSearchParams({
+      action: 'add',
+      sheetName: SHEET_NAME,
+      ...data
+    });
+    const res = await fetch(`${API_BASE}?${params}`);
+    const json = await res.json();
+    if (json.status === 'ok') {
+      showToast('✅ Enregistrement réussi !');
+      viderFormulaire();
+      await loadData();
+    } else {
+      showToast('Erreur: ' + (json.message||'inconnue'), 'error');
+    }
+  } catch(e) {
+    showToast('Erreur de connexion', 'error');
+  }
+  hideLoading();
+}
+
+// ---- MODIFIER ----
+async function modifier() {
+  if (!selectedRow) { showToast('Sélectionnez une ligne à modifier', 'error'); return; }
+  const data = getFormData();
+  showLoading('Modification en cours...');
+  try {
+    const rowNum = selectedRow._index + 12;
+    const params = new URLSearchParams({
+      action: 'update',
+      sheetName: SHEET_NAME,
+      row: rowNum,
+      ...data
+    });
+    const res = await fetch(`${API_BASE}?${params}`);
+    const json = await res.json();
+    if (json.status === 'ok') {
+      showToast('✅ Modification enregistrée !');
+      viderFormulaire();
+      await loadData();
+    } else {
+      showToast('Erreur: ' + (json.message||'inconnue'), 'error');
+    }
+  } catch(e) {
+    showToast('Erreur de connexion', 'error');
+  }
+  hideLoading();
+}
+
+// ---- EFFACER ----
+function effacer() {
+  if (!selectedRow) { showToast('Sélectionnez une ligne à effacer', 'error'); return; }
+  if (!confirm(`Effacer "${selectedRow.ref}" ?`)) return;
+  viderFormulaire();
+  showToast('Formulaire effacé', 'info');
+}
+
+// ---- VIDER ----
+function viderFormulaire() {
+  ['f-recu','f-ref','f-du','f-au','f-client','f-pmclient','f-deadline','f-datesortie','f-commentaires','f-guide'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-etat').value = '';
+  document.getElementById('f-pmvisit').value = '';
+  selectedRow = null;
+  selectedIndex = null;
+  document.getElementById('form-mode-badge').textContent = 'Nouveau';
+  document.getElementById('form-mode-badge').style.background = 'rgba(255,255,255,0.15)';
+  document.getElementById('form-mode-badge').style.color = 'white';
+  renderTable(allData);
+}
+
+// ---- RECHERCHE ----
+function rechercher() {
+  const ref = document.getElementById('s-ref').value.toLowerCase().trim();
+  const client = document.getElementById('s-client').value.toLowerCase().trim();
+  const pmclient = document.getElementById('s-pmclient').value.toLowerCase().trim();
+  if (!ref && !client && !pmclient) { renderTable(allData); return; }
+  const filtered = allData.filter(r =>
+    (ref && r.ref.toLowerCase().includes(ref)) ||
+    (client && r.client.toLowerCase().includes(client)) ||
+    (pmclient && r.pmclient.toLowerCase().includes(pmclient))
+  );
+  renderTable(filtered);
+  showToast(`${filtered.length} résultat(s) trouvé(s)`, 'info');
+}
+
+function resetRecherche() {
+  document.getElementById('s-ref').value = '';
+  document.getElementById('s-client').value = '';
+  document.getElementById('s-pmclient').value = '';
+  renderTable(allData);
+}
+
+// ---- SEARCH ON ENTER ----
+['s-ref','s-client','s-pmclient'].forEach(id => {
+  document.getElementById(id).addEventListener('keydown', e => { if(e.key==='Enter') rechercher(); });
+});
+
+// ---- INIT ----
+loadData();
+</script>
+</body>
+</html>
