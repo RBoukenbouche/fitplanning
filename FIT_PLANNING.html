@@ -4,240 +4,169 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FIT PLANNING</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
-  :root {
-    --navy: #0f2744;
-    --navy2: #1a3a5c;
-    --blue: #1e5fa8;
-    --blue2: #2979c8;
-    --accent: #3db8f5;
-    --gold: #f5c842;
-    --green: #22c55e;
-    --red: #ef4444;
-    --orange: #f97316;
-    --bg: #f0f4f8;
-    --card: #ffffff;
-    --text: #1a2332;
-    --muted: #6b7a99;
-    --border: #dde3ef;
-    --row-even: #f7f9fc;
-    --highlight: #fff8d6;
-    --highlight-border: #f5c842;
-  }
+:root {
+  --navy:#0f2744;--navy2:#1a3a5c;--blue:#1e5fa8;--blue2:#2979c8;--accent:#3db8f5;
+  --gold:#f5c842;--green:#22c55e;--red:#ef4444;--orange:#f97316;--purple:#8b5cf6;
+  --bg:#f0f4f8;--card:#ffffff;--text:#1a2332;--muted:#6b7a99;--border:#dde3ef;
+  --row-even:#f7f9fc;--highlight:#fff8d6;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+/* HEADER */
+.header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 60%,var(--blue) 100%);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:56px;box-shadow:0 2px 12px rgba(15,39,68,.18);}
+.header-left{display:flex;align-items:center;gap:12px;}
+.header-logo{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--navy);}
+.header-title{color:white;font-size:16px;font-weight:600;letter-spacing:.5px;}
+.header-subtitle{color:rgba(255,255,255,.55);font-size:11px;margin-top:1px;}
+.sync-badge{background:rgba(61,184,245,.15);border:1px solid rgba(61,184,245,.3);color:var(--accent);font-size:11px;padding:3px 10px;border-radius:20px;display:flex;align-items:center;gap:5px;}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-  }
+/* TABS */
+.tabs{display:flex;gap:0;background:var(--navy);padding:0 24px;}
+.tab{padding:10px 20px;color:rgba(255,255,255,.6);font-size:13px;font-weight:500;cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap;}
+.tab:hover{color:white;}
+.tab.active{color:white;border-bottom-color:var(--accent);}
 
-  /* HEADER */
-  .header {
-    background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 60%, var(--blue) 100%);
-    padding: 0 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 56px;
-    box-shadow: 0 2px 12px rgba(15,39,68,0.18);
-  }
-  .header-left { display: flex; align-items: center; gap: 12px; }
-  .header-logo {
-    width: 32px; height: 32px; background: var(--accent);
-    border-radius: 8px; display: flex; align-items: center; justify-content: center;
-    font-size: 16px; font-weight: 700; color: var(--navy);
-  }
-  .header-title { color: white; font-size: 16px; font-weight: 600; letter-spacing: 0.5px; }
-  .header-subtitle { color: rgba(255,255,255,0.55); font-size: 11px; margin-top: 1px; }
-  .header-right { display: flex; align-items: center; gap: 8px; }
-  .sync-badge {
-    background: rgba(61,184,245,0.15); border: 1px solid rgba(61,184,245,0.3);
-    color: var(--accent); font-size: 11px; padding: 3px 10px; border-radius: 20px;
-    display: flex; align-items: center; gap: 5px;
-  }
-  .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+/* MAIN */
+.main{padding:16px 20px;max-width:1400px;margin:0 auto;}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
 
-  /* MAIN LAYOUT */
-  .main { padding: 16px 20px; max-width: 1400px; margin: 0 auto; }
+/* CARDS */
+.form-card,.table-card,.stat-card{background:var(--card);border-radius:12px;border:1px solid var(--border);margin-bottom:16px;overflow:hidden;box-shadow:0 1px 4px rgba(15,39,68,.06);}
+.card-header{background:var(--navy);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;}
+.card-header-title{color:white;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;}
+.card-body{padding:14px 16px;}
 
-  /* FORM CARD */
-  .form-card {
-    background: var(--card);
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    margin-bottom: 16px;
-    overflow: hidden;
-    box-shadow: 0 1px 4px rgba(15,39,68,0.06);
-  }
-  .form-header {
-    background: var(--navy);
-    padding: 10px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .form-header-title { color: white; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
-  .form-body { padding: 14px 16px; }
+/* FORM */
+.form-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:12px;}
+.form-group{display:flex;flex-direction:column;gap:4px;}
+.form-group.span2{grid-column:span 2;}
+.form-group.span3{grid-column:span 3;}
+.form-group label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;}
+.form-group input,.form-group select{height:34px;border:1px solid var(--border);border-radius:6px;padding:0 10px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:#fafbfd;transition:all .15s;outline:none;}
+.form-group input:focus,.form-group select:focus{border-color:var(--blue2);box-shadow:0 0 0 3px rgba(41,121,200,.1);background:white;}
 
-  .form-grid {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 10px;
-    margin-bottom: 12px;
-  }
-  .form-group { display: flex; flex-direction: column; gap: 4px; }
-  .form-group.span2 { grid-column: span 2; }
-  .form-group label {
-    font-size: 10px; font-weight: 600; color: var(--muted);
-    text-transform: uppercase; letter-spacing: 0.6px;
-  }
-  .form-group input, .form-group select {
-    height: 34px; border: 1px solid var(--border);
-    border-radius: 6px; padding: 0 10px;
-    font-size: 13px; font-family: 'DM Sans', sans-serif;
-    color: var(--text); background: #fafbfd;
-    transition: border-color 0.15s, box-shadow 0.15s;
-    outline: none;
-  }
-  .form-group input:focus, .form-group select:focus {
-    border-color: var(--blue2);
-    box-shadow: 0 0 0 3px rgba(41,121,200,0.1);
-    background: white;
-  }
-  .form-group textarea {
-    border: 1px solid var(--border); border-radius: 6px;
-    padding: 8px 10px; font-size: 13px; font-family: 'DM Sans', sans-serif;
-    color: var(--text); background: #fafbfd; resize: none; outline: none;
-    transition: border-color 0.15s;
-  }
-  .form-group textarea:focus { border-color: var(--blue2); background: white; }
+/* BUTTONS */
+.btn-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.btn{height:34px;padding:0 16px;border-radius:7px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;display:flex;align-items:center;gap:6px;transition:all .15s;white-space:nowrap;}
+.btn-green{background:var(--green);color:white;}
+.btn-green:hover{background:#16a34a;transform:translateY(-1px);}
+.btn-edit{background:var(--blue);color:white;}
+.btn-edit:hover{background:var(--blue2);transform:translateY(-1px);}
+.btn-delete{background:var(--red);color:white;}
+.btn-delete:hover{background:#dc2626;transform:translateY(-1px);}
+.btn-clear{background:var(--bg);color:var(--muted);border:1px solid var(--border);}
+.btn-clear:hover{background:var(--border);}
+.btn-search{background:var(--navy);color:white;}
+.btn-search:hover{background:var(--navy2);}
 
-  /* BUTTONS */
-  .btn-row { display: flex; gap: 8px; align-items: center; }
-  .btn {
-    height: 34px; padding: 0 18px; border-radius: 7px;
-    font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif;
-    cursor: pointer; border: none; display: flex; align-items: center; gap: 6px;
-    transition: all 0.15s; white-space: nowrap;
-  }
-  .btn-primary { background: var(--green); color: white; }
-  .btn-primary:hover { background: #16a34a; transform: translateY(-1px); }
-  .btn-edit { background: var(--blue); color: white; }
-  .btn-edit:hover { background: var(--blue2); transform: translateY(-1px); }
-  .btn-delete { background: var(--red); color: white; }
-  .btn-delete:hover { background: #dc2626; transform: translateY(-1px); }
-  .btn-clear { background: var(--bg); color: var(--muted); border: 1px solid var(--border); }
-  .btn-clear:hover { background: var(--border); }
-  .btn-search { background: var(--navy); color: white; }
-  .btn-search:hover { background: var(--navy2); }
-  .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+/* FILTER PILLS */
+.filter-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:12px 16px;background:var(--card);border-radius:10px;border:1px solid var(--border);margin-bottom:12px;}
+.filter-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
+.pill{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid var(--border);background:white;color:var(--muted);transition:all .15s;}
+.pill:hover{border-color:var(--blue2);color:var(--blue2);}
+.pill.active{background:var(--navy);color:white;border-color:var(--navy);}
+.pill.pill-oe.active{background:#f97316;border-color:#f97316;}
+.pill.pill-at.active{background:#8b5cf6;border-color:#8b5cf6;}
+.pill.pill-ct.active{background:#1e5fa8;border-color:#1e5fa8;}
+.pill.pill-conf.active{background:#22c55e;border-color:#22c55e;}
 
-  /* SEARCH BAR */
-  .search-bar {
-    display: flex; gap: 8px; align-items: center;
-    background: var(--card); border-radius: 10px;
-    border: 1px solid var(--border); padding: 10px 14px;
-    margin-bottom: 12px;
-    box-shadow: 0 1px 4px rgba(15,39,68,0.04);
-  }
-  .search-bar input {
-    flex: 1; height: 32px; border: 1px solid var(--border);
-    border-radius: 6px; padding: 0 10px; font-size: 13px;
-    font-family: 'DM Sans', sans-serif; outline: none;
-    background: #fafbfd;
-  }
-  .search-bar input:focus { border-color: var(--blue2); background: white; }
-  .search-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+/* SEARCH BAR */
+.search-bar{display:flex;gap:8px;align-items:center;background:var(--card);border-radius:10px;border:1px solid var(--border);padding:10px 14px;margin-bottom:12px;}
+.search-bar input{flex:1;height:32px;border:1px solid var(--border);border-radius:6px;padding:0 10px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;background:#fafbfd;min-width:0;}
+.search-bar input:focus{border-color:var(--blue2);background:white;}
+.search-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
 
-  /* TABLE */
-  .table-card {
-    background: var(--card); border-radius: 12px;
-    border: 1px solid var(--border);
-    overflow: hidden;
-    box-shadow: 0 1px 4px rgba(15,39,68,0.06);
-  }
-  .table-header {
-    background: var(--navy); padding: 10px 16px;
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .table-header-title { color: white; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
-  .table-count { background: rgba(61,184,245,0.2); color: var(--accent); font-size: 11px; padding: 2px 10px; border-radius: 20px; font-weight: 600; }
+/* TABLE */
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+thead tr{background:var(--navy2);}
+thead th{color:rgba(255,255,255,.85);font-weight:500;padding:9px 10px;text-align:left;font-size:11px;letter-spacing:.4px;white-space:nowrap;border-bottom:2px solid var(--blue);}
+tbody tr{cursor:pointer;transition:background .1s;border-bottom:1px solid var(--border);}
+tbody tr:nth-child(even){background:var(--row-even);}
+tbody tr:hover{background:#e8f0fb;}
+tbody tr.selected{background:var(--highlight)!important;border-left:3px solid var(--gold);}
+tbody td{padding:7px 10px;color:var(--text);white-space:nowrap;max-width:200px;overflow:hidden;text-overflow:ellipsis;}
+.table-count{background:rgba(61,184,245,.2);color:var(--accent);font-size:11px;padding:2px 10px;border-radius:20px;font-weight:600;}
 
-  .table-wrap { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 12px; }
-  thead tr { background: var(--navy2); }
-  thead th {
-    color: rgba(255,255,255,0.85); font-weight: 500;
-    padding: 9px 10px; text-align: left;
-    font-size: 11px; letter-spacing: 0.4px; white-space: nowrap;
-    border-bottom: 2px solid var(--blue);
-  }
-  tbody tr { cursor: pointer; transition: background 0.1s; border-bottom: 1px solid var(--border); }
-  tbody tr:nth-child(even) { background: var(--row-even); }
-  tbody tr:hover { background: #e8f0fb; }
-  tbody tr.selected { background: var(--highlight) !important; border-left: 3px solid var(--gold); }
-  tbody td { padding: 8px 10px; color: var(--text); white-space: nowrap; }
+/* BADGES */
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;letter-spacing:.3px;}
+.badge-ct{background:#dbeafe;color:#1e40af;}
+.badge-oe{background:#fef3c7;color:#92400e;}
+.badge-at{background:#ede9fe;color:#5b21b6;}
+.badge-conf{background:#d1fae5;color:#065f46;}
+.badge-other{background:#f1f5f9;color:#475569;}
 
-  .badge {
-    display: inline-block; padding: 2px 8px; border-radius: 20px;
-    font-size: 10px; font-weight: 600; letter-spacing: 0.3px;
-  }
-  .badge-ct { background: #dbeafe; color: #1e40af; }
-  .badge-oe { background: #fef3c7; color: #92400e; }
-  .badge-at { background: #dcfce7; color: #166534; }
-  .badge-conf { background: #d1fae5; color: #065f46; }
-  .badge-other { background: #f1f5f9; color: #475569; }
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+.stat-box{background:var(--card);border-radius:10px;border:1px solid var(--border);padding:14px 16px;}
+.stat-box-label{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.stat-box-value{font-size:28px;font-weight:600;color:var(--text);line-height:1;}
+.stat-box-sub{font-size:11px;color:var(--muted);margin-top:4px;}
+.stat-box.blue{border-left:4px solid var(--blue);}
+.stat-box.green{border-left:4px solid var(--green);}
+.stat-box.orange{border-left:4px solid var(--orange);}
+.stat-box.purple{border-left:4px solid var(--purple);}
 
-  /* TOAST */
-  .toast {
-    position: fixed; bottom: 24px; right: 24px;
-    padding: 12px 20px; border-radius: 10px;
-    font-size: 13px; font-weight: 500; color: white;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-    z-index: 1000; transform: translateY(80px); opacity: 0;
-    transition: all 0.3s; pointer-events: none;
-  }
-  .toast.show { transform: translateY(0); opacity: 1; }
-  .toast.success { background: var(--green); }
-  .toast.error { background: var(--red); }
-  .toast.info { background: var(--blue); }
+/* AGENT CARDS */
+.agents-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:16px;}
+.agent-card{background:var(--card);border-radius:10px;border:1px solid var(--border);padding:14px 16px;}
+.agent-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.agent-avatar{width:38px;height:38px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;color:white;flex-shrink:0;}
+.agent-name{font-weight:600;font-size:14px;color:var(--text);}
+.agent-total{font-size:11px;color:var(--muted);}
+.agent-stats{display:flex;gap:6px;flex-wrap:wrap;}
+.agent-stat{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;}
 
-  /* LOADING */
-  .loading-overlay {
-    position: fixed; inset: 0; background: rgba(15,39,68,0.4);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 999; opacity: 0; pointer-events: none; transition: opacity 0.2s;
-  }
-  .loading-overlay.show { opacity: 1; pointer-events: all; }
-  .loading-box {
-    background: white; border-radius: 12px; padding: 24px 32px;
-    display: flex; align-items: center; gap: 14px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-  }
-  .spinner {
-    width: 24px; height: 24px; border: 3px solid var(--border);
-    border-top-color: var(--blue); border-radius: 50%; animation: spin 0.7s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
+/* CONFIRMED TABLE */
+.conf-table{width:100%;border-collapse:collapse;font-size:12px;}
+.conf-table thead tr{background:var(--green);}
+.conf-table thead th{color:white;font-weight:500;padding:9px 12px;text-align:left;font-size:11px;letter-spacing:.4px;white-space:nowrap;}
+.conf-table tbody tr{cursor:pointer;transition:background .1s;border-bottom:1px solid var(--border);}
+.conf-table tbody tr:nth-child(even){background:#f0fdf4;}
+.conf-table tbody tr:hover{background:#dcfce7;}
+.conf-table tbody td{padding:8px 12px;color:var(--text);white-space:nowrap;}
+.today-line{background:#fff8d6!important;border-left:3px solid var(--gold);}
 
-  /* EMPTY STATE */
-  .empty-state { text-align: center; padding: 40px; color: var(--muted); }
-  .empty-state-icon { font-size: 36px; margin-bottom: 10px; }
-  .empty-state-text { font-size: 14px; }
+/* CHART */
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.chart-box{background:var(--card);border-radius:10px;border:1px solid var(--border);padding:16px;}
+.chart-title{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;}
+.chart-wrap{position:relative;height:220px;}
 
-  @media (max-width: 900px) {
-    .form-grid { grid-template-columns: repeat(3, 1fr); }
-    .form-group.span2 { grid-column: span 1; }
-  }
-  @media (max-width: 600px) {
-    .form-grid { grid-template-columns: repeat(2, 1fr); }
-    .main { padding: 10px; }
-  }
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:500;color:white;box-shadow:0 4px 20px rgba(0,0,0,.15);z-index:1000;transform:translateY(80px);opacity:0;transition:all .3s;pointer-events:none;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{background:var(--green);}
+.toast.error{background:var(--red);}
+.toast.info{background:var(--blue);}
+
+/* LOADING */
+.loading-overlay{position:fixed;inset:0;background:rgba(15,39,68,.4);display:flex;align-items:center;justify-content:center;z-index:999;opacity:0;pointer-events:none;transition:opacity .2s;}
+.loading-overlay.show{opacity:1;pointer-events:all;}
+.loading-box{background:white;border-radius:12px;padding:24px 32px;display:flex;align-items:center;gap:14px;box-shadow:0 8px 32px rgba(0,0,0,.12);}
+.spinner{width:24px;height:24px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.empty-state{text-align:center;padding:40px;color:var(--muted);}
+.empty-icon{font-size:32px;margin-bottom:10px;}
+
+@media(max-width:900px){
+  .form-grid{grid-template-columns:repeat(3,1fr);}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .charts-grid{grid-template-columns:1fr;}
+}
+@media(max-width:600px){
+  .form-grid{grid-template-columns:repeat(2,1fr);}
+  .main{padding:10px;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+}
 </style>
 </head>
 <body>
@@ -250,23 +179,26 @@
       <div class="header-subtitle">Visit Morocco DMC</div>
     </div>
   </div>
-  <div class="header-right">
-    <div class="sync-badge">
-      <div class="sync-dot"></div>
-      Connecté à Google Sheets
-    </div>
-  </div>
+  <div class="sync-badge"><div class="sync-dot"></div>Google Sheets</div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('planning')">📋 Planning</div>
+  <div class="tab" onclick="switchTab('confirmes')">✅ Confirmés</div>
+  <div class="tab" onclick="switchTab('stats')">📊 Statistiques</div>
 </div>
 
 <div class="main">
 
-  <!-- FORM -->
+<!-- ===== TAB PLANNING ===== -->
+<div class="tab-content active" id="tab-planning">
+
   <div class="form-card">
-    <div class="form-header">
-      <span class="form-header-title">Formulaire</span>
-      <span id="form-mode-badge" style="background:rgba(255,255,255,0.15);color:white;font-size:10px;padding:2px 10px;border-radius:20px;">Nouveau</span>
+    <div class="card-header">
+      <span class="card-header-title">Formulaire</span>
+      <span id="form-mode-badge" style="background:rgba(255,255,255,.15);color:white;font-size:10px;padding:2px 10px;border-radius:20px;">Nouveau</span>
     </div>
-    <div class="form-body">
+    <div class="card-body">
       <div class="form-grid">
         <div class="form-group">
           <label>Reçu le</label>
@@ -288,11 +220,11 @@
           <label>État</label>
           <select id="f-etat">
             <option value="">-- Choisir --</option>
-            <option value="CT">CT</option>
-            <option value="O E">O E</option>
-            <option value="AT">AT</option>
             <option value="OE">OE</option>
-            <option value="CONFIRME">CONFIRME</option>
+            <option value="O E">O E</option>
+            <option value="CT">CT</option>
+            <option value="AT">AT</option>
+            <option value="CONFIRME">CONFIRMÉ</option>
           </select>
         </div>
         <div class="form-group span2">
@@ -331,14 +263,33 @@
           <input type="text" id="f-guide" placeholder="Guide">
         </div>
       </div>
-
       <div class="btn-row">
-        <button class="btn btn-primary" onclick="enregistrer()">✚ Enregistrer</button>
+        <button class="btn btn-green" onclick="enregistrer()">✚ Enregistrer</button>
         <button class="btn btn-edit" onclick="modifier()">✎ Modifier</button>
         <button class="btn btn-delete" onclick="effacer()">✕ Effacer</button>
         <button class="btn btn-clear" onclick="viderFormulaire()">↺ Vider</button>
       </div>
     </div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filter-bar">
+    <span class="filter-label">Filtrer :</span>
+    <div class="pill active" onclick="filterEtat('ALL',this)">Tous</div>
+    <div class="pill pill-oe" onclick="filterEtat('OE',this)">O E</div>
+    <div class="pill pill-ct" onclick="filterEtat('CT',this)">CT</div>
+    <div class="pill pill-at" onclick="filterEtat('AT',this)">AT</div>
+    <div class="pill pill-conf" onclick="filterEtat('CONFIRME',this)">CONFIRMÉ</div>
+    <div style="flex:1"></div>
+    <span class="filter-label">Agent :</span>
+    <select id="agent-filter" onchange="filterAgent()" style="height:32px;border:1px solid var(--border);border-radius:6px;padding:0 10px;font-size:12px;background:white;outline:none;">
+      <option value="ALL">Tous les agents</option>
+      <option value="SIHAM">SIHAM</option>
+      <option value="Imane">Imane</option>
+      <option value="Abdelhay">Abdelhay</option>
+      <option value="Med">Med</option>
+      <option value="HEATHER">HEATHER</option>
+    </select>
   </div>
 
   <!-- SEARCH -->
@@ -353,8 +304,8 @@
 
   <!-- TABLE -->
   <div class="table-card">
-    <div class="table-header">
-      <span class="table-header-title">Enregistrements</span>
+    <div class="card-header">
+      <span class="card-header-title">Enregistrements</span>
       <span class="table-count" id="row-count">0 lignes</span>
     </div>
     <div class="table-wrap">
@@ -376,32 +327,87 @@
           </tr>
         </thead>
         <tbody id="table-body">
-          <tr><td colspan="12"><div class="empty-state"><div class="empty-state-icon">⏳</div><div class="empty-state-text">Chargement des données...</div></div></td></tr>
+          <tr><td colspan="12"><div class="empty-state"><div class="empty-icon">⏳</div>Chargement...</div></td></tr>
         </tbody>
       </table>
     </div>
   </div>
 </div>
 
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
+<!-- ===== TAB CONFIRMES ===== -->
+<div class="tab-content" id="tab-confirmes">
+  <div class="table-card">
+    <div class="card-header">
+      <span class="card-header-title">✅ Réservations Confirmées à venir</span>
+      <span class="table-count" id="conf-count">0</span>
+    </div>
+    <div class="table-wrap">
+      <table class="conf-table">
+        <thead>
+          <tr>
+            <th>Du</th>
+            <th>Au</th>
+            <th>Référence</th>
+            <th>Client</th>
+            <th>PM Visit</th>
+            <th>Guide</th>
+            <th>Commentaires</th>
+          </tr>
+        </thead>
+        <tbody id="conf-body">
+          <tr><td colspan="7"><div class="empty-state"><div class="empty-icon">⏳</div>Chargement...</div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 
-<!-- LOADING -->
+<!-- ===== TAB STATS ===== -->
+<div class="tab-content" id="tab-stats">
+
+  <div class="stats-grid" id="global-stats"></div>
+
+  <div class="charts-grid">
+    <div class="chart-box">
+      <div class="chart-title">Dossiers par état</div>
+      <div class="chart-wrap"><canvas id="chart-etat"></canvas></div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title">Dossiers par agent</div>
+      <div class="chart-wrap"><canvas id="chart-agent"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card-header" style="border-radius:10px 10px 0 0;margin-bottom:0;">
+    <span class="card-header-title">Statistiques par agent</span>
+  </div>
+  <div class="agents-grid" id="agents-grid" style="padding-top:12px;"></div>
+
+</div>
+
+</div><!-- end main -->
+
+<div class="toast" id="toast"></div>
 <div class="loading-overlay" id="loading">
   <div class="loading-box">
     <div class="spinner"></div>
-    <span id="loading-text" style="font-size:14px;color:#1a2332;">Chargement...</span>
+    <span id="loading-text" style="font-size:14px;">Chargement...</span>
   </div>
 </div>
 
 <script>
 const SHEET_ID = '1nIwenjf2I1UQxIjFrqq2tGYDBHQUK_bTVTrLWe-ghlU';
 const SHEET_NAME = 'Feuille 1';
-const API_BASE = `https://script.google.com/macros/s/AKfycbzK-zEce5d4qHkxnrGLen7TmZ9K6JK8sucoDD1ubHZ4GqEA6X3-p235L0V3HpLhixwy/exec`;
+const API_URL = 'https://script.google.com/macros/s/AKfycbzK-zEce5d4qHkxnrGLen7TmZ9K6JK8sucoDD1ubHZ4GqEA6X3-p235L0V3HpLhixwy/exec';
 
 let allData = [];
+let filteredData = [];
 let selectedRow = null;
 let selectedIndex = null;
+let currentEtatFilter = 'ALL';
+let currentAgentFilter = 'ALL';
+let chartEtat = null;
+let chartAgent = null;
 
 // ---- UTILS ----
 function showToast(msg, type='success') {
@@ -410,39 +416,62 @@ function showToast(msg, type='success') {
   t.className = `toast ${type} show`;
   setTimeout(() => t.className = 'toast', 3000);
 }
-
 function showLoading(msg='Chargement...') {
   document.getElementById('loading-text').textContent = msg;
   document.getElementById('loading').classList.add('show');
 }
+function hideLoading() { document.getElementById('loading').classList.remove('show'); }
 
-function hideLoading() {
-  document.getElementById('loading').classList.remove('show');
-}
-
-function formatDate(val) {
+function formatDateFromGviz(val) {
   if (!val) return '';
-  if (val.includes('/')) return val;
-  const d = new Date(val);
-  if (isNaN(d)) return val;
-  return d.toLocaleDateString('fr-FR');
+  if (typeof val === 'string') {
+    const m = val.match(/Date\((\d+),(\d+),(\d+)\)/);
+    if (m) {
+      const d = new Date(parseInt(m[1]), parseInt(m[2]), parseInt(m[3]));
+      return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+    }
+    return val;
+  }
+  return val;
 }
-
 function toInputDate(val) {
   if (!val) return '';
   if (val.includes('-')) return val;
-  const parts = val.split('/');
-  if (parts.length === 3) return `${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}`;
+  const p = val.split('/');
+  if (p.length === 3) return `${p[2]}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`;
   return '';
 }
-
+function parseDate(str) {
+  if (!str) return null;
+  if (str.includes('/')) { const p=str.split('/'); return new Date(p[2],p[1]-1,p[0]); }
+  if (str.includes('-')) { const p=str.split('-'); return new Date(p[0],p[1]-1,p[2]); }
+  return null;
+}
 function badgeEtat(etat) {
-  const e = (etat||'').toUpperCase().trim();
-  if (e === 'CT') return `<span class="badge badge-ct">CT</span>`;
-  if (e === 'O E' || e === 'OE') return `<span class="badge badge-oe">O E</span>`;
-  if (e === 'AT') return `<span class="badge badge-at">AT</span>`;
-  if (e === 'CONFIRME') return `<span class="badge badge-conf">CONFIRMÉ</span>`;
+  const e = (etat||'').toUpperCase().trim().replace(' ','');
+  if (e==='CT') return `<span class="badge badge-ct">CT</span>`;
+  if (e==='OE') return `<span class="badge badge-oe">O E</span>`;
+  if (e==='AT') return `<span class="badge badge-at">AT</span>`;
+  if (e==='CONFIRME') return `<span class="badge badge-conf">CONFIRMÉ</span>`;
   return `<span class="badge badge-other">${etat||''}</span>`;
+}
+function normalizeEtat(e) {
+  return (e||'').toUpperCase().trim().replace(' ','');
+}
+function avatarColor(name) {
+  const colors = ['#1e5fa8','#22c55e','#f97316','#8b5cf6','#ef4444','#0f2744','#0891b2'];
+  let h = 0; for (let c of (name||'')) h = (h*31+c.charCodeAt(0))%colors.length;
+  return colors[Math.abs(h)];
+}
+
+// ---- TABS ----
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-'+tab).classList.add('active');
+  if (tab === 'stats') renderStats();
+  if (tab === 'confirmes') renderConfirmes();
 }
 
 // ---- LOAD DATA ----
@@ -454,7 +483,7 @@ async function loadData() {
     const text = await res.text();
     const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)[1]);
     const rows = json.table.rows || [];
-    allData = rows.map((r, i) => ({
+    allData = rows.map((r,i) => ({
       _index: i,
       recu: r.c[0]?.v ? formatDateFromGviz(r.c[0].v) : '',
       ref: r.c[1]?.v || '',
@@ -469,25 +498,46 @@ async function loadData() {
       commentaires: r.c[10]?.v || '',
       guide: r.c[11]?.v || '',
     })).filter(r => r.ref || r.client);
-    renderTable(allData);
+    filteredData = [...allData];
+    renderTable(filteredData);
   } catch(e) {
-    showToast('Erreur de chargement. Vérifiez la connexion.', 'error');
-    document.getElementById('table-body').innerHTML = `<tr><td colspan="12"><div class="empty-state"><div class="empty-state-icon">⚠️</div><div class="empty-state-text">Impossible de charger les données</div></div></td></tr>`;
+    showToast('Erreur de chargement', 'error');
   }
   hideLoading();
 }
 
-function formatDateFromGviz(val) {
-  if (!val) return '';
-  if (typeof val === 'string') {
-    const m = val.match(/Date\((\d+),(\d+),(\d+)\)/);
-    if (m) {
-      const d = new Date(parseInt(m[1]), parseInt(m[2]), parseInt(m[3]));
-      return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
-    }
-    return val;
+// ---- FILTERS ----
+function filterEtat(etat, el) {
+  currentEtatFilter = etat;
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  applyFilters();
+}
+function filterAgent() {
+  currentAgentFilter = document.getElementById('agent-filter').value;
+  applyFilters();
+}
+function applyFilters() {
+  let data = [...allData];
+  if (currentEtatFilter !== 'ALL') {
+    data = data.filter(r => normalizeEtat(r.etat) === currentEtatFilter);
   }
-  return val;
+  if (currentAgentFilter !== 'ALL') {
+    data = data.filter(r => (r.pmvisit||'').toLowerCase() === currentAgentFilter.toLowerCase());
+  }
+  // apply search too
+  const ref = document.getElementById('s-ref').value.toLowerCase().trim();
+  const client = document.getElementById('s-client').value.toLowerCase().trim();
+  const pmclient = document.getElementById('s-pmclient').value.toLowerCase().trim();
+  if (ref || client || pmclient) {
+    data = data.filter(r =>
+      (ref && r.ref.toLowerCase().includes(ref)) ||
+      (client && r.client.toLowerCase().includes(client)) ||
+      (pmclient && r.pmclient.toLowerCase().includes(pmclient))
+    );
+  }
+  filteredData = data;
+  renderTable(filteredData);
 }
 
 // ---- RENDER TABLE ----
@@ -495,31 +545,155 @@ function renderTable(data) {
   const tbody = document.getElementById('table-body');
   document.getElementById('row-count').textContent = `${data.length} ligne${data.length>1?'s':''}`;
   if (!data.length) {
-    tbody.innerHTML = `<tr><td colspan="12"><div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-text">Aucun enregistrement trouvé</div></div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="12"><div class="empty-state"><div class="empty-icon">📭</div>Aucun enregistrement trouvé</div></td></tr>`;
     return;
   }
-  tbody.innerHTML = data.map((row, i) => `
-    <tr onclick="selectRow(${i})" id="row-${i}" ${selectedIndex===i?'class="selected"':''}>
+  tbody.innerHTML = data.map((row,i) => `
+    <tr onclick="selectRow(${i})" ${selectedIndex===i?'class="selected"':''}>
       <td>${row.recu}</td>
-      <td style="font-weight:500">${row.ref}</td>
+      <td style="font-weight:500;max-width:160px">${row.ref}</td>
       <td>${row.du}</td>
       <td>${row.au}</td>
-      <td>${row.client}</td>
-      <td>${row.pmclient}</td>
+      <td style="max-width:130px">${row.client}</td>
+      <td style="max-width:110px">${row.pmclient}</td>
       <td>${badgeEtat(row.etat)}</td>
       <td>${row.pmvisit}</td>
       <td>${row.deadline}</td>
       <td>${row.datesortie}</td>
-      <td style="color:var(--muted);max-width:150px;overflow:hidden;text-overflow:ellipsis">${row.commentaires}</td>
+      <td style="color:var(--muted);max-width:130px">${row.commentaires}</td>
       <td>${row.guide}</td>
     </tr>
   `).join('');
 }
 
+// ---- CONFIRMED VIEW ----
+function renderConfirmes() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const confirmed = allData
+    .filter(r => normalizeEtat(r.etat) === 'CONFIRME')
+    .filter(r => { const d = parseDate(r.du); return d && d >= today; })
+    .sort((a,b) => { const da=parseDate(a.du), db=parseDate(b.du); return da-db; });
+  document.getElementById('conf-count').textContent = `${confirmed.length} dossier${confirmed.length>1?'s':''}`;
+  if (!confirmed.length) {
+    document.getElementById('conf-body').innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">🎉</div>Aucun dossier confirmé à venir</div></td></tr>`;
+    return;
+  }
+  document.getElementById('conf-body').innerHTML = confirmed.map(r => `
+    <tr>
+      <td style="font-weight:600;color:#065f46">${r.du}</td>
+      <td>${r.au}</td>
+      <td style="font-weight:500">${r.ref}</td>
+      <td>${r.client}</td>
+      <td>${r.pmvisit}</td>
+      <td>${r.guide}</td>
+      <td style="color:var(--muted)">${r.commentaires}</td>
+    </tr>
+  `).join('');
+}
+
+// ---- STATS ----
+function renderStats() {
+  const total = allData.length;
+  const byEtat = {};
+  const byAgent = {};
+  const today = new Date(); today.setHours(0,0,0,0);
+  let confirmedUpcoming = 0;
+
+  allData.forEach(r => {
+    const e = normalizeEtat(r.etat);
+    byEtat[e] = (byEtat[e]||0)+1;
+    const a = r.pmvisit || 'Non assigné';
+    if (!byAgent[a]) byAgent[a] = {total:0, etat:{}};
+    byAgent[a].total++;
+    byAgent[a].etat[e] = (byAgent[a].etat[e]||0)+1;
+    if (e==='CONFIRME') {
+      const d = parseDate(r.du);
+      if (d && d >= today) confirmedUpcoming++;
+    }
+  });
+
+  // Global stats
+  document.getElementById('global-stats').innerHTML = `
+    <div class="stat-box blue">
+      <div class="stat-box-label">Total dossiers</div>
+      <div class="stat-box-value">${total}</div>
+      <div class="stat-box-sub">Tous états confondus</div>
+    </div>
+    <div class="stat-box green">
+      <div class="stat-box-label">Confirmés à venir</div>
+      <div class="stat-box-value">${confirmedUpcoming}</div>
+      <div class="stat-box-sub">Réservations actives</div>
+    </div>
+    <div class="stat-box orange">
+      <div class="stat-box-label">En cours (OE)</div>
+      <div class="stat-box-value">${(byEtat['OE']||0)}</div>
+      <div class="stat-box-sub">Dossiers ouverts</div>
+    </div>
+    <div class="stat-box purple">
+      <div class="stat-box-label">Agents actifs</div>
+      <div class="stat-box-value">${Object.keys(byAgent).length}</div>
+      <div class="stat-box-sub">PM Visit</div>
+    </div>
+  `;
+
+  // Chart by état
+  const etatLabels = Object.keys(byEtat);
+  const etatValues = etatLabels.map(k => byEtat[k]);
+  const etatColors = etatLabels.map(k => {
+    if(k==='CT') return '#1e5fa8';
+    if(k==='OE') return '#f97316';
+    if(k==='AT') return '#8b5cf6';
+    if(k==='CONFIRME') return '#22c55e';
+    return '#94a3b8';
+  });
+  if (chartEtat) chartEtat.destroy();
+  chartEtat = new Chart(document.getElementById('chart-etat'), {
+    type: 'doughnut',
+    data: { labels: etatLabels, datasets: [{ data: etatValues, backgroundColor: etatColors, borderWidth: 2 }] },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'right', labels:{ font:{size:12}, padding:12 } } } }
+  });
+
+  // Chart by agent
+  const agentLabels = Object.keys(byAgent);
+  const agentValues = agentLabels.map(k => byAgent[k].total);
+  const agentColors = agentLabels.map(k => avatarColor(k));
+  if (chartAgent) chartAgent.destroy();
+  chartAgent = new Chart(document.getElementById('chart-agent'), {
+    type: 'bar',
+    data: { labels: agentLabels, datasets: [{ label:'Dossiers', data: agentValues, backgroundColor: agentColors, borderRadius: 6 }] },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true, ticks:{stepSize:1} } } }
+  });
+
+  // Agent cards
+  document.getElementById('agents-grid').innerHTML = Object.entries(byAgent)
+    .sort((a,b) => b[1].total - a[1].total)
+    .map(([name, data]) => {
+      const initials = name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+      const etatBadges = Object.entries(data.etat).map(([e,v]) => {
+        const colors = {CT:'#dbeafe/1e40af', OE:'#fef3c7/92400e', AT:'#ede9fe/5b21b6', CONFIRME:'#d1fae5/065f46'};
+        const [bg,col] = (colors[e]||'#f1f5f9/475569').split('/');
+        return `<span class="agent-stat" style="background:${bg};color:#${col}">${e}: ${v}</span>`;
+      }).join('');
+      const confUpcoming = allData.filter(r => r.pmvisit===name && normalizeEtat(r.etat)==='CONFIRME' && (()=>{const d=parseDate(r.du);return d&&d>=today;})()).length;
+      return `
+        <div class="agent-card">
+          <div class="agent-header">
+            <div class="agent-avatar" style="background:${avatarColor(name)}">${initials}</div>
+            <div>
+              <div class="agent-name">${name}</div>
+              <div class="agent-total">${data.total} dossier${data.total>1?'s':''} · ${confUpcoming} confirmé${confUpcoming>1?'s':''} à venir</div>
+            </div>
+          </div>
+          <div class="agent-stats">${etatBadges}</div>
+        </div>
+      `;
+    }).join('');
+}
+
 // ---- SELECT ROW ----
 function selectRow(i) {
   selectedIndex = i;
-  selectedRow = allData[i];
+  selectedRow = filteredData[i];
   document.getElementById('f-recu').value = toInputDate(selectedRow.recu);
   document.getElementById('f-ref').value = selectedRow.ref;
   document.getElementById('f-du').value = toInputDate(selectedRow.du);
@@ -532,14 +706,14 @@ function selectRow(i) {
   document.getElementById('f-datesortie').value = toInputDate(selectedRow.datesortie);
   document.getElementById('f-commentaires').value = selectedRow.commentaires;
   document.getElementById('f-guide').value = selectedRow.guide;
-  document.getElementById('form-mode-badge').textContent = 'Modification';
-  document.getElementById('form-mode-badge').style.background = 'rgba(245,200,66,0.25)';
-  document.getElementById('form-mode-badge').style.color = '#f5c842';
-  renderTable(allData);
-  document.querySelector('.form-card').scrollIntoView({behavior:'smooth', block:'start'});
+  const badge = document.getElementById('form-mode-badge');
+  badge.textContent = 'Modification';
+  badge.style.background = 'rgba(245,200,66,.25)';
+  badge.style.color = '#f5c842';
+  renderTable(filteredData);
+  document.querySelector('.form-card').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-// ---- GET FORM DATA ----
 function getFormData() {
   return {
     recu: document.getElementById('f-recu').value,
@@ -557,110 +731,67 @@ function getFormData() {
   };
 }
 
-// ---- ENREGISTRER ----
 async function enregistrer() {
   const data = getFormData();
   if (!data.ref) { showToast('Veuillez entrer une Référence', 'error'); return; }
   showLoading('Enregistrement...');
   try {
-    const row = selectedRow ? selectedRow._index + 12 : null;
-    const params = new URLSearchParams({
-      action: 'add',
-      sheetName: SHEET_NAME,
-      ...data
-    });
-    const res = await fetch(`${API_BASE}?${params}`);
+    const params = new URLSearchParams({ action:'add', sheetName:SHEET_NAME, ...data });
+    const res = await fetch(`${API_URL}?${params}`);
     const json = await res.json();
-    if (json.status === 'ok') {
-      showToast('✅ Enregistrement réussi !');
-      viderFormulaire();
-      await loadData();
-    } else {
-      showToast('Erreur: ' + (json.message||'inconnue'), 'error');
-    }
-  } catch(e) {
-    showToast('Erreur de connexion', 'error');
-  }
+    if (json.status === 'ok') { showToast('✅ Enregistrement réussi !'); viderFormulaire(); await loadData(); }
+    else showToast('Erreur: '+(json.message||'inconnue'), 'error');
+  } catch(e) { showToast('Erreur de connexion au serveur', 'error'); }
   hideLoading();
 }
 
-// ---- MODIFIER ----
 async function modifier() {
   if (!selectedRow) { showToast('Sélectionnez une ligne à modifier', 'error'); return; }
   const data = getFormData();
-  showLoading('Modification en cours...');
+  showLoading('Modification...');
   try {
     const rowNum = selectedRow._index + 12;
-    const params = new URLSearchParams({
-      action: 'update',
-      sheetName: SHEET_NAME,
-      row: rowNum,
-      ...data
-    });
-    const res = await fetch(`${API_BASE}?${params}`);
+    const params = new URLSearchParams({ action:'update', sheetName:SHEET_NAME, row:rowNum, ...data });
+    const res = await fetch(`${API_URL}?${params}`);
     const json = await res.json();
-    if (json.status === 'ok') {
-      showToast('✅ Modification enregistrée !');
-      viderFormulaire();
-      await loadData();
-    } else {
-      showToast('Erreur: ' + (json.message||'inconnue'), 'error');
-    }
-  } catch(e) {
-    showToast('Erreur de connexion', 'error');
-  }
+    if (json.status === 'ok') { showToast('✅ Modification enregistrée !'); viderFormulaire(); await loadData(); }
+    else showToast('Erreur: '+(json.message||'inconnue'), 'error');
+  } catch(e) { showToast('Erreur de connexion au serveur', 'error'); }
   hideLoading();
 }
 
-// ---- EFFACER ----
 function effacer() {
-  if (!selectedRow) { showToast('Sélectionnez une ligne à effacer', 'error'); return; }
+  if (!selectedRow) { showToast('Sélectionnez une ligne', 'error'); return; }
   if (!confirm(`Effacer "${selectedRow.ref}" ?`)) return;
   viderFormulaire();
   showToast('Formulaire effacé', 'info');
 }
 
-// ---- VIDER ----
 function viderFormulaire() {
-  ['f-recu','f-ref','f-du','f-au','f-client','f-pmclient','f-deadline','f-datesortie','f-commentaires','f-guide'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('f-etat').value = '';
-  document.getElementById('f-pmvisit').value = '';
-  selectedRow = null;
-  selectedIndex = null;
-  document.getElementById('form-mode-badge').textContent = 'Nouveau';
-  document.getElementById('form-mode-badge').style.background = 'rgba(255,255,255,0.15)';
-  document.getElementById('form-mode-badge').style.color = 'white';
-  renderTable(allData);
+  ['f-recu','f-ref','f-du','f-au','f-client','f-pmclient','f-deadline','f-datesortie','f-commentaires','f-guide'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('f-etat').value='';
+  document.getElementById('f-pmvisit').value='';
+  selectedRow=null; selectedIndex=null;
+  const badge = document.getElementById('form-mode-badge');
+  badge.textContent='Nouveau'; badge.style.background='rgba(255,255,255,.15)'; badge.style.color='white';
+  renderTable(filteredData);
 }
 
-// ---- RECHERCHE ----
 function rechercher() {
-  const ref = document.getElementById('s-ref').value.toLowerCase().trim();
-  const client = document.getElementById('s-client').value.toLowerCase().trim();
-  const pmclient = document.getElementById('s-pmclient').value.toLowerCase().trim();
-  if (!ref && !client && !pmclient) { renderTable(allData); return; }
-  const filtered = allData.filter(r =>
-    (ref && r.ref.toLowerCase().includes(ref)) ||
-    (client && r.client.toLowerCase().includes(client)) ||
-    (pmclient && r.pmclient.toLowerCase().includes(pmclient))
-  );
-  renderTable(filtered);
-  showToast(`${filtered.length} résultat(s) trouvé(s)`, 'info');
+  applyFilters();
+  showToast(`${filteredData.length} résultat(s)`, 'info');
 }
-
 function resetRecherche() {
-  document.getElementById('s-ref').value = '';
-  document.getElementById('s-client').value = '';
-  document.getElementById('s-pmclient').value = '';
-  renderTable(allData);
+  document.getElementById('s-ref').value='';
+  document.getElementById('s-client').value='';
+  document.getElementById('s-pmclient').value='';
+  applyFilters();
 }
 
-// ---- SEARCH ON ENTER ----
 ['s-ref','s-client','s-pmclient'].forEach(id => {
   document.getElementById(id).addEventListener('keydown', e => { if(e.key==='Enter') rechercher(); });
 });
 
-// ---- INIT ----
 loadData();
 </script>
 </body>
