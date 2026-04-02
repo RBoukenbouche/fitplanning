@@ -737,33 +737,47 @@ function getFormData() {
   };
 }
 
-async function enregistrer() {
+function jsonpCall(params, onSuccess, onError) {
+  const cbName = 'cb_' + Date.now();
+  const script = document.createElement('script');
+  params.callback = cbName;
+  const qs = Object.entries(params).map(([k,v]) => encodeURIComponent(k)+'='+encodeURIComponent(v)).join('&');
+  window[cbName] = function(data) {
+    delete window[cbName];
+    document.body.removeChild(script);
+    if (data.status === 'ok') onSuccess(data);
+    else onError(data.message || 'Erreur inconnue');
+  };
+  script.onerror = function() {
+    delete window[cbName];
+    document.body.removeChild(script);
+    onError('Erreur de connexion');
+  };
+  script.src = API_URL + '?' + qs;
+  document.body.appendChild(script);
+}
+
+function enregistrer() {
   const data = getFormData();
   if (!data.ref) { showToast('Veuillez entrer une Référence', 'error'); return; }
   showLoading('Enregistrement...');
-  try {
-    const params = new URLSearchParams({ action:'add', sheetName:SHEET_NAME, ...data });
-    const res = await fetch(`${API_URL}?${params}`);
-    const json = await res.json();
-    if (json.status === 'ok') { showToast('✅ Enregistrement réussi !'); viderFormulaire(); await loadData(); }
-    else showToast('Erreur: '+(json.message||'inconnue'), 'error');
-  } catch(e) { showToast('Erreur de connexion au serveur', 'error'); }
-  hideLoading();
+  jsonpCall(
+    { action:'add', sheetName:SHEET_NAME, ...data },
+    () => { hideLoading(); showToast('✅ Enregistrement réussi !'); viderFormulaire(); loadData(); },
+    (err) => { hideLoading(); showToast('Erreur: '+err, 'error'); }
+  );
 }
 
-async function modifier() {
+function modifier() {
   if (!selectedRow) { showToast('Sélectionnez une ligne à modifier', 'error'); return; }
   const data = getFormData();
   showLoading('Modification...');
-  try {
-    const rowNum = selectedRow._index + 12;
-    const params = new URLSearchParams({ action:'update', sheetName:SHEET_NAME, row:rowNum, ...data });
-    const res = await fetch(`${API_URL}?${params}`);
-    const json = await res.json();
-    if (json.status === 'ok') { showToast('✅ Modification enregistrée !'); viderFormulaire(); await loadData(); }
-    else showToast('Erreur: '+(json.message||'inconnue'), 'error');
-  } catch(e) { showToast('Erreur de connexion au serveur', 'error'); }
-  hideLoading();
+  const rowNum = selectedRow._index + 12;
+  jsonpCall(
+    { action:'update', sheetName:SHEET_NAME, row:rowNum, ...data },
+    () => { hideLoading(); showToast('✅ Modification enregistrée !'); viderFormulaire(); loadData(); },
+    (err) => { hideLoading(); showToast('Erreur: '+err, 'error'); }
+  );
 }
 
 function effacer() {
