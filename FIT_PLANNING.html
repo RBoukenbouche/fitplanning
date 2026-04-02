@@ -461,14 +461,16 @@ function parseDate(str) {
   return null;
 }
 function badgeEtat(etat) {
-  const e = (etat||'').toUpperCase().trim().replace(' ','');
+  const e = normalizeEtat(etat);
   if (e==='CT') return `<span class="badge badge-ct">CT</span>`;
   if (e==='OE') return `<span class="badge badge-oe">O E</span>`;
+  if (e==='OACTIVE') return `<span class="badge badge-oe" style="background:#fde68a;color:#78350f">O active</span>`;
   if (e==='AT') return `<span class="badge badge-at">AT</span>`;
-  if (e==='CONFIRME') return `<span class="badge badge-conf">CONFIRMÉ</span>`;
+  if (e==='CONFIRME') return `<span class="badge badge-conf">Confirmée</span>`;
+  if (e==='ANNULEE') return `<span class="badge" style="background:#fee2e2;color:#991b1b">Annulée</span>`;
   return `<span class="badge badge-other">${etat||''}</span>`;
 }
-function normalizeEtat(e) {
+  function normalizeEtat(e) {
   const s = (e||'').toUpperCase().trim().replace(/\s+/g,'').replace(/[ÉÈÊ]/g,'E').replace(/[ÀÂ]/g,'A');
   if (s.startsWith('CONFIRM')) return 'CONFIRME';
   if (s.startsWith('ANNUL')) return 'ANNULEE';
