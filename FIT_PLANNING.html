@@ -271,7 +271,7 @@ tbody td{padding:7px 10px;color:var(--text);white-space:nowrap;max-width:200px;o
         <button class="btn btn-edit" onclick="modifier()">✎ Modifier</button>
         <button class="btn btn-delete" onclick="effacer()">✕ Effacer</button>
         <button class="btn btn-clear" onclick="viderFormulaire()">↺ Vider</button>
-        <div style="width:1px;background:var(--border);height:24px;margin:0 4px;"></div>
+        <div style="width:1px;background:var(--border);height:24px;margin:0 8px 0 16px;"></div>
         <span class="filter-label">Filtrer :</span>
         <div class="pill active" onclick="filterEtat('ALL',this)">Tous</div>
         <div class="pill pill-oe" onclick="filterEtat('OE',this)">O E</div>
@@ -474,35 +474,45 @@ function switchTab(tab) {
 }
 
 // ---- LOAD DATA ----
-async function loadData() {
+function loadData() {
   showLoading('Chargement des données...');
-  try {
-    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}&range=A12:L`;
-    const res = await fetch(url);
-    const text = await res.text();
-    const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)[1]);
-    const rows = json.table.rows || [];
-    allData = rows.map((r,i) => ({
-      _index: i,
-      recu: r.c[0]?.v ? formatDateFromGviz(r.c[0].v) : '',
-      ref: r.c[1]?.v || '',
-      du: r.c[2]?.v ? formatDateFromGviz(r.c[2].v) : '',
-      au: r.c[3]?.v ? formatDateFromGviz(r.c[3].v) : '',
-      client: r.c[4]?.v || '',
-      pmclient: r.c[5]?.v || '',
-      etat: r.c[6]?.v || '',
-      pmvisit: r.c[7]?.v || '',
-      deadline: r.c[8]?.v ? formatDateFromGviz(r.c[8].v) : '',
-      datesortie: r.c[9]?.v ? formatDateFromGviz(r.c[9].v) : '',
-      commentaires: r.c[10]?.v || '',
-      guide: r.c[11]?.v || '',
-    })).filter(r => r.ref || r.client);
-    filteredData = [...allData];
-    renderTable(filteredData);
-  } catch(e) {
-    showToast('Erreur de chargement', 'error');
+  jsonpCall(
+    { action: 'read' },
+    (json) => {
+      const rows = json.data || [];
+      allData = rows.map((r, i) => ({
+        _index: i,
+        recu: formatDateVal(r[0]),
+        ref: r[1] || '',
+        du: formatDateVal(r[2]),
+        au: formatDateVal(r[3]),
+        client: r[4] || '',
+        pmclient: r[5] || '',
+        etat: r[6] || '',
+        pmvisit: r[7] || '',
+        deadline: formatDateVal(r[8]),
+        datesortie: formatDateVal(r[9]),
+        commentaires: r[10] || '',
+        guide: r[11] || '',
+      })).filter(r => r.ref || r.client);
+      filteredData = [...allData];
+      renderTable(filteredData);
+      hideLoading();
+    },
+    (err) => {
+      showToast('Erreur de chargement: ' + err, 'error');
+      hideLoading();
+    }
+  );
+}
+function formatDateVal(v) {
+  if (!v) return '';
+  if (typeof v === 'string') return v;
+  if (typeof v === 'number') {
+    const d = new Date(Math.round((v - 25569) * 86400 * 1000));
+    return `${String(d.getUTCDate()).padStart(2,'0')}/${String(d.getUTCMonth()+1).padStart(2,'0')}/${d.getUTCFullYear()}`;
   }
-  hideLoading();
+  return String(v);
 }
 
 // ---- FILTERS ----
