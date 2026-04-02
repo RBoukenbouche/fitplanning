@@ -174,52 +174,52 @@ tbody td{padding:7px 10px;color:var(--text);white-space:nowrap;max-width:200px;o
 </head>
 <body>
 
-<div class="header">
-  <div class="header-left">
-    <div class="header-logo">FP</div>
+<="header">
+  <="header-left">
+    <="header-logo">FP</div>
     <div>
-      <div class="header-title">FIT PLANNING</div>
-      <div class="header-subtitle">Visit Morocco DMC</div>
+      <="header-title">FIT PLANNING</div>
+      <="header-subtitle">Visit Morocco DMC</div>
     </div>
   </div>
-  <div class="sync-badge"><div class="sync-dot"></div>Google Sheets</div>
+  <="sync-badge"><="sync-dot"></div>Google Sheets</div>
 </div>
 
-<div class="tabs">
-  <div class="tab active" onclick="switchTab('planning')">📋 Planning</div>
-  <div class="tab" onclick="switchTab('confirmes')">✅ Confirmés</div>
-  <div class="tab" onclick="switchTab('stats')">📊 Statistiques</div>
+<div class="header-tabs">
+  <div class="htab active" id="htab-planning" onclick="switchTab('planning')">📋 Planning</div>
+  <div class="htab" id="htab-confirmes" onclick="switchTab('confirmes')">✅ Confirmés</div>
+  <div class="htab" id="htab-stats" onclick="switchTab('stats')">📊 Statistiques</div>
 </div>
-
-<div class="main">
+    
+<="main">
 
 <!-- ===== TAB PLANNING ===== -->
-<div class="tab-content active" id="tab-planning">
+<="tab-content active" id="tab-planning">
 
-  <div class="form-card sticky-form">
-    <div class="card-header">
+  <="form-card sticky-form">
+    <="card-header">
       <span class="card-header-title">Formulaire</span>
       <span id="form-mode-badge" style="background:rgba(255,255,255,.15);color:white;font-size:10px;padding:2px 10px;border-radius:20px;">Nouveau</span>
     </div>
-    <div class="card-body">
-      <div class="form-grid">
-        <div class="form-group">
+    <="card-body">
+      <="form-grid">
+        <="form-group">
           <label>Reçu le</label>
           <input type="date" id="f-recu">
         </div>
-        <div class="form-group span2">
+        <="form-group span2">
           <label>Référence</label>
           <input type="text" id="f-ref" placeholder="Référence">
         </div>
-        <div class="form-group">
+        <="form-group">
           <label>Du</label>
           <input type="date" id="f-du">
         </div>
-        <div class="form-group">
+        <="form-group">
           <label>Au</label>
           <input type="date" id="f-au">
         </div>
-        <div class="form-group">
+        <="form-group">
           <label>État</label>
           <select id="f-etat">
   <option value="">-- État --</option>
@@ -231,7 +231,7 @@ tbody td{padding:7px 10px;color:var(--text);white-space:nowrap;max-width:200px;o
   <option value="AT">AT</option>
 </select>
         </div>
-        <div class="form-group">
+        <="form-group">
           <label>PM Visit</label>
           <select id="f-pmvisit">
             <option value="">-- PM --</option>
@@ -242,32 +242,32 @@ tbody td{padding:7px 10px;color:var(--text);white-space:nowrap;max-width:200px;o
             <option value="HEATHER">HEATHER</option>
           </select>
         </div>
-        <div class="form-group">
+        <="form-group">
           <label>Deadline</label>
           <input type="date" id="f-deadline">
         </div>
-        <div class="form-group span2">
+        <="form-group span2">
           <label>Client</label>
           <input type="text" id="f-client" placeholder="Client">
         </div>
-        <div class="form-group span2">
+        <="form-group span2">
           <label>PM Client</label>
           <input type="text" id="f-pmclient" placeholder="PM Client">
         </div>
-        <div class="form-group">
+        <="form-group">
           <label>Date Sortie</label>
           <input type="date" id="f-datesortie">
         </div>
-        <div class="form-group span2">
+        <="form-group span2">
           <label>Commentaires</label>
           <input type="text" id="f-commentaires" placeholder="Commentaires">
         </div>
-        <div class="form-group">
+        <="form-group">
           <label>Guide</label>
           <input type="text" id="f-guide" placeholder="Guide">
         </div>
       </div>
-      <div class="btn-row">
+      <="btn-row">
         <button class="btn btn-green" onclick="enregistrer()">✚ Enregistrer</button>
         <button class="btn btn-edit" onclick="modifier()">✎ Modifier</button>
         <button class="btn btn-delete" onclick="effacer()">✕ Effacer</button>
