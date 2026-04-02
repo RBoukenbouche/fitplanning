@@ -820,7 +820,33 @@ function resetRecherche() {
   document.getElementById(id).addEventListener('keydown', e => { if(e.key==='Enter') rechercher(); });
 });
 
-loadData();
-</script>
-</body>
-</html>
+function loadData(){
+  loading('Chargement des données...');
+  call({action:'read'},function(d){
+    allData=(d.data||[]).map(function(r,i){return{
+      _i:i,
+      recu:fmtD(r[0]),ref:String(r[1]||''),
+      du:fmtD(r[2]),au:fmtD(r[3]),
+      client:String(r[4]||''),pmclient:String(r[5]||''),
+      etat:String(r[6]||''),pmvisit:String(r[7]||''),
+      deadline:fmtD(r[8]),datesortie:fmtD(r[9]),
+      commentaires:String(r[10]||''),guide:String(r[11]||'')
+    };}).filter(function(r){return r.ref||r.client;});
+    filtered=allData.slice();
+    renderTable(filtered);
+    hideLoad();
+  },function(e){toast('Erreur: '+e,'error');hideLoad();});
+}
+function fmtD(v){
+  if(!v)return'';
+  if(typeof v==='string'){
+    const m=v.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(m)return m[3]+'/'+m[2]+'/'+m[1];
+    return v;
+  }
+  if(typeof v==='number'){
+    const d=new Date(Math.round((v-25569)*86400*1000));
+    return String(d.getUTCDate()).padStart(2,'0')+'/'+String(d.getUTCMonth()+1).padStart(2,'0')+'/'+d.getUTCFullYear();
+  }
+  return String(v);
+}
