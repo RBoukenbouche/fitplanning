@@ -37,24 +37,27 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .tab-content{display:none;}
 .tab-content.active{display:block;}
 
+/* STICKY FORM */
+.sticky-form{position:sticky;top:0;z-index:100;}
+
 /* CARDS */
-.form-card,.table-card,.stat-card{background:var(--card);border-radius:12px;border:1px solid var(--border);margin-bottom:16px;overflow:hidden;box-shadow:0 1px 4px rgba(15,39,68,.06);}
-.card-header{background:var(--navy);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;}
-.card-header-title{color:white;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;}
-.card-body{padding:14px 16px;}
+.form-card,.table-card,.stat-card{background:var(--card);border-radius:12px;border:1px solid var(--border);margin-bottom:12px;overflow:hidden;box-shadow:0 2px 8px rgba(15,39,68,.10);}
+.card-header{background:var(--navy);padding:8px 14px;display:flex;align-items:center;justify-content:space-between;}
+.card-header-title{color:white;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;}
+.card-body{padding:10px 14px;}
 
 /* FORM */
-.form-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:12px;}
-.form-group{display:flex;flex-direction:column;gap:4px;}
+.form-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin-bottom:10px;}
+.form-group{display:flex;flex-direction:column;gap:3px;}
 .form-group.span2{grid-column:span 2;}
 .form-group.span3{grid-column:span 3;}
-.form-group label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;}
-.form-group input,.form-group select{height:34px;border:1px solid var(--border);border-radius:6px;padding:0 10px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:#fafbfd;transition:all .15s;outline:none;}
-.form-group input:focus,.form-group select:focus{border-color:var(--blue2);box-shadow:0 0 0 3px rgba(41,121,200,.1);background:white;}
+.form-group label{font-size:9px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;}
+.form-group input,.form-group select{height:28px;border:1px solid var(--border);border-radius:5px;padding:0 8px;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--text);background:#fafbfd;transition:all .15s;outline:none;}
+.form-group input:focus,.form-group select:focus{border-color:var(--blue2);box-shadow:0 0 0 2px rgba(41,121,200,.1);background:white;}
 
 /* BUTTONS */
-.btn-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
-.btn{height:34px;padding:0 16px;border-radius:7px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;display:flex;align-items:center;gap:6px;transition:all .15s;white-space:nowrap;}
+.btn-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.btn{height:28px;padding:0 14px;border-radius:6px;font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;display:flex;align-items:center;gap:5px;transition:all .15s;white-space:nowrap;}
 .btn-green{background:var(--green);color:white;}
 .btn-green:hover{background:#16a34a;transform:translateY(-1px);}
 .btn-edit{background:var(--blue);color:white;}
@@ -193,7 +196,7 @@ tbody td{padding:7px 10px;color:var(--text);white-space:nowrap;max-width:200px;o
 <!-- ===== TAB PLANNING ===== -->
 <div class="tab-content active" id="tab-planning">
 
-  <div class="form-card">
+  <div class="form-card sticky-form">
     <div class="card-header">
       <span class="card-header-title">Formulaire</span>
       <span id="form-mode-badge" style="background:rgba(255,255,255,.15);color:white;font-size:10px;padding:2px 10px;border-radius:20px;">Nouveau</span>
@@ -206,7 +209,7 @@ tbody td{padding:7px 10px;color:var(--text);white-space:nowrap;max-width:200px;o
         </div>
         <div class="form-group span2">
           <label>Référence</label>
-          <input type="text" id="f-ref" placeholder="Ex: COCA COLA">
+          <input type="text" id="f-ref" placeholder="Référence">
         </div>
         <div class="form-group">
           <label>Du</label>
@@ -219,7 +222,7 @@ tbody td{padding:7px 10px;color:var(--text);white-space:nowrap;max-width:200px;o
         <div class="form-group">
           <label>État</label>
           <select id="f-etat">
-            <option value="">-- Choisir --</option>
+            <option value="">-- État --</option>
             <option value="OE">OE</option>
             <option value="O E">O E</option>
             <option value="CT">CT</option>
@@ -227,18 +230,10 @@ tbody td{padding:7px 10px;color:var(--text);white-space:nowrap;max-width:200px;o
             <option value="CONFIRME">CONFIRMÉ</option>
           </select>
         </div>
-        <div class="form-group span2">
-          <label>Client</label>
-          <input type="text" id="f-client" placeholder="Nom du client">
-        </div>
-        <div class="form-group span2">
-          <label>PM Client</label>
-          <input type="text" id="f-pmclient" placeholder="Nom PM Client">
-        </div>
         <div class="form-group">
           <label>PM Visit</label>
           <select id="f-pmvisit">
-            <option value="">-- Choisir --</option>
+            <option value="">-- PM --</option>
             <option value="SIHAM">SIHAM</option>
             <option value="Imane">Imane</option>
             <option value="Abdelhay">Abdelhay</option>
@@ -250,13 +245,21 @@ tbody td{padding:7px 10px;color:var(--text);white-space:nowrap;max-width:200px;o
           <label>Deadline</label>
           <input type="date" id="f-deadline">
         </div>
+        <div class="form-group span2">
+          <label>Client</label>
+          <input type="text" id="f-client" placeholder="Client">
+        </div>
+        <div class="form-group span2">
+          <label>PM Client</label>
+          <input type="text" id="f-pmclient" placeholder="PM Client">
+        </div>
         <div class="form-group">
           <label>Date Sortie</label>
           <input type="date" id="f-datesortie">
         </div>
         <div class="form-group span2">
           <label>Commentaires</label>
-          <input type="text" id="f-commentaires" placeholder="Commentaires...">
+          <input type="text" id="f-commentaires" placeholder="Commentaires">
         </div>
         <div class="form-group">
           <label>Guide</label>
@@ -398,7 +401,8 @@ tbody td{padding:7px 10px;color:var(--text);white-space:nowrap;max-width:200px;o
 <script>
 const SHEET_ID = '1nIwenjf2I1UQxIjFrqq2tGYDBHQUK_bTVTrLWe-ghlU';
 const SHEET_NAME = 'Feuille 1';
-const API_URL = 'https://script.google.com/macros/s/AKfycbzK-zEce5d4qHkxnrGLen7TmZ9K6JK8sucoDD1ubHZ4GqEA6X3-p235L0V3HpLhixwy/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbyPkKKXmtmdIZbws4ltWOJqrA_ghUJqP3jx7pUyeKntzonzuYrmtz8mLnWRD3LDPbXJ/exec';
+
 
 let allData = [];
 let filteredData = [];
@@ -456,7 +460,9 @@ function badgeEtat(etat) {
   return `<span class="badge badge-other">${etat||''}</span>`;
 }
 function normalizeEtat(e) {
-  return (e||'').toUpperCase().trim().replace(' ','');
+  const s = (e||'').toUpperCase().trim().replace(/\s+/g,'').replace(/É/g,'E').replace(/È/g,'E').replace(/Ê/g,'E');
+  if (s.startsWith('CONFIRM')) return 'CONFIRME';
+  return s;
 }
 function avatarColor(name) {
   const colors = ['#1e5fa8','#22c55e','#f97316','#8b5cf6','#ef4444','#0f2744','#0891b2'];
