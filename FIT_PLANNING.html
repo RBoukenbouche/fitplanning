@@ -465,15 +465,30 @@ function avatarColor(name) {
 
 // ---- TABS ----
 function switchTab(tab) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.htab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-  event.target.classList.add('active');
+document.getElementById('htab-'+tab).classList.add('active');
   document.getElementById('tab-'+tab).classList.add('active');
   if (tab === 'stats') renderStats();
   if (tab === 'confirmes') renderConfirmes();
 }
 
 // ---- LOAD DATA ----
+  function formatDateVal(v) {
+  if (!v) return '';
+  if (typeof v === 'string') {
+    const m = v.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (m) return m[3]+'/'+m[2]+'/'+m[1];
+    return v;
+  }
+  if (typeof v === 'number') {
+    const d = new Date(Math.round((v-25569)*86400*1000));
+    return String(d.getUTCDate()).padStart(2,'0')+'/'+
+           String(d.getUTCMonth()+1).padStart(2,'0')+'/'+
+           d.getUTCFullYear();
+  }
+  return String(v);
+}
 function loadData() {
   showLoading('Chargement des données...');
   jsonpCall(
