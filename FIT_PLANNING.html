@@ -470,6 +470,8 @@ function badgeEtat(etat) {
   if (e==='ANNULEE') return `<span class="badge" style="background:#fee2e2;color:#991b1b">Annulée</span>`;
   return `<span class="badge badge-other">${etat||''}</span>`;
 }
+  return `<span class="badge badge-other">${etat||''}</span>`;
+}
   function normalizeEtat(e) {
   const s = (e||'').toUpperCase().trim().replace(/\s+/g,'').replace(/[ÉÈÊ]/g,'E').replace(/[ÀÂ]/g,'A');
   if (s.startsWith('CONFIRM')) return 'CONFIRME';
