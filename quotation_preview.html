@@ -191,7 +191,7 @@ table.recap tr.total-row td{border-top:2px solid rgba(201,168,76,.5);font-weight
         <div class="field"><label>Phone</label><input type="text" id="agPhone" value="+212 524 42 03 87"></div>
         <div class="field"><label>Mobile</label><input type="text" id="agMobile" value="+212 665 877 863"></div>
       </div>
-      <div class="field"><label>Email</label><input type="text" id="agEmail" value="incoming@visitmoroccodmc.com"></div>
+      <div class="field"><label>Email</label><input type="text" id="agEmail" value="incoming[at]visitmoroccodmc[dot]com"></div>
       <div class="modal-actions">
         <button class="btn btn-proposal" id="btnGenProposal" onclick="doGenerateProposal()">📝 Generate Word Document</button>
         <button class="btn btn-cancel" onclick="closeMo('moProposal')">Cancel</button>
@@ -233,7 +233,6 @@ table.recap tr.total-row td{border-top:2px solid rgba(201,168,76,.5);font-weight
       <div class="ci-label">Agent</div>
       <div class="ci-name">Sarah Benali</div>
       <div class="ci-detail">Project Manager · Incoming Department</div>
-      <div class="ci-detail" style="margin-top:3px;"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="452c2b262a282c2b2205332c362c31282a372a26262a2128266b262a28">[email&#160;protected]</a> · +212 524 42 03 87</div>
     </div>
   </div>
 
@@ -427,16 +426,11 @@ table.recap tr.total-row td{border-top:2px solid rgba(201,168,76,.5);font-weight
   <div class="qf">
     <div>
       <div class="qf-agent"><strong>Sarah Benali</strong>Project Manager · Incoming Department</div>
-      <div class="qf-contact" style="margin-top:3px;">📞 +212 524 42 03 87 · 📱 +212 665 877 863 · ✉ <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4920272a262420272e093f203a203d24263b262a2a262d242a672a2624">[email&#160;protected]</a></div>
     </div>
     <div class="qf-logo">Visit Morocco<br><span style="font-size:9.5px;color:var(--tm);">Travel & Events</span></div>
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js">
-  
-</script>
-<script data-cfasync="false">
 // ── DATA DU DEVIS (en production : vient du système de devis) ─────────────────
 const QUOTE = {
   ref: 'QT-001', version: 'v1', date: '06 Apr 2026', status: 'sent',
@@ -444,7 +438,7 @@ const QUOTE = {
   paxNames: 'Smith Family', pax: 4,
   arr: '2026-04-23', dep: '2026-05-01', numDays: 8,
   currency: 'EUR', rate: 10.5, totalSellMad: 68800,
-  agent: 'Sarah Benali', agentEmail: 'incoming@visitmoroccodmc.com',
+  agent: 'Sarah Benali', agentEmail: 'incoming[at]visitmoroccodmc[dot]com',
   agentPhone: '+212 524 42 03 87', agentMobile: '+212 665 877 863',
   accomLines: [
     'Apr 23-25 - Marrakech - Riad Palais des Fassis - Double Room - 2 units - BB',
@@ -554,8 +548,8 @@ function openInvoiceModal() {
   openMo('moInvoice');
 }
 
-// ── URL DU BACKEND RENDER 
-const API_URL = 'https://fitplanning.onrender.com'; 
+// ── URL DU BACKEND RENDER — À mettre à jour après déploiement ────────────────
+const API_URL = 'https://VOTRE-APP.onrender.com'; // ← Remplacer après déploiement Render
 
 async function doGenerateInvoice() {
   const btn = document.getElementById('btnGenInvoice');
