@@ -736,3 +736,19 @@ function generateProposalText(t, firstName, total, perPax, cur, agName, agTitle,
     'Incoming Department',
     `Phone : ${agPhone}`,
     `Mobile : $
+{agMobile}`,
+    `Email : ${agEmail}`,
+  ];
+  return lines.join('\n');
+}
+
+function downloadFile(content, filename, mimeType) {
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
