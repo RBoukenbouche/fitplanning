@@ -186,6 +186,7 @@
     <button class="btn btn-ghost" onclick="openModal()">📁 Mes devis (<span id="devisCount">0</span>)</button>
     <button class="btn btn-outline" onclick="exportCSV()">⬇ CSV</button>
     <button class="btn btn-green" onclick="saveDevis()">💾 Sauvegarder</button>
+    <button class="btn" style="background:#7B2D8B;" onclick="openPreview()">👁 Preview</button>
     <button class="btn btn-gold" onclick="printQuotation()">🖨 PDF</button>
   </div>
 </div>
@@ -517,6 +518,48 @@ function newDevis(){
 function readGenRows(bodyId){const saved={};document.querySelectorAll(`#${bodyId} tr`).forEach((tr,i)=>{saved[i]=Array.from(tr.querySelectorAll('input')).map(el=>el.value);});return saved;}
 function printQuotation(){window.print();}
 function exportCSV(){showToast('⬇ Export CSV en cours...','success');}
+
+
+function openPreview() {
+  const snap = takeSnapshot();
+  const PREVIEW_URL = 'https://transcendent-smakager-e2df06.netlify.app/preview.html';
+  // Encoder les données dans l'URL via sessionStorage partagé
+  const data = {
+    ref: snap.ref || 'QT-001',
+    version: snap.version || 'v1',
+    quoteDate: snap.quoteDate || new Date().toISOString().split('T')[0],
+    status: snap.status || 'sent',
+    client: snap.clientName || '',
+    contact: snap.contactName || '',
+    paxNames: snap.paxNames || snap.clientName || '',
+    pax: parseInt(snap.pax) || 2,
+    arr: snap.arrivalDate || '',
+    dep: snap.departureDate || '',
+    numDays: snap.numDays || 0,
+    numCats: snap.numCats || 1,
+    currency: snap.currency || 'EUR',
+    rate: parseFloat(snap.eurRate) || 10.5,
+    totalSellMad: 0,
+    agent: currentAgent ? currentAgent.name : 'Agent',
+    agentEmail: currentAgent ? (currentAgent.email || 'incoming[at]visitmoroccodmc[dot]com') : 'incoming[at]visitmoroccodmc[dot]com',
+    agentPhone: '+212 524 42 03 87',
+    agentMobile: '+212 665 877 863',
+    accomData: snap.accomData || {},
+    mealsData: snap.mealsData || [],
+    transData: snap.transData || {},
+    actData: snap.actData || [],
+    extData: snap.extrasData ? Object.values(snap.extrasData).map(r => ({desc: r[0]||'', rate: r[1]||0, qty: r[2]||1})) : [],
+    incLines: snap.incLines || [],
+    marginAccom: parseFloat(snap.marginAccom) || 0,
+    marginTrans: parseFloat(snap.marginTrans) || 20,
+    marginAct: parseFloat(snap.marginAct) || 20,
+    marginExtras: parseFloat(snap.marginExtras) || 20,
+    notes: snap.notes || '',
+  };
+  // Sauvegarder dans localStorage pour que preview.html puisse le lire
+  localStorage.setItem('vm_preview_data', JSON.stringify(data));
+  window.open(PREVIEW_URL, '_blank');
+}
 
 // INIT
 document.getElementById('quoteDate').value=new Date().toISOString().split('T')[0];
