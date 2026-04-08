@@ -578,32 +578,43 @@ function newDevis(){
 
 function readGenRows(bodyId){const saved={};document.querySelectorAll(`#${bodyId} tr`).forEach((tr,i)=>{saved[i]=Array.from(tr.querySelectorAll('input')).map(el=>el.value);});return saved;}
 function printQuotation(){window.print();}
-function exportExcel(){
-  const all = getAllDevis();
-  const keys = Object.keys(all);
-  if(keys.length===0){showToast('Aucun devis à exporter','error');return;}
-  
-  // Créer CSV compatible Excel
-  const headers = ['Réf','Version','Statut','Client','Arrivée','Départ','Jours','Devise','Taux','Total MAD','Notes'];
-  const rows = [headers];
-  
-  keys.forEach(k=>{
-    const d=all[k];
-    rows.push([
-      d.ref||'', d.version||'', d.status||'', d.clientName||'',
-      d.arrivalDate||'', d.departureDate||'', d.numDays||'',
-      d.currency||'', d.eurRate||'', '', d.notes||''
-    ]);
-  });
-  
-  const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const BOM = '\uFEFF';
-  const blob = new Blob([BOM+csv],{type:'text/csv;charset=utf-8'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href=url; a.download=`VisitMorocco_Devis_${new Date().toISOString().split('T')[0]}.csv`;
-  a.click(); URL.revokeObjectURL(url);
-  showToast('✅ Export Excel téléchargé !','success');
+async function exportExcel(){
+  if(!currentDevisKey){showToast('⚠ Sauvegardez le devis avant d\'exporter','error');return;}
+  const snap = takeSnapshot();
+  showToast('⏳ Génération Excel...','success');
+  try {
+    const payload = {
+      ref: snap.ref, version: snap.version, status: snap.status,
+      client: snap.clientName, contact: snap.contactName||'',
+      pax: parseInt(snap.pax)||1, arr: snap.arrivalDate, dep: snap.departureDate,
+      numDays: snap.numDays, numCats: snap.numCats||1,
+      currency: snap.currency, rate: parseFloat(snap.eurRate)||10.5,
+      quoteDate: snap.quoteDate,
+      marginAccom: parseFloat(snap.marginAccom)||0,
+      marginTrans: parseFloat(snap.marginTrans)||20,
+      marginAct: parseFloat(snap.marginAct)||20,
+      marginExtras: parseFloat(snap.marginExtras)||20,
+      accomData: snap.accomData||{},
+      transData: snap.transData||{},
+      actData: snap.actData||{},
+      extrasData: snap.extrasData||{}
+    };
+    const resp = await fetch('https://fitplanning.onrender.com/export-quotation', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    if(!resp.ok) throw new Error('Server error');
+    const blob = await resp.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href=url;
+    a.download=`Quotation_${snap.ref}_${snap.clientName||'Client'}.xlsx`;
+    a.click(); URL.revokeObjectURL(url);
+    showToast('✅ Quotation Excel téléchargée !','success');
+  } catch(e) {
+    showToast('⚠ Erreur export — réessayez dans 30s','error');
+    console.error(e);
+  }
 }
 
 
