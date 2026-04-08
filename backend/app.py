@@ -179,8 +179,8 @@ def generate_invoice(data):
     num_cats  = int(data.get('numCats', 1))
     arrival   = data.get('arr', '')
     departure = data.get('dep', '')
-    total_f   = round(total_mad / rate, 2)
-    per_pax   = round(total_f / pax, 2) if pax > 0 else 0
+    total_f   = int(((total_mad / rate) + 9) // 10) * 10  # Arrondi dizaine superieure
+    per_pax   = int(((total_f / pax) + 9) // 10) * 10 if pax > 0 else 0  # Arrondi dizaine superieure
 
     ref       = data.get('ref', '')
     client    = data.get('client', '')
@@ -198,6 +198,17 @@ def generate_invoice(data):
     act_lines   = build_act_lines(data.get('actData', []))
     extra_lines = build_extra_lines(data.get('extData', []))
     inc_lines   = data.get('incLines', [])
+    if not inc_lines:
+        inc_lines = [
+            'Accommodation at hotels as shown above or Similar',
+            'All meals as indicated',
+            'A/C Private deluxe vehicle at disposal',
+            'High qualified English Speaking guide throughout',
+            'All visits and activities as per the Itinerary',
+            'Entrance fees to the monuments',
+            'Water in the car during the tour',
+            'All Local Taxes',
+        ]
     words       = amount_to_words(total_f, currency)
 
     tpl_file = 'template_vim.xlsx' if is_eur else 'template_sweet.xlsx'
