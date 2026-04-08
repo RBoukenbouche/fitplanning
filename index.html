@@ -557,9 +557,10 @@ const PREVIEW_URL = 'https://fitplanning-alpha.vercel.app/preview.html';
     notes: snap.notes || '',
   };
   // Sauvegarder dans localStorage pour que preview.html puisse le lire
-  localStorage.setItem('vm_preview_data', JSON.stringify(data));
-
+ localStorage.setItem('vm_preview_data', JSON.stringify(data));
+window.open(PREVIEW_URL + '?t=' + Date.now(), '_blank');
 }
+
 
 // INIT
 document.getElementById('quoteDate').value=new Date().toISOString().split('T')[0];
