@@ -7,7 +7,7 @@
 <style>
 :root{--navy:#1A2E4A;--blue:#2B5EA7;--gold:#C9A84C;--gr:#1A6B4A;--bd:#D8E2EF;--sf:#F7F8FA;--tm:#6B7C93;--tx:#1E2A3A;--rd:#C0392B;}
 *{box-sizing:border-box;margin:0;padding:0;}
-
+body{font-family:'DM Sans',sans-serif;background:var(--sf);color:var(--tx);padding:20px;}
 .page{max-width:900px;margin:0 auto;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 4px 30px rgba(0,0,0,.12);}
 .qh{background:var(--navy);padding:26px 36px;display:flex;align-items:center;justify-content:space-between;}
 .qh-logo{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold);letter-spacing:1px;}
@@ -183,14 +183,14 @@ table.recap tr.total-row td{border-top:2px solid rgba(201,168,76,.5);font-weight
 
 <script data-cfasync="false">
 // ── CHARGEMENT DONNÉES ────────────────────────────────────────────────────────
-(function() {
-  try {
-    const stored = localStorage.getItem('vm_preview_data');
-    if (stored) window._PD = JSON.parse(stored);
-  } catch(e) {}
-})();
+// Lire localStorage immédiatement
+try {
+  const stored = localStorage.getItem('vm_preview_data');
+  if (stored) window._PD = JSON.parse(stored);
+} catch(e) { console.error('localStorage error:', e); }
 
 const d = window._PD || {};
+console.log('Preview data loaded:', d.client || 'NO DATA', '| ref:', d.ref || 'none');
 const roundUp10 = n => Math.ceil(Number(n||0)/10)*10;
 const fmt = (n, dec=2, round=false) => {
   const val = round ? roundUp10(n) : Number(n||0);
@@ -531,7 +531,12 @@ function render() {
   };
 }
 
-render();
+// Attendre que le DOM soit prêt
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', render);
+} else {
+  render();
+}
 
 // ── MODAL INVOICE ─────────────────────────────────────────────────────────────
 const API_URL = 'https://fitplanning.onrender.com';
