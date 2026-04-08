@@ -148,6 +148,51 @@
 </head>
 <body>
 
+
+<!-- LOGIN PAGE -->
+<div id="loginPage" style="position:fixed;inset:0;background:linear-gradient(135deg,#1A2E4A 0%,#2B5EA7 100%);display:flex;align-items:center;justify-content:center;z-index:9999;">
+  <div style="background:#fff;border-radius:12px;padding:40px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.3);">
+    <div style="text-align:center;margin-bottom:28px;">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#1A2E4A;letter-spacing:1px;">Visit Morocco</div>
+      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#6B7C93;margin-top:4px;">Travel & Events — Quotation System</div>
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#6B7C93;display:block;margin-bottom:5px;">Agent</label>
+      <select id="loginAgent" style="width:100%;border:1px solid #D8E2EF;border-radius:6px;padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:#1E2A3A;background:#F7F8FA;outline:none;">
+        <option value="">-- Sélectionner --</option>
+      </select>
+    </div>
+    <div style="margin-bottom:20px;position:relative;">
+      <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#6B7C93;display:block;margin-bottom:5px;">Mot de passe</label>
+      <input type="password" id="loginPwd" placeholder="••••••••" style="width:100%;border:1px solid #D8E2EF;border-radius:6px;padding:10px 40px 10px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:#1E2A3A;background:#F7F8FA;outline:none;" onkeydown="if(event.key==='Enter')doLogin()">
+      <button onclick="togglePwd()" style="position:absolute;right:10px;top:30px;background:none;border:none;cursor:pointer;color:#6B7C93;font-size:16px;" id="pwdToggle">👁</button>
+    </div>
+    <div id="loginError" style="color:#C0392B;font-size:11px;margin-bottom:10px;display:none;text-align:center;">Identifiants incorrects</div>
+    <button onclick="doLogin()" style="width:100%;background:#1A2E4A;color:#fff;border:none;border-radius:6px;padding:12px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;">Se connecter</button>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="modal-overlay" id="adminPanel">
+  <div class="modal" style="max-width:600px;">
+    <div class="modal-header">
+      <div class="modal-title">⚙️ Gestion des Agents</div>
+      <button class="modal-close" onclick="closeAdminPanel()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="agentsList" style="margin-bottom:16px;"></div>
+      <div style="border-top:1px solid #D8E2EF;padding-top:16px;">
+        <div style="font-size:12px;font-weight:700;color:#1A2E4A;margin-bottom:10px;">➕ Ajouter un agent</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+          <div class="field"><label>Nom</label><input type="text" id="newAgentName" placeholder="Prénom Nom"></div>
+          <div class="field"><label>Mot de passe</label><input type="text" id="newAgentPwd" placeholder="motdepasse2025?"></div>
+        </div>
+        <button class="btn btn-green" onclick="addAgent()" style="width:100%;">➕ Ajouter l'agent</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <div class="modal-header">
@@ -181,7 +226,7 @@
     <div class="header-divider"></div>
     <div style="color:rgba(255,255,255,.45);font-size:10px;letter-spacing:2px;text-transform:uppercase;">Quotation System</div>
   </div>
-  <div class="header-actions">
+  <div class="header-actions" id="headerActions">
     <div class="save-indicator">
       <div class="save-dot" id="saveDot"></div>
       <span id="saveLabel" style="color:#fff;">—</span>
@@ -192,6 +237,8 @@
     <button class="btn btn-green" onclick="saveDevis()">💾 Sauvegarder</button>
     <button class="btn" style="background:#7B2D8B;" onclick="openPreview()">👁 Preview</button>
     <button class="btn btn-gold" onclick="printQuotation()">🖨 PDF</button>
+    <button class="btn" style="background:#E67E22;" id="adminBtn" onclick="openAdminPanel()" style="display:none;">⚙️ Admin</button>
+    <button class="btn" style="background:#C0392B;" onclick="doLogout()">🚪 Déco</button>
   </div>
 </div>
 
@@ -438,7 +485,7 @@ function updateGT(){
 }
 function recalcAll(){recalcAccom();recalcTrans();recalcAct();recalcExtras();}
 
-function takeSnapshot(){return{ref:document.getElementById('quoteRef').value,quoteDate:document.getElementById('quoteDate').value,version:document.getElementById('version').value,status:document.getElementById('status').value,clientName:document.getElementById('clientName').value,pax:document.getElementById('pax').value,arrivalDate:document.getElementById('arrivalDate').value,departureDate:document.getElementById('departureDate').value,numDays,numCats,currency:document.getElementById('currency').value,eurRate:document.getElementById('eurRate').value,quickNote:document.getElementById('quickNote').value,notes:document.getElementById('notes').value,marginAccom:document.getElementById('marginAccom').value,marginTrans:document.getElementById('marginTrans').value,marginAct:document.getElementById('marginAct').value,marginExtras:document.getElementById('marginExtras').value,accomData:readAccomData(),transData:readGenRows('transBody'),actData:readGenRows('actBody'),extrasData:readGenRows('extrasBody'),savedAt:new Date().toISOString()};}
+function takeSnapshot(){return{agent:currentAgent?currentAgent.name:'',agentEmail:currentAgent?currentAgent.email:'incoming[at]visitmoroccodmc[dot]com',ref:document.getElementById('quoteRef').value,quoteDate:document.getElementById('quoteDate').value,version:document.getElementById('version').value,status:document.getElementById('status').value,clientName:document.getElementById('clientName').value,pax:document.getElementById('pax').value,arrivalDate:document.getElementById('arrivalDate').value,departureDate:document.getElementById('departureDate').value,numDays,numCats,currency:document.getElementById('currency').value,eurRate:document.getElementById('eurRate').value,quickNote:document.getElementById('quickNote').value,notes:document.getElementById('notes').value,marginAccom:document.getElementById('marginAccom').value,marginTrans:document.getElementById('marginTrans').value,marginAct:document.getElementById('marginAct').value,marginExtras:document.getElementById('marginExtras').value,accomData:readAccomData(),transData:readGenRows('transBody'),actData:readGenRows('actBody'),extrasData:readGenRows('extrasBody'),savedAt:new Date().toISOString()};}
 
 function restoreSnapshot(snap){
   numDays=snap.numDays||0;arrivalDate=snap.arrivalDate||null;numCats=snap.numCats||1;extrasCount=0;
@@ -639,7 +686,7 @@ function openPreview() {
     rate: parseFloat(snap.eurRate) || 10.5,
     totalSellMad: 0,
     agent: document.getElementById('quickNote')?.value || 'Agent Visit Morocco',
-    agentEmail: 'incoming[at]visitmoroccodmc[dot]com',
+    agentEmail: currentAgent ? currentAgent.email : 'incoming[at]visitmoroccodmc[dot]com',
     agentPhone: '+212 524 42 03 87',
     agentMobile: '+212 665 877 863',
     accomData: snap.accomData || {},
@@ -659,7 +706,138 @@ function openPreview() {
   window.open(PREVIEW_URL, '_blank');
 }
 
+
+// ── SYSTÈME DE SESSIONS ───────────────────────────────────────────────────────
+const DEFAULT_AGENTS = [
+  {name:'admin',    pwd:'admin2025?',    email:'',                              role:'admin'},
+  {name:'Abdelkay', pwd:'Abdelkay2025?', email:'incoming[at]visitmoroccodmc[dot]com', role:'agent'},
+  {name:'Siham',    pwd:'Siham2025?',    email:'incoming[at]visitmoroccodmc[dot]com', role:'agent'},
+  {name:'Mohamed',  pwd:'Mohamed2025?',  email:'incoming[at]visitmoroccodmc[dot]com', role:'agent'},
+];
+
+function getAgents(){
+  try{ return JSON.parse(localStorage.getItem('vm_agents')||'null') || DEFAULT_AGENTS; }
+  catch(e){ return DEFAULT_AGENTS; }
+}
+function saveAgents(agents){ localStorage.setItem('vm_agents', JSON.stringify(agents)); }
+
+let currentAgent = null;
+
+function initLogin(){
+  const agents = getAgents();
+  const sel = document.getElementById('loginAgent');
+  sel.innerHTML = '<option value="">-- Sélectionner --</option>';
+  agents.forEach(a => {
+    const opt = document.createElement('option');
+    opt.value = a.name; opt.textContent = a.name;
+    sel.appendChild(opt);
+  });
+  // Vérifier session existante
+  const saved = sessionStorage.getItem('vm_current_agent');
+  if(saved){ currentAgent = JSON.parse(saved); showApp(); }
+}
+
+function togglePwd(){
+  const inp = document.getElementById('loginPwd');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+function doLogin(){
+  const name = document.getElementById('loginAgent').value;
+  const pwd = document.getElementById('loginPwd').value;
+  const agents = getAgents();
+  const agent = agents.find(a => a.name === name && a.pwd === pwd);
+  if(agent){
+    currentAgent = agent;
+    sessionStorage.setItem('vm_current_agent', JSON.stringify(agent));
+    showApp();
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+  }
+}
+
+function showApp(){
+  document.getElementById('loginPage').style.display = 'none';
+  if(currentAgent.role === 'admin'){
+    document.getElementById('adminBtn').style.display = 'inline-flex';
+  }
+  updateDevisCount();
+}
+
+function doLogout(){
+  if(!confirm('Déconnexion ?')) return;
+  currentAgent = null;
+  sessionStorage.removeItem('vm_current_agent');
+  document.getElementById('loginPage').style.display = 'flex';
+  document.getElementById('loginPwd').value = '';
+  document.getElementById('loginError').style.display = 'none';
+  document.getElementById('adminBtn').style.display = 'none';
+}
+
+// Admin Panel
+function openAdminPanel(){
+  renderAgentsList();
+  document.getElementById('adminPanel').classList.add('open');
+}
+function closeAdminPanel(){ document.getElementById('adminPanel').classList.remove('open'); }
+
+function renderAgentsList(){
+  const agents = getAgents();
+  const div = document.getElementById('agentsList');
+  div.innerHTML = agents.map((a,i) => `
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border:1px solid #D8E2EF;border-radius:6px;margin-bottom:6px;background:#F7F8FA;">
+      <div style="flex:1;">
+        <div style="font-weight:600;font-size:13px;color:#1A2E4A;">${a.name} <span style="font-size:10px;color:#6B7C93;">(${a.role})</span></div>
+        <div style="font-size:11px;color:#6B7C93;">Pwd: ${a.pwd}</div>
+      </div>
+      ${a.name !== 'admin' ? `<button class="btn btn-danger" onclick="removeAgent(${i})">🗑</button>` : ''}
+    </div>
+  `).join('');
+}
+
+function addAgent(){
+  const name = document.getElementById('newAgentName').value.trim();
+  const pwd = document.getElementById('newAgentPwd').value.trim();
+  if(!name || !pwd){ alert('Nom et mot de passe requis'); return; }
+  const agents = getAgents();
+  if(agents.find(a => a.name === name)){ alert('Agent déjà existant'); return; }
+  agents.push({name, pwd, email:'incoming[at]visitmoroccodmc[dot]com', role:'agent'});
+  saveAgents(agents);
+  document.getElementById('newAgentName').value = '';
+  document.getElementById('newAgentPwd').value = '';
+  // Mettre à jour la liste de login
+  const sel = document.getElementById('loginAgent');
+  const opt = document.createElement('option');
+  opt.value = name; opt.textContent = name;
+  sel.appendChild(opt);
+  renderAgentsList();
+  showToast(`✅ Agent ${name} ajouté !`, 'success');
+}
+
+function removeAgent(index){
+  const agents = getAgents();
+  if(!confirm(`Supprimer l'agent ${agents[index].name} ?`)) return;
+  agents.splice(index, 1);
+  saveAgents(agents);
+  renderAgentsList();
+  showToast('🗑 Agent supprimé', 'error');
+}
+
+// Filtrer les devis par agent
+const _getAllDevis_orig = getAllDevis;
+getAllDevis = function(){
+  const all = _getAllDevis_orig();
+  if(!currentAgent || currentAgent.role === 'admin') return all;
+  // Filtrer par agent
+  const filtered = {};
+  Object.entries(all).forEach(([k,v]) => {
+    if(v.agent === currentAgent.name) filtered[k] = v;
+  });
+  return filtered;
+};
+
 // INIT
+initLogin();
 document.getElementById('quoteDate').value=new Date().toISOString().split('T')[0];
 document.getElementById('saveDot').className='save-dot';
 document.getElementById('saveLabel').textContent='Nouveau devis';
