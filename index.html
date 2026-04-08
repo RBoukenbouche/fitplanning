@@ -107,6 +107,10 @@
   .margin-row{background:#F0F4FA;padding:8px 13px;display:flex;align-items:center;gap:12px;border-top:1px solid var(--border);flex-wrap:wrap;}
   .margin-row label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);}
   .margin-row input[type=number]{width:55px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px;font-weight:700;color:var(--blue);background:#fff;outline:none;}
+  /* Supprimer les flèches sur tous les champs numériques */
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+  input[type=number]{-moz-appearance:textfield;}
   .margin-stat{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:1px;}
   .margin-stat span{font-size:10px;color:var(--text-muted);}
   .margin-stat strong{font-size:12.5px;color:var(--green);font-weight:700;}
@@ -364,7 +368,7 @@ function onDatesChange(){
 }
 function rebuildAll(){rebuildAccom();rebuildTrans();rebuildAct();recalcAll();}
 
-function readAccomData(){const d={};for(let i=0;i<numDays;i++){d[i]={};for(let c=0;c<numCats;c++){const r=document.getElementById(`ar-${i}-${c}`);if(r){const inp=r.querySelectorAll('input');d[i][c]={hotel:inp[0]?.value||'',roomType:inp[1]?.value||'',units:inp[2]?.value||'0',rate:inp[3]?.value||'0'};}}}return d;}
+function readAccomData(){const d={};for(let i=0;i<numDays;i++){d[i]={};for(let c=0;c<numCats;c++){const r=document.getElementById(`ar-${i}-${c}`);if(r){const inputs=r.querySelectorAll('input');const sel=r.querySelector('select');d[i][c]={hotel:inputs[0]?.value||'',roomType:sel?.value||'',units:inputs[1]?.value||'0',rate:inputs[2]?.value||'0'};}}}return d;}
 
 function rebuildAccom(savedData){
   const data=savedData||readAccomData();
@@ -376,7 +380,14 @@ function rebuildAccom(savedData){
       const tr=document.createElement('tr');tr.className='data-row';tr.id=`ar-${i}-${c}`;
       tr.innerHTML=`<td></td><td></td><td><span class="cat-badge">Cat.${c+1}</span></td>
         <td><input type="text" placeholder="Hôtel" value="${s.hotel||''}" oninput="recalcAccom();markUnsaved()"></td>
-        <td><input type="text" placeholder="Single/Double/Suite..." value="${s.roomType||''}" oninput="markUnsaved()"></td>
+        <td><select onchange="markUnsaved()" style="width:100%;border:1px solid transparent;border-radius:3px;padding:4px 5px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text);background:transparent;outline:none;">
+          <option value="">-- Type --</option>
+          <option value="Single" ${s.roomType==='Single'?'selected':''}>Single</option>
+          <option value="Double" ${s.roomType==='Double'?'selected':''}>Double</option>
+          <option value="Twin" ${s.roomType==='Twin'?'selected':''}>Twin</option>
+          <option value="Triple" ${s.roomType==='Triple'?'selected':''}>Triple</option>
+          <option value="Suite" ${s.roomType==='Suite'?'selected':''}>Suite</option>
+        </select></td>
         <td class="td-num"><input type="number" min="0" value="${s.units||0}" oninput="recalcAccom();markUnsaved()"></td>
         <td class="td-num"><input type="number" min="0" step="0.01" value="${s.rate||0}" oninput="recalcAccom();markUnsaved()"></td>
         <td class="td-total" id="at-${i}-${c}">0,00</td>
