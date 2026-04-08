@@ -138,13 +138,26 @@ def build_trans_lines(trans_data, arrival, num_days):
 # ── CONSTRUCTION LIGNES ACTIVITÉS ────────────────────────────────────────────
 def build_act_lines(act_data):
     lines = []
-    sorted_acts = sorted(act_data, key=lambda x: x.get('date', ''))
-    for a in sorted_acts:
-        desc = a.get('desc', '').strip()
-        date = a.get('date', '')
-        if not desc: continue
-        date_lbl = fmt_short(date) if date else ''
-        lines.append(f"{date_lbl}: {desc}" if date_lbl else desc)
+    if not act_data: return lines
+    # Format dict {0: [desc, rate, qty]} venant de actBody
+    if isinstance(act_data, dict):
+        for i in sorted(act_data.keys(), key=lambda x: int(x) if str(x).isdigit() else 0):
+            row = act_data[i]
+            if isinstance(row, list) and len(row) > 0 and row[0]:
+                lines.append(str(row[0]).strip())
+            elif isinstance(row, dict):
+                desc = row.get('desc', '').strip()
+                if desc: lines.append(desc)
+        return lines
+    # Format liste [{date, desc}]
+    if isinstance(act_data, list):
+        for a in act_data:
+            if not isinstance(a, dict): continue
+            desc = a.get('desc', '').strip()
+            date = a.get('date', '')
+            if not desc: continue
+            date_lbl = fmt_short(date) if date else ''
+            lines.append(f"{date_lbl}: {desc}" if date_lbl else desc)
     return lines
 
 # ── CONSTRUCTION LIGNES EXTRAS ────────────────────────────────────────────────
