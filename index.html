@@ -558,7 +558,7 @@ function openPreview() {
   };
   // Sauvegarder dans localStorage pour que preview.html puisse le lire
   localStorage.setItem('vm_preview_data', JSON.stringify(data));
-  window.open(PREVIEW_URL, '_blank');
+ window.open(PREVIEW_URL + '?t=' + Date.now(), '_blank');
 }
 
 // INIT
