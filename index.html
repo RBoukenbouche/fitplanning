@@ -268,7 +268,7 @@
 
   <!-- ACTIVITÉS -->
   <div class="section-card">
-    <div class="section-header"><div class="section-title">🎭 Activités & Expériences</div></div>
+    <div class="section-header"><div class="section-title">🎭 Activities & Experiences</div></div>
     <div class="table-wrap"><table class="gen-table">
       <thead><tr>
         <th style="width:52px">Jour</th><th style="width:87px">Date</th><th>Monument / Visite / Expérience</th>
@@ -286,7 +286,7 @@
 
   <!-- EXTRAS -->
   <div class="section-card">
-    <div class="section-header"><div class="section-title">➕ Autres Services & Extras</div></div>
+    <div class="section-header"><div class="section-title">🍽️ Meals & Services</div></div>
     <div class="table-wrap"><table class="gen-table">
       <thead><tr>
         <th>Service / Extra</th>
@@ -312,8 +312,8 @@
         <tbody>
           <tr><td>🏨 Hébergement</td><td id="gt-m-a">0%</td><td id="gt-c-a">0,00</td><td id="gt-s-a">0,00</td><td class="cur-val" id="gt-e-a">0,00</td></tr>
           <tr><td>🚗 Guide & Transport</td><td id="gt-m-t">20%</td><td id="gt-c-t">0,00</td><td id="gt-s-t">0,00</td><td class="cur-val" id="gt-e-t">0,00</td></tr>
-          <tr><td>🎭 Activités & Exp.</td><td id="gt-m-x">20%</td><td id="gt-c-x">0,00</td><td id="gt-s-x">0,00</td><td class="cur-val" id="gt-e-x">0,00</td></tr>
-          <tr><td>➕ Autres Services</td><td id="gt-m-e">20%</td><td id="gt-c-e">0,00</td><td id="gt-s-e">0,00</td><td class="cur-val" id="gt-e-e">0,00</td></tr>
+          <tr><td>🎭 Activities & Exp.</td><td id="gt-m-x">20%</td><td id="gt-c-x">0,00</td><td id="gt-s-x">0,00</td><td class="cur-val" id="gt-e-x">0,00</td></tr>
+          <tr><td>🍽️ Meals & Services</td><td id="gt-m-e">20%</td><td id="gt-c-e">0,00</td><td id="gt-s-e">0,00</td><td class="cur-val" id="gt-e-e">0,00</td></tr>
           <tr class="total-row"><td>TOTAL GÉNÉRAL</td><td>—</td><td id="gt-c-tot">0,00</td><td id="gt-s-tot">0,00</td><td class="cur-val" id="gt-e-tot">0,00</td></tr>
         </tbody>
       </table>
@@ -522,7 +522,7 @@ function exportCSV(){showToast('⬇ Export CSV en cours...','success');}
 
 function openPreview() {
   const snap = takeSnapshot();
-const PREVIEW_URL = 'https://fitplanning-alpha.vercel.app/preview.html';
+  const PREVIEW_URL = 'https://transcendent-smakager-e2df06.netlify.app/preview.html';
   // Encoder les données dans l'URL via sessionStorage partagé
   const data = {
     ref: snap.ref || 'QT-001',
@@ -540,7 +540,7 @@ const PREVIEW_URL = 'https://fitplanning-alpha.vercel.app/preview.html';
     currency: snap.currency || 'EUR',
     rate: parseFloat(snap.eurRate) || 10.5,
     totalSellMad: 0,
-    agent: 'Agent Visit Morocco',
+    agent: document.getElementById('quickNote')?.value || 'Agent Visit Morocco',
     agentEmail: 'incoming[at]visitmoroccodmc[dot]com',
     agentPhone: '+212 524 42 03 87',
     agentMobile: '+212 665 877 863',
@@ -557,10 +557,9 @@ const PREVIEW_URL = 'https://fitplanning-alpha.vercel.app/preview.html';
     notes: snap.notes || '',
   };
   // Sauvegarder dans localStorage pour que preview.html puisse le lire
- localStorage.setItem('vm_preview_data', JSON.stringify(data));
-window.open(PREVIEW_URL + '?t=' + Date.now(), '_blank');
+  localStorage.setItem('vm_preview_data', JSON.stringify(data));
+  window.open(PREVIEW_URL, '_blank');
 }
-
 
 // INIT
 document.getElementById('quoteDate').value=new Date().toISOString().split('T')[0];
