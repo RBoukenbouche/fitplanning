@@ -9,8 +9,6 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'DM Sans',sans-serif;background:var(--sf);color:var(--tx);padding:20px;}
 .page{max-width:900px;margin:0 auto;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 4px 30px rgba(0,0,0,.12);}
-
-/* HEADER */
 .qh{background:var(--navy);padding:26px 36px;display:flex;align-items:center;justify-content:space-between;}
 .qh-logo{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold);letter-spacing:1px;}
 .qh-sub{color:rgba(255,255,255,.4);font-size:9px;letter-spacing:2px;text-transform:uppercase;margin-top:3px;}
@@ -18,8 +16,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--sf);color:var(--tx);paddi
 .qh-type{font-family:'Cormorant Garamond',serif;font-size:20px;color:#fff;letter-spacing:3px;text-transform:uppercase;}
 .qh-ref{font-size:11px;color:var(--gold);margin-top:4px;}
 .gold-bar{height:4px;background:linear-gradient(90deg,var(--gold),#E8C86A,var(--gold));}
-
-/* CLIENT */
 .ci{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--bd);}
 .ci-block{padding:16px 28px;}
 .ci-block:first-child{border-right:1px solid var(--bd);}
@@ -27,21 +23,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--sf);color:var(--tx);paddi
 .ci-name{font-size:14px;font-weight:600;color:var(--navy);margin-bottom:2px;}
 .ci-detail{font-size:11px;color:var(--tm);margin-bottom:1px;}
 .ci-badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 8px;border-radius:8px;margin-top:4px;background:#DBEAFE;color:#1E40AF;}
-
-/* DATES */
 .dr{display:grid;grid-template-columns:repeat(5,1fr);background:var(--navy);padding:12px 28px;gap:10px;}
 .dr-item{text-align:center;}
 .dr-label{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.38);margin-bottom:4px;}
 .dr-value{font-size:12px;font-weight:600;color:#fff;}
 .dr-value.gold{color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:15px;}
-
-/* SECTION */
 .section{padding:18px 28px;border-bottom:1px solid var(--bd);}
 .sec-title{display:flex;align-items:center;gap:8px;margin-bottom:11px;}
 .sec-title h3{font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--navy);text-transform:uppercase;letter-spacing:1px;}
 .sec-title .line{flex:1;height:1px;background:var(--bd);}
-
-/* TABLE */
 table.qt{width:100%;border-collapse:collapse;font-size:11px;}
 table.qt thead tr{background:var(--sf);}
 table.qt thead th{padding:6px 8px;text-align:left;font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--tm);border-bottom:2px solid var(--bd);white-space:nowrap;}
@@ -54,26 +44,19 @@ table.qt tbody td.rt{text-align:right;}
 .date-cell{font-size:10px;color:var(--tm);white-space:nowrap;}
 .hotel-name{font-weight:600;color:var(--tx);font-size:11px;}
 .hotel-city{font-size:10px;color:var(--tm);}
-.bb-badge{display:inline-block;font-size:8px;font-weight:700;padding:1px 5px;border-radius:3px;background:#DCFCE7;color:#166534;margin-left:4px;vertical-align:middle;}
-
-/* SECTION TOTALS — une ligne compacte */
-.sec-totals{margin-top:8px;background:linear-gradient(135deg,#F0F4FA,#E8EFF8);border-radius:5px;padding:6px 12px;display:flex;align-items:center;gap:0;}
+.empty-row{text-align:center;color:var(--tm);font-style:italic;padding:12px!important;}
+.sec-totals{margin-top:8px;background:linear-gradient(135deg,#F0F4FA,#E8EFF8);border-radius:5px;padding:6px 12px;display:flex;align-items:center;}
 .st-block{flex:1;display:flex;align-items:center;gap:5px;padding:0 10px;border-right:1px solid #CDD8E8;}
 .st-block:first-child{padding-left:4px;}
 .st-block:last-child{border-right:none;}
-.st-label{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--tm);white-space:nowrap;flex-shrink:0;}
-.st-value{font-size:11px;font-weight:700;color:var(--navy);white-space:nowrap;}
+.st-label{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--tm);white-space:nowrap;}
+.st-value{font-size:11px;font-weight:700;color:var(--navy);}
 .st-value.sell{color:var(--gr);}
 .st-margin{display:flex;align-items:center;gap:2px;}
 .st-margin input{width:36px;border:1px solid var(--bd);border-radius:3px;padding:1px 4px;font-size:10.5px;font-weight:700;color:var(--blue);text-align:center;background:#fff;outline:none;}
-.st-margin span{font-size:10px;color:var(--tm);}
-
-/* INCLUDING */
 .inc-grid{display:flex;flex-wrap:wrap;gap:5px;}
 .inc-chip{display:flex;align-items:center;gap:4px;padding:4px 9px;background:var(--sf);border:1px solid var(--bd);border-radius:4px;font-size:10.5px;}
 .inc-chip::before{content:'✓';color:var(--gr);font-weight:700;font-size:10px;}
-
-/* GRAND TOTAL */
 .gt-section{background:var(--navy);padding:18px 28px;}
 .gt-title{font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:13px;}
 table.recap{width:100%;border-collapse:collapse;margin-bottom:14px;}
@@ -83,8 +66,6 @@ table.recap td{padding:6px 10px;font-size:11px;text-align:right;border-bottom:1p
 table.recap td:first-child{text-align:left;}
 table.recap tr.total-row td{border-top:2px solid rgba(201,168,76,.5);font-weight:700;font-size:12.5px;color:#fff;padding-top:8px;}
 .cv{color:var(--gold);font-weight:700;}
-
-/* PAX BANNER */
 .pax-banner{background:linear-gradient(135deg,var(--gold),#E8C86A 50%,var(--gold));border-radius:5px;padding:13px 20px;display:flex;align-items:center;justify-content:space-between;gap:14px;}
 .pax-left .pax-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:rgba(26,46,74,.6);}
 .pax-left .pax-note{font-size:10px;color:rgba(26,46,74,.5);margin-top:2px;}
@@ -94,33 +75,23 @@ table.recap tr.total-row td{border-top:2px solid rgba(201,168,76,.5);font-weight
 .pax-block .pval{font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:700;color:var(--navy);line-height:1.1;}
 .pax-block .pval-sm{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:var(--navy);line-height:1.1;}
 .pax-div{width:1px;height:34px;background:rgba(26,46,74,.2);}
-
-/* FOOTER */
 .qf{padding:13px 28px;display:flex;align-items:center;justify-content:space-between;background:#F8F6F0;border-top:1px solid var(--bd);}
 .qf-agent strong{color:var(--navy);display:block;font-size:12px;font-weight:600;margin-bottom:1px;}
 .qf-contact{font-size:10px;color:var(--tm);}
 .qf-logo{font-family:'Cormorant Garamond',serif;font-size:12px;color:var(--tm);text-align:right;}
-
-/* TOOLBAR */
 .toolbar{max-width:900px;margin:0 auto 14px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;}
 .toolbar-left{font-size:13px;font-weight:600;color:var(--navy);}
 .toolbar-right{display:flex;gap:8px;}
 .btn{padding:8px 16px;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .18s;white-space:nowrap;display:flex;align-items:center;gap:6px;}
 .btn-print{background:var(--navy);color:#fff;}
-.btn-print:hover{background:#0F1E30;}
 .btn-invoice{background:#7B2D8B;color:#fff;}
-.btn-invoice:hover{background:#5E1F6B;}
 .btn-proposal{background:var(--gr);color:#fff;}
-.btn-proposal:hover{background:#145538;}
-
-/* MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(10,20,40,.65);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;}
 .modal-overlay.open{display:flex;}
 .modal{background:#fff;border-radius:8px;width:100%;max-width:520px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.35);}
 .mhdr{background:var(--navy);padding:16px 22px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--gold);}
 .mtit{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold);letter-spacing:1px;}
 .mclose{background:none;border:none;color:rgba(255,255,255,.6);font-size:20px;cursor:pointer;}
-.mclose:hover{color:#fff;}
 .mbody{padding:20px;}
 .lang-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:16px;}
 .lang-card{border:2px solid var(--bd);border-radius:6px;padding:12px 8px;text-align:center;cursor:pointer;transition:all .15s;}
@@ -129,22 +100,17 @@ table.recap tr.total-row td{border-top:2px solid rgba(201,168,76,.5);font-weight
 .lang-card .lname{font-size:11px;font-weight:600;color:var(--navy);}
 .field{display:flex;flex-direction:column;gap:3px;margin-bottom:10px;}
 .field label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--tm);}
-.field input,.field select{border:1px solid var(--bd);border-radius:4px;padding:7px 9px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--tx);background:var(--sf);outline:none;}
-.field input:focus,.field select:focus{border-color:var(--blue);background:#fff;}
+.field input{border:1px solid var(--bd);border-radius:4px;padding:7px 9px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--tx);background:var(--sf);outline:none;}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .modal-actions{display:flex;gap:10px;margin-top:16px;}
 .modal-actions .btn{flex:1;justify-content:center;padding:10px;}
 .btn-cancel{background:var(--sf);color:var(--tx);border:1px solid var(--bd);}
-.btn-cancel:hover{background:var(--bd);}
-
-/* TOAST */
 .toast{position:fixed;bottom:22px;right:22px;background:var(--navy);color:#fff;padding:12px 20px;border-radius:6px;font-size:12.5px;border-left:4px solid var(--gold);box-shadow:0 4px 20px rgba(0,0,0,.3);z-index:9999;transform:translateY(80px);opacity:0;transition:all .3s;}
 .toast.show{transform:translateY(0);opacity:1;}
 .toast.success{border-left-color:#27AE60;}
 .toast.error{border-left-color:var(--rd);}
 .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
-
 @media print{body{padding:0;background:#fff;}.toolbar{display:none;}.page{box-shadow:none;border-radius:0;}}
 </style>
 </head>
@@ -202,9 +168,8 @@ table.recap tr.total-row td{border-top:2px solid rgba(201,168,76,.5);font-weight
 
 <div class="toast" id="toast"></div>
 
-<!-- TOOLBAR -->
 <div class="toolbar no-print">
-  <div class="toolbar-left">📄 Quotation Preview — QT-001 v1</div>
+  <div class="toolbar-left" id="toolbar-title">📄 Quotation Preview</div>
   <div class="toolbar-right">
     <button class="btn btn-print" onclick="window.print()">🖨 Print / PDF</button>
     <button class="btn btn-invoice" onclick="openInvoiceModal()">📊 Generate Invoice</button>
@@ -212,542 +177,571 @@ table.recap tr.total-row td{border-top:2px solid rgba(201,168,76,.5);font-weight
   </div>
 </div>
 
-<div class="page">
-  <!-- HEADER -->
-  <div class="qh">
-    <div><div class="qh-logo">Visit Morocco</div><div class="qh-sub">Travel & Events</div></div>
-    <div class="qh-right"><div class="qh-type">Quotation</div><div class="qh-ref">Ref : QT-001 &nbsp;·&nbsp; v1 &nbsp;·&nbsp; 06 Apr 2026</div></div>
-  </div>
-  <div class="gold-bar"></div>
+<div class="page" id="quotation-page">
+  <!-- Contenu généré dynamiquement par JS -->
+</div>
 
-  <!-- CLIENT -->
-  <div class="ci">
-    <div class="ci-block">
-      <div class="ci-label">Client</div>
-      <div class="ci-name">Atlantida Travel</div>
-      <div class="ci-detail">Contact : Maria Garcia</div>
-      <div class="ci-detail">Passengers : Smith Family × 4</div>
-      <span class="ci-badge">Sent</span>
+<script data-cfasync="false">
+// ── CHARGEMENT DONNÉES ────────────────────────────────────────────────────────
+(function() {
+  try {
+    const stored = localStorage.getItem('vm_preview_data');
+    if (stored) window._PD = JSON.parse(stored);
+  } catch(e) {}
+})();
+
+const d = window._PD || {};
+const roundUp10 = n => Math.ceil(Number(n||0)/10)*10;
+const fmt = (n, dec=2, round=false) => {
+  const val = round ? roundUp10(n) : Number(n||0);
+  return val.toLocaleString('fr-MA',{minimumFractionDigits: round?0:dec, maximumFractionDigits: round?0:dec});
+};
+const fmtR = n => fmt(n, 0, true); // Format avec arrondi à la dizaine
+const fmtDate = s => { try { return new Date(s).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); } catch(e){ return s||'—'; }};
+const sell = (c,m) => m<100 ? c/(1-(m/100)) : c;
+
+const Q = {
+  ref:      d.ref      || 'QT-001',
+  version:  d.version  || 'v1',
+  date:     fmtDate(d.quoteDate) || '08 Apr 2026',
+  status:   d.status   || 'draft',
+  client:   d.client   || '—',
+  contact:  d.contact  || '—',
+  paxNames: d.paxNames || d.client || '—',
+  pax:      parseInt(d.pax) || 2,
+  arr:      d.arr      || '',
+  dep:      d.dep      || '',
+  numDays:  parseInt(d.numDays) || 0,
+  numCats:  parseInt(d.numCats) || 1,
+  currency: d.currency || 'EUR',
+  rate:     parseFloat(d.rate) || 10.5,
+  agent:    d.agent    || 'Agent Visit Morocco',
+  agentPhone: d.agentPhone || '+212 524 42 03 87',
+  agentMobile: d.agentMobile || '+212 665 877 863',
+  agentEmail: d.agentEmail || 'incoming[at]visitmoroccodmc[dot]com',
+  accomData: d.accomData || {},
+  transData: d.transData || {},
+  actData:   d.actData  || [],
+  extData:   d.extData  || [],
+  mealsData: d.mealsData || [],
+  incLines:  d.incLines || [],
+  marginAccom:  parseFloat(d.marginAccom)  || 0,
+  marginTrans:  parseFloat(d.marginTrans)  || 20,
+  marginAct:    parseFloat(d.marginAct)    || 20,
+  marginExtras: parseFloat(d.marginExtras) || 20,
+  notes: d.notes || '',
+};
+
+// ── CALCULS ───────────────────────────────────────────────────────────────────
+function calcTotals() {
+  let aC=0, tC=0, xC=0, eC=0;
+
+  // Hébergement
+  for(let i=0;i<Q.numDays;i++) {
+    for(let c=0;c<Q.numCats;c++) {
+      const r=(Q.accomData[i]||{})[c]||{};
+      aC += (parseFloat(r.units)||0)*(parseFloat(r.rate)||0);
+    }
+  }
+  // Transport
+  for(let i=0;i<Q.numDays;i++) {
+    const r=(Q.transData[i]||[]);
+    tC += ((parseFloat(r[1])||0)+(parseFloat(r[2])||0))*(parseFloat(r[3])||1);
+  }
+  // Activités
+  for(let i=0;i<Q.numDays;i++) {
+    const r=(d.actData||{})[i]||(Q.actData[i]||[]);
+    if(Array.isArray(r)) xC += (parseFloat(r[1])||0)*(parseFloat(r[2])||0);
+  }
+  // Extras
+  Q.extData.forEach(e => { eC += (parseFloat(e.rate)||0)*(parseFloat(e.qty)||1); });
+
+  const aS=sell(aC,Q.marginAccom), tS=sell(tC,Q.marginTrans);
+  const xS=sell(xC,Q.marginAct), eS=sell(eC,Q.marginExtras);
+  const totS=aS+tS+xS+eS;
+  return {aC,tC,xC,eC,aS,tS,xS,eS,totS};
+}
+
+// ── CONSTRUCTION LIGNES HÉBERGEMENT ──────────────────────────────────────────
+function buildAccomRows() {
+  const rows = [];
+  let prev = null;
+  for(let i=0;i<Q.numDays;i++) {
+    for(let c=0;c<Q.numCats;c++) {
+      const r=(Q.accomData[i]||{})[c]||{};
+      if(!r.hotel && !r.city) continue;
+      const key = `${r.hotel}|${r.city}|${r.roomType}|${r.units}`;
+      if(prev && prev.key===key) { prev.endDay=i; }
+      else {
+        prev={key,hotel:r.hotel||'',city:r.city||'',roomType:r.roomType||'',units:r.units||0,rate:r.rate||0,startDay:i,endDay:i};
+        rows.push(prev);
+      }
+    }
+  }
+  return rows;
+}
+
+function dayDate(i) {
+  if(!Q.arr) return '—';
+  const d2=new Date(Q.arr); d2.setDate(d2.getDate()+i);
+  return d2.toLocaleDateString('en-GB',{day:'2-digit',month:'short'});
+}
+
+// ── RENDU HTML ────────────────────────────────────────────────────────────────
+function render() {
+  const T = calcTotals();
+  const statusLabel = {draft:'Draft',sent:'Sent',confirmed:'Confirmed'}[Q.status]||'Draft';
+  const cur = Q.currency;
+
+  // Hébergement
+  const accomRows = buildAccomRows();
+  const accomHTML = accomRows.length ? accomRows.map((r,i) => {
+    const dayFrom = `Day ${r.startDay+1}${r.endDay>r.startDay?'-'+(r.endDay+1):''}`;
+    const dates = `${dayDate(r.startDay)} → ${dayDate(r.endDay+1)}`;
+    const total = (parseFloat(r.units)||0)*(parseFloat(r.rate)||0)*((r.endDay-r.startDay)+1);
+    return `<tr>
+      <td><span class="day-cell">${dayFrom}</span></td>
+      <td><span class="date-cell">${dates}</span></td>
+      <td><div class="hotel-name">${r.hotel}</div><div class="hotel-city">${r.city}</div></td>
+      <td style="font-size:10.5px;color:var(--tm);">${r.roomType}</td>
+      <td class="rt">${r.units}</td>
+      <td class="rt">${fmt(r.rate)}</td>
+      <td class="rt" style="font-weight:600;">${fmt(total)}</td>
+    </tr>`;
+  }).join('') : `<tr><td colspan="7" class="empty-row">Aucun hébergement saisi</td></tr>`;
+
+  // Transport
+  const transRows = [];
+  for(let i=0;i<Q.numDays;i++) {
+    const r=(Q.transData[i]||[]);
+    if(r[0]) {
+      const total=((parseFloat(r[1])||0)+(parseFloat(r[2])||0))*(parseFloat(r[3])||1);
+      transRows.push(`<tr>
+        <td class="day-cell">Day ${i+1}</td>
+        <td class="date-cell">${dayDate(i)}</td>
+        <td>${r[0]}</td>
+        <td class="rt">${r[1]>0?fmt(r[1]):'—'}</td>
+        <td class="rt">${r[2]>0?fmt(r[2]):'—'}</td>
+        <td class="rt">${r[3]||1}</td>
+        <td class="rt" style="font-weight:600;">${fmt(total)}</td>
+      </tr>`);
+    }
+  }
+  const transHTML = transRows.length ? transRows.join('') : `<tr><td colspan="7" class="empty-row">Aucun transport saisi</td></tr>`;
+
+  // Activités
+  const actRows = [];
+  for(let i=0;i<Q.numDays;i++) {
+    const r=(d.actData||{})[i]||(Q.actData[i]||[]);
+    if(Array.isArray(r)&&r[0]) {
+      actRows.push(`<tr>
+        <td class="day-cell">Day ${i+1}</td>
+        <td class="date-cell">${dayDate(i)}</td>
+        <td>${r[0]}</td>
+        <td class="rt">${fmt(r[1]||0)}</td>
+        <td class="rt">${r[2]||0}</td>
+        <td class="rt" style="font-weight:600;">${fmt((parseFloat(r[1])||0)*(parseFloat(r[2])||0))}</td>
+      </tr>`);
+    }
+  }
+  const actHTML = actRows.length ? actRows.join('') : `<tr><td colspan="6" class="empty-row">Aucune activité saisie</td></tr>`;
+
+  // Extras
+  const extRows = Q.extData.filter(e=>e.desc).map(e=>`<tr>
+    <td style="font-weight:500;">${e.desc}</td>
+    <td class="rt">${fmt(e.rate||0)}</td>
+    <td class="rt">${e.qty||1}</td>
+    <td class="rt" style="font-weight:600;">${fmt((parseFloat(e.rate)||0)*(parseFloat(e.qty)||1))}</td>
+  </tr>`).join('');
+  const extHTML = extRows || `<tr><td colspan="4" class="empty-row">Aucun extra saisi</td></tr>`;
+
+  // Including
+  const DEFAULT_INC = [
+    'Accommodation at hotels as shown above or Similar',
+    'All meals as indicated',
+    'A/C Private deluxe vehicle at disposal',
+    'High qualified English Speaking guide throughout',
+    'All visits and activities as per the Itinerary',
+    'Entrance fees to the monuments',
+    'Water in the car during the tour',
+    'All Local Taxes',
+  ];
+  const DEFAULT_EXCL = [
+    'Drinks during meals',
+    'Personal Expenses',
+    'Tips for the Driver, Porters & Guide',
+  ];
+  const incList = (Q.incLines && Q.incLines.length) ? Q.incLines : DEFAULT_INC;
+  const incHTML = incList.map(l=>`<div class="inc-chip">${l}</div>`).join('') +
+    `<div style="width:100%;margin-top:8px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--rd);">Not included</div>` +
+    DEFAULT_EXCL.map(l=>`<div class="inc-chip" style="border-color:#FECACA;background:#FFF5F5;"><span style="color:var(--rd)">✗</span> ${l}</div>`).join('');
+
+  // Grand total
+  const perPax = T.totS/Q.rate/Q.pax;
+
+  const page = document.getElementById('quotation-page');
+  page.innerHTML = `
+    <div class="qh">
+      <div><div class="qh-logo">Visit Morocco</div><div class="qh-sub">Travel & Events</div></div>
+      <div class="qh-right"><div class="qh-type">Quotation</div><div class="qh-ref">Ref : ${Q.ref} · ${Q.version} · ${Q.date}</div></div>
     </div>
-    <div class="ci-block">
-      <div class="ci-label">Agent</div>
-      <div class="ci-name">Sarah Benali</div>
-      <div class="ci-detail">Project Manager · Incoming Department</div>
+    <div class="gold-bar"></div>
+    <div class="ci">
+      <div class="ci-block">
+        <div class="ci-label">Client</div>
+        <div class="ci-name">${Q.client}</div>
+        <div class="ci-detail">Contact : ${Q.contact}</div>
+        <div class="ci-detail">Passengers : ${Q.paxNames} × ${Q.pax}</div>
+        <span class="ci-badge">${statusLabel}</span>
+      </div>
+      <div class="ci-block">
+        <div class="ci-label">Agent</div>
+        <div class="ci-name">${Q.agent}</div>
+        <div class="ci-detail">Project Manager · Incoming Department</div>
+        <div class="ci-detail" style="margin-top:3px;">${Q.agentEmail} · ${Q.agentPhone}</div>
+      </div>
     </div>
-  </div>
+    <div class="dr">
+      <div class="dr-item"><div class="dr-label">Arrival</div><div class="dr-value">${fmtDate(Q.arr)}</div></div>
+      <div class="dr-item"><div class="dr-label">Departure</div><div class="dr-value">${fmtDate(Q.dep)}</div></div>
+      <div class="dr-item"><div class="dr-label">Duration</div><div class="dr-value gold">${Q.numDays} Days</div></div>
+      <div class="dr-item"><div class="dr-label">Passengers</div><div class="dr-value gold">${Q.pax} pax</div></div>
+      <div class="dr-item"><div class="dr-label">Exchange Rate</div><div class="dr-value" style="color:var(--gold);font-size:11px;">1 ${cur} = ${Q.rate} MAD</div></div>
+    </div>
 
-  <!-- DATES -->
-  <div class="dr">
-    <div class="dr-item"><div class="dr-label">Arrival</div><div class="dr-value">23 Apr 2026</div></div>
-    <div class="dr-item"><div class="dr-label">Departure</div><div class="dr-value">01 May 2026</div></div>
-    <div class="dr-item"><div class="dr-label">Duration</div><div class="dr-value gold">8 Days</div></div>
-    <div class="dr-item"><div class="dr-label">Passengers</div><div class="dr-value gold">4 pax</div></div>
-    <div class="dr-item"><div class="dr-label">Exchange Rate</div><div class="dr-value" style="color:var(--gold);font-size:11px;">1 EUR = 10.50 MAD</div></div>
-  </div>
-
-  <!-- ACCOMMODATION -->
-  <div class="section">
-    <div class="sec-title"><span>🏨</span><h3>Accommodation</h3><div class="line"></div></div>
-    <table class="qt">
-      <thead><tr>
-        <th style="width:52px">Day</th><th style="width:115px">Dates</th>
-        <th>Hotel / City</th><th style="width:165px">Room Type</th>
+    <div class="section">
+      <div class="sec-title"><span>🏨</span><h3>Accommodation</h3><div class="line"></div></div>
+      <table class="qt"><thead><tr>
+        <th style="width:65px">Day</th><th style="width:120px">Dates</th>
+        <th>Hotel / City</th><th style="width:155px">Room Type</th>
         <th class="rt" style="width:48px">Units</th>
-        <th class="rt" style="width:108px">Rate/Night (MAD)</th>
+        <th class="rt" style="width:110px">Rate/Night (MAD)</th>
         <th class="rt" style="width:90px">Total (MAD)</th>
-      </tr></thead>
-      <tbody>
-        <tr><td><span class="day-cell">Day 1-2</span></td><td><span class="date-cell">Apr 23 → Apr 25</span></td><td><div class="hotel-name">Riad Palais des Fassis</div><div class="hotel-city">Marrakech</div></td><td style="font-size:10.5px;color:var(--tm);">Double Room<span class="bb-badge">BB</span></td><td class="rt">2</td><td class="rt">1 200,00</td><td class="rt" style="font-weight:600;">4 800,00</td></tr>
-        <tr><td><span class="day-cell">Day 3-5</span></td><td><span class="date-cell">Apr 25 → Apr 28</span></td><td><div class="hotel-name">Barcelo Fes Medina</div><div class="hotel-city">Fès</div></td><td style="font-size:10.5px;color:var(--tm);">Standard Room<span class="bb-badge">HB</span></td><td class="rt">2</td><td class="rt">950,00</td><td class="rt" style="font-weight:600;">5 700,00</td></tr>
-        <tr><td><span class="day-cell">Day 6-7</span></td><td><span class="date-cell">Apr 28 → Apr 30</span></td><td><div class="hotel-name">Luxury Desert Camp</div><div class="hotel-city">Merzouga</div></td><td style="font-size:10.5px;color:var(--tm);">Private Tent<span class="bb-badge">HB</span></td><td class="rt">2</td><td class="rt">1 800,00</td><td class="rt" style="font-weight:600;">7 200,00</td></tr>
-        <tr><td><span class="day-cell">Day 8</span></td><td><span class="date-cell">Apr 30 → May 01</span></td><td><div class="hotel-name">Oscar Hotel</div><div class="hotel-city">Ouarzazate</div></td><td style="font-size:10.5px;color:var(--tm);">Standard Room<span class="bb-badge">BB</span></td><td class="rt">2</td><td class="rt">750,00</td><td class="rt" style="font-weight:600;">1 500,00</td></tr>
-      </tbody>
-    </table>
-    <div class="sec-totals">
-      <div class="st-block"><span class="st-label">Total Cost</span><span class="st-value">19 200,00 MAD</span></div>
-      <div class="st-block"><span class="st-label">Margin</span><div class="st-margin"><input type="number" value="0" min="0" max="100"><span>%</span></div></div>
-      <div class="st-block"><span class="st-label">Selling (MAD)</span><span class="st-value sell">19 200,00</span></div>
-      <div class="st-block"><span class="st-label">Selling (EUR)</span><span class="st-value sell">1 828,57</span></div>
+      </tr></thead><tbody>${accomHTML}</tbody></table>
+      <div class="sec-totals">
+        <div class="st-block"><span class="st-label">Total Cost</span><span class="st-value">${fmt(T.aC)} MAD</span></div>
+        <div class="st-block"><span class="st-label">Margin</span><div class="st-margin"><input type="number" value="${Q.marginAccom}" min="0" max="100"><span>%</span></div></div>
+        <div class="st-block"><span class="st-label">Selling (MAD)</span><span class="st-value sell">${fmt(T.aS)}</span></div>
+        <div class="st-block"><span class="st-label">Selling (${cur})</span><span class="st-value sell">${fmtR(T.aS/Q.rate)}</span></div>
+      </div>
     </div>
-  </div>
 
-  <!-- MEALS -->
-  <div class="section">
-    <div class="sec-title"><span>🍽️</span><h3>Meals</h3><div class="line"></div></div>
-    <table class="qt">
-      <thead><tr>
-        <th style="width:105px">Date</th><th>Restaurant / Description</th>
-        <th class="rt" style="width:108px">Unit Rate (MAD)</th>
-        <th class="rt" style="width:48px">Units</th>
-        <th class="rt" style="width:90px">Total (MAD)</th>
-      </tr></thead>
-      <tbody>
-        <tr><td style="font-size:10px;color:var(--tm);">Apr 23 — Day 1</td><td style="font-weight:500;">La Maison Arabe — Welcome Dinner</td><td class="rt">600,00</td><td class="rt">4</td><td class="rt" style="font-weight:600;">2 400,00</td></tr>
-        <tr><td style="font-size:10px;color:var(--tm);">Apr 26 — Day 4</td><td style="font-weight:500;">Barcelo Fes — Traditional Dinner</td><td class="rt">400,00</td><td class="rt">4</td><td class="rt" style="font-weight:600;">1 600,00</td></tr>
-        <tr><td style="font-size:10px;color:var(--tm);">Apr 28 — Day 6</td><td style="font-weight:500;">Luxury Desert Camp — Bedouin Dinner</td><td class="rt">500,00</td><td class="rt">4</td><td class="rt" style="font-weight:600;">2 000,00</td></tr>
-      </tbody>
-    </table>
-    <div class="sec-totals">
-      <div class="st-block"><span class="st-label">Total Cost</span><span class="st-value">6 000,00 MAD</span></div>
-      <div class="st-block"><span class="st-label">Margin</span><div class="st-margin"><input type="number" value="20" min="0" max="100"><span>%</span></div></div>
-      <div class="st-block"><span class="st-label">Selling (MAD)</span><span class="st-value sell">7 500,00</span></div>
-      <div class="st-block"><span class="st-label">Selling (EUR)</span><span class="st-value sell">714,29</span></div>
-    </div>
-  </div>
-
-  <!-- GUIDE & TRANSPORT -->
-  <div class="section">
-    <div class="sec-title"><span>🚗</span><h3>Guide & Transportation</h3><div class="line"></div></div>
-    <table class="qt">
-      <thead><tr>
+    <div class="section">
+      <div class="sec-title"><span>🚗</span><h3>Guide & Transportation</h3><div class="line"></div></div>
+      <table class="qt"><thead><tr>
         <th style="width:48px">Day</th><th style="width:65px">Date</th><th>Route / Description</th>
         <th class="rt" style="width:95px">Vehicle (MAD)</th>
         <th class="rt" style="width:85px">Guide (MAD)</th>
-        <th class="rt" style="width:46px">Qty</th>
+        <th class="rt" style="width:40px">Qty</th>
         <th class="rt" style="width:88px">Total (MAD)</th>
-      </tr></thead>
-      <tbody>
-        <tr><td class="day-cell">Day 1</td><td class="date-cell">Apr 23</td><td>Airport transfer → Marrakech</td><td class="rt" style="color:var(--tm);">—</td><td class="rt" style="color:var(--tm);">—</td><td class="rt">1</td><td class="rt" style="font-weight:600;">0,00</td></tr>
-        <tr><td class="day-cell">Day 2</td><td class="date-cell">Apr 24</td><td>Guided city tour of Marrakech</td><td class="rt">3 500,00</td><td class="rt">800,00</td><td class="rt">1</td><td class="rt" style="font-weight:600;">4 300,00</td></tr>
-        <tr><td class="day-cell">Day 3</td><td class="date-cell">Apr 25</td><td>Marrakech → Fès — private transfer</td><td class="rt">3 500,00</td><td class="rt">800,00</td><td class="rt">1</td><td class="rt" style="font-weight:600;">4 300,00</td></tr>
-        <tr><td class="day-cell">Day 4</td><td class="date-cell">Apr 26</td><td>Guided city tour of Fès</td><td class="rt">3 500,00</td><td class="rt">800,00</td><td class="rt">1</td><td class="rt" style="font-weight:600;">4 300,00</td></tr>
-        <tr><td class="day-cell">Day 5</td><td class="date-cell">Apr 27</td><td>Fès → Merzouga — private transfer</td><td class="rt">3 500,00</td><td class="rt">800,00</td><td class="rt">1</td><td class="rt" style="font-weight:600;">4 300,00</td></tr>
-        <tr><td class="day-cell">Day 6</td><td class="date-cell">Apr 28</td><td>Merzouga excursion</td><td class="rt">3 500,00</td><td class="rt">800,00</td><td class="rt">1</td><td class="rt" style="font-weight:600;">4 300,00</td></tr>
-        <tr><td class="day-cell">Day 7</td><td class="date-cell">Apr 29</td><td>Merzouga → Ouarzazate — private transfer</td><td class="rt">3 500,00</td><td class="rt">800,00</td><td class="rt">1</td><td class="rt" style="font-weight:600;">4 300,00</td></tr>
-        <tr><td class="day-cell">Day 8</td><td class="date-cell">Apr 30</td><td>Hotel → Airport — departure transfer</td><td class="rt" style="color:var(--tm);">—</td><td class="rt" style="color:var(--tm);">—</td><td class="rt">1</td><td class="rt" style="font-weight:600;">0,00</td></tr>
-      </tbody>
-    </table>
-    <div class="sec-totals">
-      <div class="st-block"><span class="st-label">Total Cost</span><span class="st-value">25 800,00 MAD</span></div>
-      <div class="st-block"><span class="st-label">Margin</span><div class="st-margin"><input type="number" value="20" min="0" max="100"><span>%</span></div></div>
-      <div class="st-block"><span class="st-label">Selling (MAD)</span><span class="st-value sell">32 250,00</span></div>
-      <div class="st-block"><span class="st-label">Selling (EUR)</span><span class="st-value sell">3 071,43</span></div>
+      </tr></thead><tbody>${transHTML}</tbody></table>
+      <div class="sec-totals">
+        <div class="st-block"><span class="st-label">Total Cost</span><span class="st-value">${fmt(T.tC)} MAD</span></div>
+        <div class="st-block"><span class="st-label">Margin</span><div class="st-margin"><input type="number" value="${Q.marginTrans}" min="0" max="100"><span>%</span></div></div>
+        <div class="st-block"><span class="st-label">Selling (MAD)</span><span class="st-value sell">${fmt(T.tS)}</span></div>
+        <div class="st-block"><span class="st-label">Selling (${cur})</span><span class="st-value sell">${fmtR(T.tS/Q.rate)}</span></div>
+      </div>
     </div>
-  </div>
 
-  <!-- ACTIVITIES -->
-  <div class="section">
-    <div class="sec-title"><span>🎭</span><h3>Activities & Experiences</h3><div class="line"></div></div>
-    <table class="qt">
-      <thead><tr>
-        <th style="width:105px">Date</th><th>Activity / Visit</th>
+    <div class="section">
+      <div class="sec-title"><span>🎭</span><h3>Activities & Experiences</h3><div class="line"></div></div>
+      <table class="qt"><thead><tr>
+        <th style="width:48px">Day</th><th style="width:65px">Date</th><th>Activity / Visit</th>
         <th class="rt" style="width:100px">Rate (MAD)</th>
         <th class="rt" style="width:48px">Qty</th>
         <th class="rt" style="width:90px">Total (MAD)</th>
-      </tr></thead>
-      <tbody>
-        <tr><td style="font-size:10px;color:var(--tm);">Apr 23 — Day 1</td><td style="font-weight:500;">Majorelle Garden & YSL Museum</td><td class="rt">330,00</td><td class="rt">4</td><td class="rt" style="font-weight:600;">1 320,00</td></tr>
-        <tr><td style="font-size:10px;color:var(--tm);">Apr 24 — Day 2</td><td style="font-weight:500;">Bahia Palace + Saadian Tombs</td><td class="rt">140,00</td><td class="rt">4</td><td class="rt" style="font-weight:600;">560,00</td></tr>
-        <tr><td style="font-size:10px;color:var(--tm);">Apr 26 — Day 4</td><td style="font-weight:500;">Medersa Bou Inania + Tanneries</td><td class="rt">200,00</td><td class="rt">4</td><td class="rt" style="font-weight:600;">800,00</td></tr>
-        <tr><td style="font-size:10px;color:var(--tm);">Apr 28 — Day 6</td><td style="font-weight:500;">Camel Ride — Merzouga</td><td class="rt">400,00</td><td class="rt">4</td><td class="rt" style="font-weight:600;">1 600,00</td></tr>
-      </tbody>
-    </table>
-    <div class="sec-totals">
-      <div class="st-block"><span class="st-label">Total Cost</span><span class="st-value">4 280,00 MAD</span></div>
-      <div class="st-block"><span class="st-label">Margin</span><div class="st-margin"><input type="number" value="20" min="0" max="100"><span>%</span></div></div>
-      <div class="st-block"><span class="st-label">Selling (MAD)</span><span class="st-value sell">5 350,00</span></div>
-      <div class="st-block"><span class="st-label">Selling (EUR)</span><span class="st-value sell">509,52</span></div>
+      </tr></thead><tbody>${actHTML}</tbody></table>
+      <div class="sec-totals">
+        <div class="st-block"><span class="st-label">Total Cost</span><span class="st-value">${fmt(T.xC)} MAD</span></div>
+        <div class="st-block"><span class="st-label">Margin</span><div class="st-margin"><input type="number" value="${Q.marginAct}" min="0" max="100"><span>%</span></div></div>
+        <div class="st-block"><span class="st-label">Selling (MAD)</span><span class="st-value sell">${fmt(T.xS)}</span></div>
+        <div class="st-block"><span class="st-label">Selling (${cur})</span><span class="st-value sell">${fmtR(T.xS/Q.rate)}</span></div>
+      </div>
     </div>
-  </div>
 
-  <!-- EXTRAS -->
-  <div class="section">
-    <div class="sec-title"><span>➕</span><h3>Other Services & Extras</h3><div class="line"></div></div>
-    <table class="qt">
-      <thead><tr>
+    <div class="section">
+      <div class="sec-title"><span>➕</span><h3>Other Services & Extras</h3><div class="line"></div></div>
+      <table class="qt"><thead><tr>
         <th>Service / Extra</th>
         <th class="rt" style="width:100px">Rate (MAD)</th>
         <th class="rt" style="width:48px">Qty</th>
         <th class="rt" style="width:90px">Total (MAD)</th>
-      </tr></thead>
-      <tbody>
-        <tr><td style="font-weight:500;">Fast Track Airport Service</td><td class="rt">1 700,00</td><td class="rt">1</td><td class="rt" style="font-weight:600;">1 700,00</td></tr>
-        <tr><td style="font-weight:500;">Tips & Assistance</td><td class="rt">1 400,00</td><td class="rt">1</td><td class="rt" style="font-weight:600;">1 400,00</td></tr>
-        <tr><td style="font-weight:500;">FDS</td><td class="rt">500,00</td><td class="rt">1</td><td class="rt" style="font-weight:600;">500,00</td></tr>
-      </tbody>
-    </table>
-    <div class="sec-totals">
-      <div class="st-block"><span class="st-label">Total Cost</span><span class="st-value">3 600,00 MAD</span></div>
-      <div class="st-block"><span class="st-label">Margin</span><div class="st-margin"><input type="number" value="20" min="0" max="100"><span>%</span></div></div>
-      <div class="st-block"><span class="st-label">Selling (MAD)</span><span class="st-value sell">4 500,00</span></div>
-      <div class="st-block"><span class="st-label">Selling (EUR)</span><span class="st-value sell">428,57</span></div>
-    </div>
-  </div>
-
-  <!-- INCLUDING -->
-  <div class="section">
-    <div class="sec-title"><span>✅</span><h3>Including</h3><div class="line"></div></div>
-    <div class="inc-grid">
-      <div class="inc-chip">8 Nights accommodation as shown above</div>
-      <div class="inc-chip">All meals as indicated</div>
-      <div class="inc-chip">A/C Private car at disposal</div>
-      <div class="inc-chip">English Speaking guide throughout</div>
-      <div class="inc-chip">All visits & activities per itinerary</div>
-      <div class="inc-chip">Entrance fees to monuments</div>
-      <div class="inc-chip">Water in the car</div>
-      <div class="inc-chip">All local taxes</div>
-      <div class="inc-chip">Tips for driver, porters & guide</div>
-    </div>
-  </div>
-
-  <!-- GRAND TOTAL -->
-  <div class="gt-section">
-    <div class="gt-title">Summary & Total</div>
-    <table class="recap">
-      <thead><tr>
-        <th>Section</th><th>Margin</th>
-        <th>Total Cost (MAD)</th><th>Selling (MAD)</th><th>Selling (EUR)</th>
-      </tr></thead>
-      <tbody>
-        <tr><td>🏨 Accommodation</td><td style="color:rgba(255,255,255,.45);">0%</td><td>19 200,00</td><td>19 200,00</td><td class="cv">1 828,57</td></tr>
-        <tr><td>🍽️ Meals</td><td style="color:rgba(255,255,255,.45);">20%</td><td>6 000,00</td><td>7 500,00</td><td class="cv">714,29</td></tr>
-        <tr><td>🚗 Guide & Transportation</td><td style="color:rgba(255,255,255,.45);">20%</td><td>25 800,00</td><td>32 250,00</td><td class="cv">3 071,43</td></tr>
-        <tr><td>🎭 Activities & Experiences</td><td style="color:rgba(255,255,255,.45);">20%</td><td>4 280,00</td><td>5 350,00</td><td class="cv">509,52</td></tr>
-        <tr><td>➕ Other Services & Extras</td><td style="color:rgba(255,255,255,.45);">20%</td><td>3 600,00</td><td>4 500,00</td><td class="cv">428,57</td></tr>
-        <tr class="total-row"><td>TOTAL</td><td>—</td><td>58 880,00</td><td>68 800,00</td><td class="cv">6 552,38</td></tr>
-      </tbody>
-    </table>
-    <div class="pax-banner">
-      <div class="pax-left">
-        <div class="pax-label">💰 Net Quote — Total Selling Price</div>
-        <div class="pax-note">Based on 4 passengers &nbsp;·&nbsp; Exchange rate : 1 EUR = 10.50 MAD</div>
-      </div>
-      <div class="pax-right">
-        <div class="pax-block"><div class="pcur">MAD</div><div class="pval">68 800,00</div></div>
-        <div class="pax-div"></div>
-        <div class="pax-block"><div class="pcur">EUR</div><div class="pval">6 552,38</div></div>
-        <div class="pax-div"></div>
-        <div class="pax-block"><div class="pcur">Per Person</div><div class="pval-sm">1 638,10 EUR</div></div>
+      </tr></thead><tbody>${extHTML}</tbody></table>
+      <div class="sec-totals">
+        <div class="st-block"><span class="st-label">Total Cost</span><span class="st-value">${fmt(T.eC)} MAD</span></div>
+        <div class="st-block"><span class="st-label">Margin</span><div class="st-margin"><input type="number" value="${Q.marginExtras}" min="0" max="100"><span>%</span></div></div>
+        <div class="st-block"><span class="st-label">Selling (MAD)</span><span class="st-value sell">${fmt(T.eS)}</span></div>
+        <div class="st-block"><span class="st-label">Selling (${cur})</span><span class="st-value sell">${fmtR(T.eS/Q.rate)}</span></div>
       </div>
     </div>
-  </div>
 
-  <!-- FOOTER -->
-  <div class="qf">
-    <div>
-      <div class="qf-agent"><strong>Sarah Benali</strong>Project Manager · Incoming Department</div>
+    <div class="section">
+      <div class="sec-title"><span>✅</span><h3>Including</h3><div class="line"></div></div>
+      <div class="inc-grid">${incHTML}</div>
     </div>
-    <div class="qf-logo">Visit Morocco<br><span style="font-size:9.5px;color:var(--tm);">Travel & Events</span></div>
-  </div>
-</div>
 
-// ── DATA DU DEVIS (en production : vient du système de devis) ─────────────────
-const QUOTE = {
-  ref: 'QT-001', version: 'v1', date: '06 Apr 2026', status: 'sent',
-  client: 'Atlantida Travel', contact: 'Maria Garcia',
-  paxNames: 'Smith Family', pax: 4,
-  arr: '2026-04-23', dep: '2026-05-01', numDays: 8,
-  currency: 'EUR', rate: 10.5, totalSellMad: 68800,
-  agent: 'Sarah Benali', agentEmail: 'incoming[at]visitmoroccodmc[dot]com',
-  agentPhone: '+212 524 42 03 87', agentMobile: '+212 665 877 863',
-  accomLines: [
-    'Apr 23-25 - Marrakech - Riad Palais des Fassis - Double Room - 2 units - BB',
-    'Apr 25-28 - Fès - Barcelo Fes Medina - Standard Room - 2 units - HB',
-    'Apr 28-30 - Merzouga - Luxury Desert Camp - Private Tent - 2 units - HB',
-    'Apr 30-May 01 - Ouarzazate - Oscar Hotel - Standard Room - 2 units - BB',
-  ],
-  mealLines: [
-    'Apr 23: La Maison Arabe — Welcome Dinner',
-    'Apr 26: Barcelo Fes — Traditional Dinner',
-    'Apr 28: Luxury Desert Camp — Bedouin Dinner',
-  ],
-  transLines: [
-    'Apr 23: Airport transfer → Marrakech',
-    'Apr 24: Guided city tour of Marrakech — full day',
-    'Apr 25: Marrakech → Fès — private transfer',
-    'Apr 26: Guided city tour of Fès',
-    'Apr 27: Fès → Merzouga — private transfer',
-    'Apr 28: Merzouga excursion',
-    'Apr 29: Merzouga → Ouarzazate — private transfer',
-    'Apr 30: Hotel → Airport — departure transfer',
-  ],
-  actLines: [
-    'Apr 23: Majorelle Garden & YSL Museum',
-    'Apr 24: Bahia Palace + Saadian Tombs',
-    'Apr 26: Medersa Bou Inania + Tanneries',
-    'Apr 28: Camel Ride — Merzouga',
-  ],
-  extraLines: ['Fast Track Airport Service', 'Tips & Assistance', 'FDS'],
-  incLines: [
-    '8 Nights accommodation at hotels as shown above',
-    'All meals as indicated',
-    'A/C Private car at disposal',
-    'English Speaking guide throughout',
-    'All visits & activities per itinerary',
-    'Entrance fees to monuments',
-    'Water in the car',
-    'All local taxes',
-    'Tips for driver, porters & guide',
-  ],
-};
+    <div class="gt-section">
+      <div class="gt-title">Summary & Total</div>
+      <table class="recap">
+        <thead><tr><th>Section</th><th>Margin</th><th>Total Cost (MAD)</th><th>Selling (MAD)</th><th>Selling (${cur})</th></tr></thead>
+        <tbody>
+          <tr><td>🏨 Accommodation</td><td style="color:rgba(255,255,255,.45);">${Q.marginAccom}%</td><td>${fmt(T.aC)}</td><td>${fmt(T.aS)}</td><td class="cv">${fmtR(T.aS/Q.rate)}</td></tr>
+          <tr><td>🚗 Guide & Transportation</td><td style="color:rgba(255,255,255,.45);">${Q.marginTrans}%</td><td>${fmt(T.tC)}</td><td>${fmt(T.tS)}</td><td class="cv">${fmtR(T.tS/Q.rate)}</td></tr>
+          <tr><td>🎭 Activities & Experiences</td><td style="color:rgba(255,255,255,.45);">${Q.marginAct}%</td><td>${fmt(T.xC)}</td><td>${fmt(T.xS)}</td><td class="cv">${fmtR(T.xS/Q.rate)}</td></tr>
+          <tr><td>➕ Other Services & Extras</td><td style="color:rgba(255,255,255,.45);">${Q.marginExtras}%</td><td>${fmt(T.eC)}</td><td>${fmt(T.eS)}</td><td class="cv">${fmtR(T.eS/Q.rate)}</td></tr>
+          <tr class="total-row"><td>TOTAL</td><td>—</td><td>${fmt(T.aC+T.tC+T.xC+T.eC)}</td><td>${fmt(T.totS)}</td><td class="cv">${fmtR(T.totS/Q.rate)}</td></tr>
+        </tbody>
+      </table>
+      <div class="pax-banner">
+        <div class="pax-left">
+          <div class="pax-label">💰 Net Quote — Total Selling Price</div>
+          <div class="pax-note">Based on ${Q.pax} passengers · Exchange rate : 1 ${cur} = ${Q.rate} MAD</div>
+        </div>
+        <div class="pax-right">
+          <div class="pax-block"><div class="pcur">MAD</div><div class="pval">${fmtR(T.totS)}</div></div>
+          <div class="pax-div"></div>
+          <div class="pax-block"><div class="pcur">${cur}</div><div class="pval">${fmtR(T.totS/Q.rate)}</div></div>
+          <div class="pax-div"></div>
+          <div class="pax-block"><div class="pcur">Per Person</div><div class="pval-sm">${fmtR(perPax)} ${cur}</div></div>
+        </div>
+      </div>
+    </div>
 
-// ── UTILS ─────────────────────────────────────────────────────────────────────
+    <div class="qf">
+      <div>
+        <div class="qf-agent"><strong>${Q.agent}</strong>Project Manager · Incoming Department</div>
+        <div class="qf-contact" style="margin-top:3px;">📞 ${Q.agentPhone} · 📱 ${Q.agentMobile} · ✉ ${Q.agentEmail}</div>
+      </div>
+      <div class="qf-logo">Visit Morocco<br><span style="font-size:9.5px;color:var(--tm);">Travel & Events</span></div>
+    </div>
+  `;
+
+  document.getElementById('toolbar-title').textContent = `📄 Quotation Preview — ${Q.ref} ${Q.version}`;
+
+  // Mettre à jour la modal invoice
+  window._QUOTE_FOR_INVOICE = {
+    ...Q,
+    totalSellMad: T.totS,
+    accomData: Q.accomData,
+    mealsData: Q.mealsData,
+    transData: Q.transData,
+    actData: Q.actData,
+    extData: Q.extData,
+    incLines: Q.incLines,
+  };
+}
+
+render();
+
+// ── MODAL INVOICE ─────────────────────────────────────────────────────────────
+const API_URL = 'https://fitplanning.onrender.com';
 let selLangCode = 'en';
 
 function selLang(lang) {
   selLangCode = lang;
-  ['en','fr','es','pt'].forEach(l => {
-    document.getElementById(`lc-${l}`).className = `lang-card${l===lang?' active':''}`;
-  });
+  ['en','fr','es','pt'].forEach(l => document.getElementById(`lc-${l}`).className=`lang-card${l===lang?' active':''}`);
 }
-
 function openMo(id) { document.getElementById(id).classList.add('open'); }
 function closeMo(id) { document.getElementById(id).classList.remove('open'); }
-document.querySelectorAll('.modal-overlay').forEach(mo => {
-  mo.addEventListener('click', e => { if(e.target === mo) mo.classList.remove('open'); });
-});
+document.querySelectorAll('.modal-overlay').forEach(mo => mo.addEventListener('click', e => { if(e.target===mo) mo.classList.remove('open'); }));
+function showToast(msg, type='success') { const t=document.getElementById('toast'); t.textContent=msg; t.className=`toast ${type} show`; setTimeout(()=>t.className='toast',3500); }
 
-function showToast(msg, type='success') {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.className = `toast ${type} show`;
-  setTimeout(() => t.className = 'toast', 3500);
-}
-
-// Montant en lettres
 function amountToWords(amount, currency) {
   const ONES=['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
   const TENS=['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
   function b(n){if(n<20)return ONES[n];if(n<100)return TENS[Math.floor(n/10)]+(ONES[n%10]?' '+ONES[n%10]:'');return ONES[Math.floor(n/100)]+' Hundred'+(n%100?' '+b(n%100):'');}
-  amount = Math.round(amount*100)/100;
-  const main = Math.floor(amount), cents = Math.round((amount-main)*100);
-  const parts = [];
+  amount=Math.round(amount*100)/100; const main=Math.floor(amount),cents=Math.round((amount-main)*100);
+  const parts=[];
   if(Math.floor(main/1e9)) parts.push(b(Math.floor(main/1e9))+' Billion');
   if(Math.floor((main%1e9)/1e6)) parts.push(b(Math.floor((main%1e9)/1e6))+' Million');
   if(Math.floor((main%1e6)/1e3)) parts.push(b(Math.floor((main%1e6)/1e3))+' Thousand');
   if(main%1e3) parts.push(b(main%1e3));
-  let res = parts.length ? parts.join(' ') : 'Zero';
-  if(cents) res += ` And ${b(cents)} Cents`;
-  return res + ` ${currency==='EUR'?'Euros':'US Dollars'} Only`;
+  let res=parts.length?parts.join(' '):'Zero';
+  if(cents) res+=` And ${b(cents)} Cents`;
+  return res+` ${currency==='EUR'?'Euros':'US Dollars'} Only`;
 }
 
-// ── INVOICE MODAL ─────────────────────────────────────────────────────────────
 function openInvoiceModal() {
-  const total = QUOTE.totalSellMad / QUOTE.rate;
-  const perPax = total / QUOTE.pax;
-  const cur = QUOTE.currency;
-
-  document.getElementById('invTplInfo').textContent =
-    cur === 'EUR'
-      ? '🇪🇸 VIM Experiences Events S.L. — Madrid (PROFORMA EUR)'
-      : '🇦🇪 Sweet Travel — Dubai (INVOICE USD)';
-
-  document.getElementById('invTotal').textContent =
-    `${total.toLocaleString('en-US',{minimumFractionDigits:2})} ${cur}`;
+  const QQ = window._QUOTE_FOR_INVOICE || Q;
+  const totalRaw = QQ.totalSellMad / QQ.rate;
+  const total = Math.ceil(totalRaw / 10) * 10; // Arrondi à la dizaine supérieure
+  const perPax = Math.ceil((totalRaw / QQ.pax) / 10) * 10;
+  const cur = QQ.currency;
+  document.getElementById('invTplInfo').textContent = cur==='EUR' ? '🇪🇸 VIM Experiences Events S.L. — Madrid (PROFORMA EUR)' : '🇦🇪 Sweet Travel — Dubai (INVOICE USD)';
+  document.getElementById('invTotal').textContent = `${total.toLocaleString('en-US',{minimumFractionDigits:0})} ${cur}`;
   document.getElementById('invWords').textContent = amountToWords(total, cur);
-
   document.getElementById('invSummary').innerHTML = `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-      <div><span style="font-weight:600;color:var(--navy);">Client :</span> ${QUOTE.client}</div>
-      <div><span style="font-weight:600;color:var(--navy);">Contact :</span> ${QUOTE.contact}</div>
-      <div><span style="font-weight:600;color:var(--navy);">Passengers :</span> ${QUOTE.paxNames} × ${QUOTE.pax}</div>
-      <div><span style="font-weight:600;color:var(--navy);">Period :</span> ${QUOTE.arr} → ${QUOTE.dep}</div>
-      <div><span style="font-weight:600;color:var(--navy);">Per person :</span> ${perPax.toLocaleString('en-US',{minimumFractionDigits:2})} ${cur}</div>
-      <div><span style="font-weight:600;color:var(--navy);">Rate :</span> 1 ${cur} = ${QUOTE.rate} MAD</div>
+      <div><strong style="color:var(--navy);">Client :</strong> ${QQ.client}</div>
+      <div><strong style="color:var(--navy);">Contact :</strong> ${QQ.contact}</div>
+      <div><strong style="color:var(--navy);">Passengers :</strong> ${QQ.paxNames} × ${QQ.pax}</div>
+      <div><strong style="color:var(--navy);">Period :</strong> ${QQ.arr} → ${QQ.dep}</div>
+      <div><strong style="color:var(--navy);">Per person :</strong> ${perPax.toLocaleString('en-US',{minimumFractionDigits:0})} ${cur}</div>
+      <div><strong style="color:var(--navy);">Rate :</strong> 1 ${cur} = ${QQ.rate} MAD</div>
     </div>`;
-
   openMo('moInvoice');
 }
 
-// ── URL DU BACKEND RENDER — À mettre à jour après déploiement ────────────────
-const API_URL = 'https://VOTRE-APP.onrender.com'; // ← Remplacer après déploiement Render
-
 async function doGenerateInvoice() {
+  const QQ = window._QUOTE_FOR_INVOICE || Q;
   const btn = document.getElementById('btnGenInvoice');
-  btn.innerHTML = '<span class="spinner"></span> Generating...';
-  btn.disabled = true;
-
+  btn.innerHTML = '<span class="spinner"></span> Generating...'; btn.disabled=true;
   try {
     const payload = {
-      currency: QUOTE.currency, pax: QUOTE.pax,
-      totalSell: QUOTE.totalSellMad, eurRate: QUOTE.rate,
-      ref: QUOTE.ref, client: QUOTE.client, contact: QUOTE.contact,
-      paxNames: `${QUOTE.paxNames} x${QUOTE.pax}`,
-      agentDisplay: QUOTE.agent, arr: QUOTE.arr, dep: QUOTE.dep,
-      numDays: QUOTE.numDays, numCats: 1,
-      accomData: QUOTE.accomData, mealsData: QUOTE.mealsData,
-      transData: QUOTE.transData, actData: QUOTE.actData,
-      extData: QUOTE.extraLines.map(l => ({desc:l})),
-      incLines: QUOTE.incLines,
+      currency:QQ.currency, pax:QQ.pax, totalSell:QQ.totalSellMad, eurRate:QQ.rate,
+      ref:QQ.ref, client:QQ.client, contact:QQ.contact, paxNames:`${QQ.paxNames} x${QQ.pax}`,
+      agentDisplay:QQ.agent, arr:QQ.arr, dep:QQ.dep, numDays:QQ.numDays, numCats:QQ.numCats||1,
+      accomData:QQ.accomData, mealsData:QQ.mealsData, transData:QQ.transData,
+      actData:QQ.actData, extData:QQ.extData, incLines:QQ.incLines,
     };
-
-    // Appel au backend Render → génère le vrai fichier Excel
-    const resp = await fetch(`${API_URL}/generate-invoice`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-
-    if (!resp.ok) throw new Error(`Server error: ${resp.status}`);
-
-    // Téléchargement automatique du fichier .xlsx
-    const blob = await resp.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `Invoice_${QUOTE.ref}_${QUOTE.client.replace(/\s/g,'_')}.xlsx`;
-    a.click();
-    URL.revokeObjectURL(url);
-
-    showToast(`✅ Invoice ${QUOTE.ref} generated — ${(QUOTE.totalSellMad/QUOTE.rate).toFixed(2)} ${QUOTE.currency}`, 'success');
+    const resp = await fetch(`${API_URL}/generate-invoice`, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if(!resp.ok) throw new Error(`Server error: ${resp.status}`);
+    const blob=await resp.blob(); const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download=`Invoice_${QQ.ref}_${QQ.client.replace(/\s/g,'_')}.xlsx`; a.click(); URL.revokeObjectURL(url);
+    showToast(`✅ Invoice ${QQ.ref} generated — ${(QQ.totalSellMad/QQ.rate).toFixed(2)} ${QQ.currency}`,'success');
     closeMo('moInvoice');
   } catch(e) {
-    showToast('⚠ Backend not connected yet — deploy Render first', 'error');
-    console.error(e);
-  } finally {
-    btn.innerHTML = '📊 Generate Excel Invoice';
-    btn.disabled = false;
-  }
+    showToast('⚠ Backend not connected — try again in 30s','error'); console.error(e);
+  } finally { btn.innerHTML='📊 Generate Excel Invoice'; btn.disabled=false; }
 }
 
-function generateInvoiceCSV(payload) {
-  const total = payload.totalSell / payload.eurRate;
-  const perPax = total / payload.pax;
-  const lines = [
-    ['INVOICE — VISIT MOROCCO TRAVEL & EVENTS'],
-    [],
-    ['Bill To:', payload.client],
-    ['Contact:', payload.contact],
-    ['Ref N°:', `${payload.paxNames}`],
-    ['Ref:', `${payload.arr} — ${payload.dep}`],
-    ['Date:', new Date().toLocaleDateString('en-GB')],
-    ['Invoice N°:', payload.ref],
-    [],
-    ['DESCRIPTION', 'UNIT', 'DAYS', 'DAILY RATE', 'GROSS AMOUNT'],
-    [`Package per person — ${payload.arr} to ${payload.dep}`, payload.pax, payload.numDays, perPax.toFixed(2), total.toFixed(2)],
-    [],
-    ['Accommodation:'],
-    ...payload.accomLines.map(l => [l]),
-    [],
-    ['Meals:'],
-    ...payload.mealLines.map(l => [l]),
-    [],
-    ['Guide & Transportation:'],
-    ...payload.transLines.map(l => [l]),
-    [],
-    ['Activities & Experiences:'],
-    ...payload.actLines.map(l => [l]),
-    [],
-    ['Other Services & Extras:'],
-    ...payload.extraLines.map(l => [l]),
-    [],
-    ['Including:'],
-    ...payload.incLines.map(l => [`- ${l}`]),
-    [],
-    ['', '', '', `Total Invoice in ${payload.currency}`, total.toFixed(2)],
-  ];
-  return lines.map(r => r.map(c => `"${c||''}"`).join(',')).join('\n');
-}
-
-// ── PROPOSAL MODAL ────────────────────────────────────────────────────────────
 function openProposalModal() { openMo('moProposal'); }
 
 async function doGenerateProposal() {
-  const btn = document.getElementById('btnGenProposal');
-  btn.innerHTML = '<span class="spinner"></span> Generating...';
-  btn.disabled = true;
-
-  const TRAD = {
-    en: { dear:'Dear', intro1:'Thank you for your email.', intro2:'Kindly find below our proposal along with the rates. Please feel free to share any comments or let me know if you think any adjustments are needed—I would be happy to revise it accordingly.', itinerary:'Proposed Itinerary & Activities', included:'Services Included', total:'Total Quote net', closing:'Looking forward to hear back from you', regards:'Regards' },
-    fr: { dear:'Cher/Chère', intro1:'Merci pour votre email.', intro2:"Veuillez trouver ci-dessous notre proposition ainsi que les tarifs. N'hésitez pas à nous faire part de vos commentaires.", itinerary:'Programme & Activités Proposés', included:'Services Inclus', total:'Total net devis', closing:"Dans l'attente de votre retour", regards:'Cordialement' },
-    es: { dear:'Estimado/a', intro1:'Gracias por su correo electrónico.', intro2:'A continuación encontrará nuestra propuesta junto con las tarifas. No dude en compartir sus comentarios o hacernos saber si necesita algún ajuste.', itinerary:'Itinerario y Actividades Propuestos', included:'Servicios Incluidos', total:'Total neto cotización', closing:'Quedamos a la espera de sus noticias', regards:'Atentamente' },
-    pt: { dear:'Caro/a', intro1:'Obrigado pelo seu e-mail.', intro2:'Por favor, encontre abaixo nossa proposta junto com as tarifas. Sinta-se à vontade para compartilhar seus comentários.', itinerary:'Itinerário e Atividades Propostos', included:'Serviços Incluídos', total:'Total líquido cotação', closing:'Aguardamos seu retorno', regards:'Atenciosamente' },
+  const QQ = window._QUOTE_FOR_INVOICE || Q;
+  const btn=document.getElementById('btnGenProposal'); btn.innerHTML='<span class="spinner"></span> Generating...'; btn.disabled=true;
+  const TRAD={
+    en:{dear:'Dear',intro1:'Thank you for your email.',intro2:'Kindly find below our proposal along with the rates. Please feel free to share any comments or let me know if any adjustments are needed.',accommodation:'Accommodation',meals:'Meals',itinerary:'Proposed Itinerary',included:'Services Included',notIncluded:'Not Included',total:'NET QUOTE',perPax:'Per Person',closing:'Looking forward to hearing from you',regards:'Regards'},
+    fr:{dear:'Cher/Chère',intro1:'Merci pour votre email.',intro2:'Veuillez trouver ci-dessous notre proposition ainsi que les tarifs.',accommodation:'Hébergement',meals:'Repas',itinerary:'Programme Proposé',included:'Services Inclus',notIncluded:'Non Inclus',total:'TOTAL NET',perPax:'Par Personne',closing:"Dans l'attente de votre retour",regards:'Cordialement'},
+    es:{dear:'Estimado/a',intro1:'Gracias por su correo.',intro2:'A continuación encontrará nuestra propuesta junto con las tarifas.',accommodation:'Alojamiento',meals:'Comidas',itinerary:'Itinerario Propuesto',included:'Servicios Incluidos',notIncluded:'No Incluido',total:'TOTAL NETO',perPax:'Por Persona',closing:'Quedamos a la espera de sus noticias',regards:'Atentamente'},
+    pt:{dear:'Caro/a',intro1:'Obrigado pelo e-mail.',intro2:'Encontre abaixo nossa proposta junto com as tarifas.',accommodation:'Hospedagem',meals:'Refeições',itinerary:'Itinerário Proposto',included:'Serviços Incluídos',notIncluded:'Não Incluído',total:'TOTAL LÍQUIDO',perPax:'Por Pessoa',closing:'Aguardamos seu retorno',regards:'Atenciosamente'},
   };
+  const t=TRAD[selLangCode]||TRAD.en;
+  const totalRaw=QQ.totalSellMad/QQ.rate;
+  const total=Math.ceil(totalRaw/10)*10;
+  const perPaxRaw=totalRaw/QQ.pax;
+  const perPax=Math.ceil(perPaxRaw/10)*10;
+  const cur=QQ.currency;
+  const fmtDate=s=>{try{return new Date(s).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});}catch(e){return s||'';}};
+  const agName=document.getElementById('agName').value, agTitle=document.getElementById('agTitle').value;
+  const agPhone=document.getElementById('agPhone').value, agMobile=document.getElementById('agMobile').value;
+  const agEmail=document.getElementById('agEmail').value;
 
-  const t = TRAD[selLangCode] || TRAD.en;
-  const firstName = QUOTE.contact.split(' ')[0];
-  const total = QUOTE.totalSellMad / QUOTE.rate;
-  const perPax = total / QUOTE.pax;
-  const cur = QUOTE.currency;
-
-  const agName = document.getElementById('agName').value;
-  const agTitle = document.getElementById('agTitle').value;
-  const agPhone = document.getElementById('agPhone').value;
-  const agMobile = document.getElementById('agMobile').value;
-  const agEmail = document.getElementById('agEmail').value;
-
-  try {
-    // Générer le contenu du document via l'API
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{
-          role: 'user',
-          content: `Génère le contenu d'un email de proposition de voyage en ${selLangCode} pour Visit Morocco.
-
-Contact: ${firstName}
-Programme: ${QUOTE.transLines.slice(0,5).join(' | ')}
-Total: ${total.toFixed(2)} ${cur}
-Par personne: ${perPax.toFixed(2)} ${cur}
-
-Réponds avec un JSON sans backticks:
-{"intro":"[phrase d'introduction courte en ${selLangCode}]","body":"[1 phrase résumant le voyage]"}`
-        }]
-      })
-    });
-    const data = await resp.json();
-    const text = data.content?.find(b => b.type === 'text')?.text || '{}';
-
-    // Générer le document texte à copier/coller dans Gmail
-    const doc = generateProposalText(t, firstName, total, perPax, cur, agName, agTitle, agPhone, agMobile, agEmail);
-    downloadFile(doc, `Proposal_${selLangCode.toUpperCase()}_${firstName}_${QUOTE.ref}.txt`, 'text/plain');
-
-    showToast(`✅ Proposal generated in ${selLangCode.toUpperCase()} — ready to copy into Gmail`, 'success');
-    closeMo('moProposal');
-  } catch(e) {
-    // Fallback sans API
-    const doc = generateProposalText(t, firstName, total, perPax, cur, agName, agTitle, agPhone, agMobile, agEmail);
-    downloadFile(doc, `Proposal_${selLangCode.toUpperCase()}_${firstName}_${QUOTE.ref}.txt`, 'text/plain');
-    showToast(`✅ Proposal generated — ready to paste into Gmail`, 'success');
-    closeMo('moProposal');
-  } finally {
-    btn.innerHTML = '📝 Generate Word Document';
-    btn.disabled = false;
+  // Hébergement
+  const accomLines=[];
+  let prev=null;
+  for(let i=0;i<QQ.numDays;i++){
+    for(let c=0;c<(QQ.numCats||1);c++){
+      const r=((QQ.accomData||{})[i]||{})[c]||{};
+      if(!r.hotel&&!r.city) continue;
+      const key=`${r.hotel}|${r.city}|${r.roomType}`;
+      if(prev&&prev.key===key){prev.end=i;}
+      else{prev={key,hotel:r.hotel||'',city:r.city||'',room:r.roomType||'',units:r.units||'',start:i,end:i};accomLines.push(prev);}
+    }
   }
-}
+  const accomText=accomLines.map(r=>{
+    const d1=new Date(QQ.arr||'');d1.setDate(d1.getDate()+r.start);
+    const d2=new Date(QQ.arr||'');d2.setDate(d2.getDate()+r.end+1);
+    const from=d1.toLocaleDateString('en-GB',{day:'2-digit',month:'short'});
+    const to=d2.toLocaleDateString('en-GB',{day:'2-digit',month:'short'});
+    return `   ${from} - ${to} : ${r.city} - ${r.hotel}${r.room?' ('+r.room+')':''}${r.units>0?' - '+r.units+' unit(s)':''}`;
+  });
 
-function generateProposalText(t, firstName, total, perPax, cur, agName, agTitle, agPhone, agMobile, agEmail) {
-  const lines = [
-    `${t.dear} ${firstName},`,
+  // Meals
+  const mealLines=(QQ.mealsData||[]).filter(m=>m.desc).map(m=>{
+    const dt=m.date?new Date(m.date).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}):'';
+    return `   ${dt} : ${m.desc}`;
+  });
+
+  // Transport
+  const transLines=[];
+  for(let i=0;i<QQ.numDays;i++){const r=(QQ.transData[i]||[]);if(r[0]){const dt=new Date(QQ.arr||'');dt.setDate(dt.getDate()+i);transLines.push(`   Day ${i+1} (${dt.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}) : ${r[0]}`);}}
+
+  // Including — traduit par langue
+  const INC_TRANS = {
+    en: {
+      inc: ['Accommodation at hotels as shown above or Similar','All meals as indicated','A/C Private deluxe vehicle at disposal','High qualified English Speaking guide throughout','All visits and activities as per the Itinerary','Entrance fees to the monuments','Water in the car during the tour','All Local Taxes'],
+      excl: ['Drinks during meals','Personal Expenses','Tips for the Driver, Porters & Guide']
+    },
+    fr: {
+      inc: ['Hébergement dans les hôtels indiqués ou similaires','Tous les repas indiqués','Véhicule de luxe A/C à disposition','Guide anglophone hautement qualifié','Toutes les visites et activités selon le programme','Droits d'entrée aux monuments','Eau dans le véhicule','Toutes les taxes locales'],
+      excl: ['Boissons pendant les repas','Dépenses personnelles','Pourboires pour le chauffeur, les porteurs et le guide']
+    },
+    es: {
+      inc: ['Alojamiento en hoteles indicados o similares','Todas las comidas indicadas','Vehículo de lujo A/C a disposición','Guía anglófono altamente cualificado','Todas las visitas y actividades según el itinerario','Entradas a los monumentos','Agua en el vehículo','Todos los impuestos locales'],
+      excl: ['Bebidas durante las comidas','Gastos personales','Propinas para el conductor, maleteros y guía']
+    },
+    pt: {
+      inc: ['Hospedagem nos hotéis indicados ou similares','Todas as refeições indicadas','Veículo de luxo A/C à disposição','Guia anglófono altamente qualificado','Todas as visitas e atividades conforme o itinerário','Ingressos aos monumentos','Água no veículo','Todos os impostos locais'],
+      excl: ['Bebidas durante as refeições','Despesas pessoais','Gorjetas para o motorista, carregadores e guia']
+    },
+  };
+  const langInc = INC_TRANS[selLangCode] || INC_TRANS.en;
+  const DEFAULT_INC = langInc.inc;
+  const DEFAULT_EXCL = langInc.excl;
+  const incList=(QQ.incLines&&QQ.incLines.length)?QQ.incLines:DEFAULT_INC;
+
+  const sep='─'.repeat(50);
+  const lines=[
+    `${t.dear} ${QQ.contact||QQ.client||''},`,
     '',
     t.intro1,
     '',
     t.intro2,
     '',
-    `${t.itinerary} :`,
+    sep,
+    `📋 PROGRAM : ${QQ.ref} | ${fmtDate(QQ.arr)} → ${fmtDate(QQ.dep)} | ${QQ.numDays} days | ${QQ.pax} pax`,
+    sep,
     '',
-    ...QUOTE.transLines.map((l,i) => `• ${l}`),
-    '',
-    `${t.included}:`,
-    '',
-    ...QUOTE.incLines.map(l => `• ${l}`),
-    '',
-    `${t.total} : ${total.toLocaleString('en-US',{minimumFractionDigits:2})} ${cur}`,
-    `Per person : ${perPax.toLocaleString('en-US',{minimumFractionDigits:2})} ${cur}  (based on ${QUOTE.pax} pax)`,
-    '',
-    t.closing,
-    '',
-    t.regards,
-    '',
-    agName,
-    agTitle,
-    'Incoming Department',
-    `Phone : ${agPhone}`,
-    `Mobile : $
-{agMobile}`,
-    `Email : ${agEmail}`,
   ];
-  return lines.join('\n');
-}
 
-function downloadFile(content, filename, mimeType) {
-  const blob = new Blob([content], { type: mimeType });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = filename; a.click();
-  URL.revokeObjectURL(url);
+  if(accomText.length){
+    lines.push(`🏨 ${t.accommodation.toUpperCase()}:`);
+    lines.push(...accomText);
+    lines.push('');
+  }
+
+  if(mealLines.length){
+    lines.push(`🍽️  ${t.meals.toUpperCase()}:`);
+    lines.push(...mealLines);
+    lines.push('');
+  }
+
+  if(transLines.length){
+    lines.push(`🚗 ${t.itinerary.toUpperCase()}:`);
+    lines.push(...transLines);
+    lines.push('');
+  }
+
+  lines.push(sep);
+  lines.push(`✅ ${t.included.toUpperCase()}:`);
+  incList.forEach(l=>lines.push(`   ✓ ${l}`));
+  lines.push('');
+  lines.push(`❌ ${t.notIncluded.toUpperCase()}:`);
+  DEFAULT_EXCL.forEach(l=>lines.push(`   ✗ ${l}`));
+  lines.push(sep);
+  lines.push('');
+  lines.push(`💰 ${t.total} : ${total.toLocaleString('en-US',{minimumFractionDigits:0})} ${cur}`);
+  lines.push(`   ${t.perPax} : ${perPax.toLocaleString('en-US',{minimumFractionDigits:0})} ${cur}  (${QQ.pax} pax)`);
+  lines.push('');
+  lines.push(t.closing);
+  lines.push('');
+  lines.push(t.regards);
+  lines.push('');
+  lines.push(agName);
+  lines.push(agTitle);
+  lines.push('Incoming Department | Visit Morocco Travel & Events');
+  lines.push(`📞 ${agPhone}   📱 ${agMobile}`);
+  lines.push(`✉  ${agEmail}`);
+
+  try {
+    const blob=new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url;
+    a.download=`Proposal_${selLangCode.toUpperCase()}_${QQ.ref}_${QQ.client||'Client'}.txt`; a.click(); URL.revokeObjectURL(url);
+    showToast(`✅ Proposal generated — ready to paste into Gmail`,'success');
+    closeMo('moProposal');
+  } finally { btn.innerHTML='📝 Generate Word Document'; btn.disabled=false; }
 }
 </script>
 </body>
