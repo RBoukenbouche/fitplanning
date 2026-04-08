@@ -1,6 +1,8 @@
 from flask import Flask, request, send_file, jsonify
 from flask_cors import CORS
 from openpyxl import load_workbook
+from openpyxl.drawing.image import Image as XLImage
+from openpyxl.styles import Font
 import datetime, json, io, os
 
 app = Flask(__name__)
@@ -209,6 +211,7 @@ def generate_invoice(data):
             'Water in the car during the tour',
             'All Local Taxes',
         ]
+    # total_f est le montant arrondi — words sera recalculé après insertion dans Excel
     words       = amount_to_words(total_f, currency)
 
     tpl_file = 'template_vim.xlsx' if is_eur else 'template_sweet.xlsx'
@@ -235,16 +238,16 @@ def generate_invoice(data):
         row = 20
 
         if accom_lines:
-            s(ws, row, 1, 'Accommodation:'); row += 1
+            s(ws, row, 1, 'Accommodation:')
+            ws.cell(row=row, column=1).font = Font(bold=True)
+            row += 1
             for l in accom_lines: s(ws, row, 1, l); row += 1
 
         if meal_lines:
-            s(ws, row, 1, 'Meals:'); row += 1
+            s(ws, row, 1, 'Meals:')
+            ws.cell(row=row, column=1).font = Font(bold=True)
+            row += 1
             for l in meal_lines: s(ws, row, 1, l); row += 1
-
-        if trans_lines:
-            s(ws, row, 1, 'Guide & Transportation:'); row += 1
-            for l in trans_lines: s(ws, row, 1, l); row += 1
 
         if act_lines:
             s(ws, row, 1, 'Activities & Experiences:'); row += 1
@@ -255,7 +258,10 @@ def generate_invoice(data):
             for l in extra_lines: s(ws, row, 1, l); row += 1
 
         if inc_lines:
-            row += 1; s(ws, row, 1, 'Including:'); row += 1
+            row += 1
+            s(ws, row, 1, 'Including:')
+            ws.cell(row=row, column=1).font = Font(bold=True)
+            row += 1
             for l in inc_lines: s(ws, row, 1, f'- {l}'); row += 1
 
         if notes: row += 1; s(ws, row, 1, notes); row += 1
@@ -267,7 +273,10 @@ def generate_invoice(data):
         s(ws, tr+1, 8, f'=0.3*H{tr}')
         s(ws, tr+2, 7, f'Balance to be paid {currency}')
         s(ws, tr+2, 8, f'=H{tr}-H{tr+1}')
-        s(ws, tr+4, 1, words)
+        # Total en lettres = montant réel total facture
+        total_final = total_f
+        words_final = amount_to_words(total_final, currency)
+        s(ws, tr+4, 1, words_final)
 
     else:
         # SWEET — En-tête
@@ -298,10 +307,6 @@ def generate_invoice(data):
             s(ws, row, 1, 'Meals:'); row += 1
             for l in meal_lines: s(ws, row, 1, l); row += 1
 
-        if trans_lines:
-            s(ws, row, 1, 'Guide & Transportation:'); row += 1
-            for l in trans_lines: s(ws, row, 1, l); row += 1
-
         if act_lines:
             s(ws, row, 1, 'Activities & Experiences:'); row += 1
             for l in act_lines: s(ws, row, 1, l); row += 1
@@ -311,7 +316,10 @@ def generate_invoice(data):
             for l in extra_lines: s(ws, row, 1, l); row += 1
 
         if inc_lines:
-            row += 1; s(ws, row, 1, 'Including:'); row += 1
+            row += 1
+            s(ws, row, 1, 'Including:')
+            ws.cell(row=row, column=1).font = Font(bold=True)
+            row += 1
             for l in inc_lines: s(ws, row, 1, f'- {l}'); row += 1
 
         if notes: row += 1; s(ws, row, 1, notes); row += 1
@@ -327,7 +335,18 @@ def generate_invoice(data):
         s(ws, tr+3, 8, f'=0.3*H{tr+2}')
         s(ws, tr+4, 7, f'Balance to be paid {currency}')
         s(ws, tr+4, 8, f'=H{tr+2}-H{tr+3}')
-        s(ws, tr+6, 1, words)
+        # Total en lettres = montant réel total facture
+        total_final = total_f
+        words_final = amount_to_words(total_final, currency)
+        s(ws, tr+6, 1, words_final)
+        # Logo Sweet Spot
+        logo_path = os.path.join(BASE, 'sweet_logo.png')
+        if os.path.exists(logo_path):
+            try:
+                img = XLImage(logo_path)
+                img.width = 150; img.height = 60
+                ws.add_image(img, 'G1')
+            except: pass
 
     # Sauvegarder en mémoire
     buf = io.BytesIO()
