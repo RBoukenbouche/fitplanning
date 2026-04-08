@@ -188,7 +188,7 @@
     </div>
     <button class="btn btn-ghost" onclick="newDevis()">＋ Nouveau</button>
     <button class="btn btn-ghost" onclick="openModal()">📁 Mes devis (<span id="devisCount">0</span>)</button>
-    <button class="btn btn-outline" onclick="exportCSV()">⬇ CSV</button>
+    <button class="btn btn-outline" onclick="exportExcel()">⬇ Excel</button>
     <button class="btn btn-green" onclick="saveDevis()">💾 Sauvegarder</button>
     <button class="btn" style="background:#7B2D8B;" onclick="openPreview()">👁 Preview</button>
     <button class="btn btn-gold" onclick="printQuotation()">🖨 PDF</button>
@@ -453,6 +453,8 @@ function restoreSnapshot(snap){
 
 function getAllDevis(){const keys=Object.keys(localStorage).filter(k=>k.startsWith('vm_devis_'));const result={};keys.forEach(k=>{try{result[k]=JSON.parse(localStorage.getItem(k));}catch(e){}});return result;}
 
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyTpFjkBtcIDwYHhJjwbQ84pRjlFce1Fepj3w4l6c2FWS1WuHqe7pTL9WL7oPz3zX4b/exec';
+
 function saveDevis(){
   const snap=takeSnapshot();const ref=snap.ref||'sans-ref';
   let newVerNum=1;
@@ -463,6 +465,54 @@ function saveDevis(){
   localStorage.setItem(key,JSON.stringify(snap));currentDevisKey=key;
   markSaved(`${snap.version} sauvegardé`);updateDevisCount();
   showToast(`✅ Devis ${ref} ${snap.version} sauvegardé !`,'success');
+  // Envoyer au Google Sheet
+  syncToSheet(snap);
+}
+
+function syncToSheet(snap){
+  // Calcul totaux
+  const rate = parseFloat(snap.eurRate)||10.5;
+  let totalMad = 0;
+  const sell = (c,m) => m<100 ? c/(1-m/100) : c;
+  let aC=0,tC=0,xC=0,eC=0;
+  const ad = snap.accomData||{};
+  for(let i=0;i<snap.numDays;i++) for(let c=0;c<snap.numCats;c++){const r=(ad[i]||{})[c]||{};aC+=(parseFloat(r.units)||0)*(parseFloat(r.rate)||0);}
+  const td = snap.transData||{};
+  for(let i=0;i<snap.numDays;i++){const r=td[i]||[];tC+=((parseFloat(r[1])||0)+(parseFloat(r[2])||0))*(parseFloat(r[3])||1);}
+  const xd = snap.actData||{};
+  for(let i=0;i<snap.numDays;i++){const r=xd[i]||[];xC+=(parseFloat(r[1])||0)*(parseFloat(r[2])||0);}
+  Object.values(snap.extrasData||{}).forEach(r=>{eC+=(parseFloat(r[1])||0)*(parseFloat(r[2])||0);});
+  const aS=sell(aC,parseFloat(snap.marginAccom)||0);
+  const tS=sell(tC,parseFloat(snap.marginTrans)||20);
+  const xS=sell(xC,parseFloat(snap.marginAct)||20);
+  const eS=sell(eC,parseFloat(snap.marginExtras)||20);
+  totalMad = aS+tS+xS+eS;
+  const totalDevise = Math.ceil((totalMad/rate)/10)*10;
+
+  // Résumés hébergement/transport
+  const accomSummary = Object.values(ad).map(day=>Object.values(day).map(r=>r.hotel||'').filter(Boolean).join(', ')).filter(Boolean).join(' | ');
+  const transSummary = Object.values(td).map(r=>r[0]||'').filter(Boolean).join(' | ');
+  const actSummary = Object.values(xd).map(r=>r[0]||'').filter(Boolean).join(' | ');
+  const extrasSummary = Object.values(snap.extrasData||{}).map(r=>r[0]||'').filter(Boolean).join(' | ');
+
+  const payload = {
+    agent: snap.agent || 'Agent Visit Morocco',
+    ref: snap.ref, version: snap.version, status: snap.status,
+    client: snap.clientName, contact: snap.contactName||'',
+    pax: snap.pax, arr: snap.arrivalDate, dep: snap.departureDate,
+    numDays: snap.numDays, currency: snap.currency, rate: snap.eurRate,
+    marginAccom: snap.marginAccom, marginTrans: snap.marginTrans,
+    marginAct: snap.marginAct, marginExtras: snap.marginExtras,
+    totalMad: Math.round(totalMad), totalDevise,
+    accomSummary, transSummary, actSummary, extrasSummary,
+    notes: snap.notes||''
+  };
+
+  fetch(SHEET_URL, {
+    method:'POST', mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(payload)
+  }).catch(()=>{});
 }
 
 function loadDevis(key){
@@ -528,7 +578,33 @@ function newDevis(){
 
 function readGenRows(bodyId){const saved={};document.querySelectorAll(`#${bodyId} tr`).forEach((tr,i)=>{saved[i]=Array.from(tr.querySelectorAll('input')).map(el=>el.value);});return saved;}
 function printQuotation(){window.print();}
-function exportCSV(){showToast('⬇ Export CSV en cours...','success');}
+function exportExcel(){
+  const all = getAllDevis();
+  const keys = Object.keys(all);
+  if(keys.length===0){showToast('Aucun devis à exporter','error');return;}
+  
+  // Créer CSV compatible Excel
+  const headers = ['Réf','Version','Statut','Client','Arrivée','Départ','Jours','Devise','Taux','Total MAD','Notes'];
+  const rows = [headers];
+  
+  keys.forEach(k=>{
+    const d=all[k];
+    rows.push([
+      d.ref||'', d.version||'', d.status||'', d.clientName||'',
+      d.arrivalDate||'', d.departureDate||'', d.numDays||'',
+      d.currency||'', d.eurRate||'', '', d.notes||''
+    ]);
+  });
+  
+  const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const BOM = '\uFEFF';
+  const blob = new Blob([BOM+csv],{type:'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download=`VisitMorocco_Devis_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+  showToast('✅ Export Excel téléchargé !','success');
+}
 
 
 function openPreview() {
