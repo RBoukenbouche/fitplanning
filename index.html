@@ -237,7 +237,7 @@
     <button class="btn btn-green" onclick="saveDevis()">💾 Sauvegarder</button>
     <button class="btn" style="background:#7B2D8B;" onclick="openPreview()">👁 Preview</button>
     <button class="btn btn-gold" onclick="printQuotation()">🖨 PDF</button>
-    <button class="btn" style="background:#E67E22;" id="adminBtn" onclick="openAdminPanel()" style="display:none;">⚙️ Admin</button>
+    <button class="btn" id="adminBtn" onclick="openAdminPanel()" style="display:none;background:#E67E22;">⚙️ Admin</button>
     <button class="btn" style="background:#C0392B;" onclick="doLogout()">🚪 Déco</button>
   </div>
 </div>
@@ -723,7 +723,7 @@ function saveAgents(agents){ localStorage.setItem('vm_agents', JSON.stringify(ag
 
 let currentAgent = null;
 
-function initLogin(){
+function refreshLoginSelect(){
   const agents = getAgents();
   const sel = document.getElementById('loginAgent');
   sel.innerHTML = '<option value="">-- Sélectionner --</option>';
@@ -732,6 +732,10 @@ function initLogin(){
     opt.value = a.name; opt.textContent = a.name;
     sel.appendChild(opt);
   });
+}
+
+function initLogin(){
+  refreshLoginSelect();
   // Vérifier session existante
   const saved = sessionStorage.getItem('vm_current_agent');
   if(saved){ currentAgent = JSON.parse(saved); showApp(); }
@@ -805,11 +809,7 @@ function addAgent(){
   saveAgents(agents);
   document.getElementById('newAgentName').value = '';
   document.getElementById('newAgentPwd').value = '';
-  // Mettre à jour la liste de login
-  const sel = document.getElementById('loginAgent');
-  const opt = document.createElement('option');
-  opt.value = name; opt.textContent = name;
-  sel.appendChild(opt);
+  refreshLoginSelect();
   renderAgentsList();
   showToast(`✅ Agent ${name} ajouté !`, 'success');
 }
@@ -819,6 +819,7 @@ function removeAgent(index){
   if(!confirm(`Supprimer l'agent ${agents[index].name} ?`)) return;
   agents.splice(index, 1);
   saveAgents(agents);
+  refreshLoginSelect();
   renderAgentsList();
   showToast('🗑 Agent supprimé', 'error');
 }
