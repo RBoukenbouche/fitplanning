@@ -611,6 +611,7 @@ function newDevis(){
   ['accomBody','transBody','actBody','extrasBody'].forEach(id=>document.getElementById(id).innerHTML='');
   ['quoteRef','clientName','arrivalDate','departureDate','quickNote','notes'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('quoteDate').value=new Date().toISOString().split('T')[0];
+  document.getElementById('quoteRef').value=getNextRef();
   document.getElementById('version').value='v1';document.getElementById('status').value='draft';
   document.getElementById('pax').value='2';document.getElementById('eurRate').value='10.5';
   document.getElementById('daysDisplay').value='—';
@@ -709,10 +710,10 @@ function openPreview() {
 
 // ── SYSTÈME DE SESSIONS ───────────────────────────────────────────────────────
 const DEFAULT_AGENTS = [
-  {name:'admin',    pwd:'admin2025?',    email:'',                              role:'admin'},
-  {name:'Abdelkay', pwd:'Abdelkay2025?', email:'incoming[at]visitmoroccodmc[dot]com', role:'agent'},
-  {name:'Siham',    pwd:'Siham2025?',    email:'incoming[at]visitmoroccodmc[dot]com', role:'agent'},
-  {name:'Mohamed',  pwd:'Mohamed2025?',  email:'incoming[at]visitmoroccodmc[dot]com', role:'agent'},
+  {name:'admin',    pwd:'admin2025?',    email:'',                                    role:'admin',  prefix:'QT'},
+  {name:'Abdelkay', pwd:'Abdelkay2025?', email:'incoming[at]visitmoroccodmc[dot]com', role:'agent',  prefix:'ABDEL'},
+  {name:'Siham',    pwd:'Siham2025?',    email:'incoming[at]visitmoroccodmc[dot]com', role:'agent',  prefix:'SIH'},
+  {name:'Mohamed',  pwd:'Mohamed2025?',  email:'incoming[at]visitmoroccodmc[dot]com', role:'agent',  prefix:'MOH'},
 ];
 
 function getAgents(){
@@ -722,6 +723,24 @@ function getAgents(){
 function saveAgents(agents){ localStorage.setItem('vm_agents', JSON.stringify(agents)); }
 
 let currentAgent = null;
+
+
+function getNextRef(){
+  if(!currentAgent) return 'QT-001';
+  const prefix = currentAgent.prefix || 'QT';
+  const all = getAllDevis();
+  // Trouver le numéro max pour ce préfixe
+  let maxNum = 0;
+  Object.values(all).forEach(d => {
+    const ref = d.ref || '';
+    if(ref.startsWith(prefix + '-')){
+      const num = parseInt(ref.replace(prefix + '-', '')) || 0;
+      if(num > maxNum) maxNum = num;
+    }
+  });
+  const nextNum = String(maxNum + 1).padStart(3, '0');
+  return `${prefix}-${nextNum}`;
+}
 
 function refreshLoginSelect(){
   const agents = getAgents();
@@ -765,6 +784,11 @@ function showApp(){
   if(currentAgent.role === 'admin'){
     document.getElementById('adminBtn').style.display = 'inline-flex';
   }
+  // Auto-générer la référence pour le devis en cours
+  const currentRef = document.getElementById('quoteRef').value;
+  if(!currentRef || currentRef === 'QT-001'){
+    document.getElementById('quoteRef').value = getNextRef();
+  }
   updateDevisCount();
 }
 
@@ -805,7 +829,8 @@ function addAgent(){
   if(!name || !pwd){ alert('Nom et mot de passe requis'); return; }
   const agents = getAgents();
   if(agents.find(a => a.name === name)){ alert('Agent déjà existant'); return; }
-  agents.push({name, pwd, email:'incoming[at]visitmoroccodmc[dot]com', role:'agent'});
+  const prefix = name.substring(0,4).toUpperCase();
+  agents.push({name, pwd, email:'incoming[at]visitmoroccodmc[dot]com', role:'agent', prefix});
   saveAgents(agents);
   document.getElementById('newAgentName').value = '';
   document.getElementById('newAgentPwd').value = '';
