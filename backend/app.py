@@ -369,7 +369,7 @@ def generate_quotation_excel(data, sheet_title=None):
     thin=Border(left=Side(style='thin',color='D8E2EF'),right=Side(style='thin',color='D8E2EF'),
                 top=Side(style='thin',color='D8E2EF'),bottom=Side(style='thin',color='D8E2EF'))
 
-    def st(cell,style='',num=False,formula=False):
+    def st(cell,style='',num=False):
         cell.border=thin
         if style=='hdr':
             cell.font=Font(bold=True,color=white,size=10)
@@ -391,9 +391,10 @@ def generate_quotation_excel(data, sheet_title=None):
         if num: cell.number_format='#,##0.00'
         return cell
 
-    def w(row,col,val,style='',num=False):
+    def w(row,col,val,style='',num=False,int_num=False):
         cell=ws.cell(row=row,column=col,value=val)
         st(cell,style,num)
+        if int_num: cell.number_format='#,##0'
         return cell
 
     # Données
@@ -413,21 +414,25 @@ def generate_quotation_excel(data, sheet_title=None):
     c.alignment=Alignment(horizontal='center',vertical='center')
     ws.row_dimensions[r].height=28; r+=1
 
-    # INFOS GÉNÉRALES
-    info=[('Réf. Devis',data.get('ref',''),'Version',data.get('version',''),'Statut',data.get('status',''),'Date',data.get('quoteDate','')),
-          ('Client',data.get('client',''),'Contact',data.get('contact',''),'Passagers',pax,'Devise',currency),
-          ('Arrivée',arrival,'Départ',data.get('dep',''),'Jours',num_days,'Taux',rate)]
-    rate_cell_ref = None
-    for ri, row_data in enumerate(info):
+    # INFOS GÉNÉRALES — le taux est dans une cellule référençable
+    info_labels=[('Réf. Devis',data.get('ref',''),'Version',data.get('version',''),'Statut',data.get('status',''),'Date',data.get('quoteDate','')),
+                 ('Client',data.get('client',''),'Contact',data.get('contact',''),'Passagers',pax,'Devise',currency),
+                 ('Arrivée',arrival,'Départ',data.get('dep',''),'Jours',num_days,'Taux',rate)]
+    
+    rate_cell_ref = None  # On va stocker la référence de la cellule taux
+    
+    for row_idx, row_data in enumerate(info_labels):
         for i,v in enumerate(row_data):
             c=ws.cell(row=r,column=i+1,value=v); c.border=thin
-            if i%2==0: c.font=Font(bold=True,color='6B7C93',size=9); c.fill=PatternFill('solid',fgColor=lb)
+            if i%2==0:
+                c.font=Font(bold=True,color='6B7C93',size=9)
+                c.fill=PatternFill('solid',fgColor=lb)
             else:
                 c.font=Font(size=10)
-                # Stocker la référence de la cellule taux (3ème ligne, colonne H = 8)
-                if ri==2 and i==7:
+                # Stocker la référence de la cellule taux (3ème ligne, colonne 8)
+                if row_idx==2 and i==7:
                     rate_cell_ref = f'{get_column_letter(i+1)}{r}'
-                    c.number_format='0.00'
+                    c.number_format='#,##0.00'
         r+=1
     r+=1
 
@@ -437,7 +442,7 @@ def generate_quotation_excel(data, sheet_title=None):
     ws.row_dimensions[r].height=20; r+=1
     for i,h in enumerate(['Jour','Date','Hotel','Type Chambre','Unites','Tarif Unit. (MAD)','Total Achat (MAD)','Total Vente (MAD)']):
         w(r,i+1,h,'hdr')
-    header_row=r; r+=1
+    r+=1
 
     accom_data=data.get('accomData',{})
     accom_start=r
@@ -450,21 +455,21 @@ def generate_quotation_excel(data, sheet_title=None):
             if not hotel: continue
             dl=fmt_short(add_days(arrival,i)) if arrival else f'Jour {i+1}'
             w(r,1,f'Jour {i+1}'); w(r,2,dl); w(r,3,hotel); w(r,4,room)
-            w(r,5,units,'',False); ws.cell(row=r,column=5).number_format='0'; w(r,6,rate_u,'',True)
-            # Formule total achat = unités × tarif
-            c7=w(r,7,f'=E{r}*F{r}','',True)
-            # Formule total vente = total achat / (1 - marge)
+            # Unités sans décimales
+            w(r,5,units,'',False,True)
+            w(r,6,rate_u,'',True)
+            # Total achat = unités × tarif
+            w(r,7,f'=E{r}*F{r}','',True)
+            # Total vente arrondi à la dizaine = CEILING(achat/(1-marge), 10)
             if margin_accom < 100:
-                c8=w(r,8,f'=G{r}/(1-{margin_accom/100})','',True)
+                w(r,8,f'=CEILING(G{r}/(1-{margin_accom/100}),10)','',True)
             else:
-                c8=w(r,8,f'=G{r}','',True)
+                w(r,8,f'=G{r}','',True)
             r+=1
     accom_end=r-1
 
-    # Ligne total hébergement
     total_row_accom=r
-    w(r,5,'TOTAL','bold'); 
-    c6=w(r,6,'','bold')
+    w(r,5,'TOTAL','bold')
     c7=ws.cell(row=r,column=7,value=f'=SUM(G{accom_start}:G{accom_end})')
     st(c7,'gld',True)
     c8=ws.cell(row=r,column=8,value=f'=SUM(H{accom_start}:H{accom_end})')
@@ -488,21 +493,22 @@ def generate_quotation_excel(data, sheet_title=None):
         qty=float(rt[3] or 1) if len(rt)>3 else 1
         dl=fmt_short(add_days(arrival,i)) if arrival else f'Jour {i+1}'
         w(r,1,f'Jour {i+1}'); w(r,2,dl); w(r,3,desc)
-        w(r,4,veh,'',True); w(r,5,guide,'',True); w(r,6,qty,'',False); ws.cell(row=r,column=6).number_format='0'
-        # Total achat = (véhicule + guide) × qté
-        c7=w(r,7,f'=(D{r}+E{r})*F{r}','',True)
+        w(r,4,veh,'',True); w(r,5,guide,'',True)
+        w(r,6,qty,'',False,True)
+        w(r,7,f'=(D{r}+E{r})*F{r}','',True)
         if margin_trans < 100:
-            c8=w(r,8,f'=CEILING(G{r}/(1-{margin_trans/100}),10)','',True)
+            w(r,8,f'=CEILING(G{r}/(1-{margin_trans/100}),10)','',True)
         else:
-            c8=w(r,8,f'=G{r}','',True)
+            w(r,8,f'=G{r}','',True)
         r+=1
     trans_end=r-1
+    trans_total_row=r
+    w(r,5,'TOTAL','bold')
     c7=ws.cell(row=r,column=7,value=f'=SUM(G{trans_start}:G{trans_end})')
     st(c7,'gld',True)
     c8=ws.cell(row=r,column=8,value=f'=SUM(H{trans_start}:H{trans_end})')
     st(c8,'gld',True)
-    w(r,5,'TOTAL','bold')
-    trans_total_row=r; r+=2
+    r+=2
 
     # ── MEALS & SERVICES ─────────────────────────────────────────────────────
     ws.merge_cells(f'A{r}:H{r}')
@@ -517,7 +523,8 @@ def generate_quotation_excel(data, sheet_title=None):
         tarif=float(val[1] or 0) if len(val)>1 else 0
         qty=float(val[2] or 0) if len(val)>2 else 0
         if not desc: continue
-        w(r,1,desc); w(r,2,tarif,'',True); w(r,3,qty,'',False); ws.cell(row=r,column=3).number_format='0'
+        w(r,1,desc); w(r,2,tarif,'',True)
+        w(r,3,qty,'',False,True)
         w(r,4,f'=B{r}*C{r}','',True)
         if margin_extras < 100:
             w(r,5,f'=CEILING(D{r}/(1-{margin_extras/100}),10)','',True)
@@ -525,12 +532,13 @@ def generate_quotation_excel(data, sheet_title=None):
             w(r,5,f'=D{r}','',True)
         r+=1
     extras_end=r-1
+    extras_total_row=r
+    w(r,2,'TOTAL','bold')
     c4=ws.cell(row=r,column=4,value=f'=SUM(D{extras_start}:D{extras_end})')
     st(c4,'gld',True)
     c5=ws.cell(row=r,column=5,value=f'=SUM(E{extras_start}:E{extras_end})')
     st(c5,'gld',True)
-    w(r,2,'TOTAL','bold')
-    extras_total_row=r; r+=2
+    r+=2
 
     # ── ACTIVITIES ───────────────────────────────────────────────────────────
     ws.merge_cells(f'A{r}:H{r}')
@@ -548,7 +556,8 @@ def generate_quotation_excel(data, sheet_title=None):
         if not desc: continue
         dl=fmt_short(add_days(arrival,i)) if arrival else f'Jour {i+1}'
         w(r,1,f'Jour {i+1}'); w(r,2,dl); w(r,3,desc)
-        w(r,4,tarif,'',True); w(r,5,qty,'',False); ws.cell(row=r,column=5).number_format='0'
+        w(r,4,tarif,'',True)
+        w(r,5,qty,'',False,True)
         w(r,6,f'=D{r}*E{r}','',True)
         if margin_act < 100:
             w(r,7,f'=CEILING(F{r}/(1-{margin_act/100}),10)','',True)
@@ -556,12 +565,13 @@ def generate_quotation_excel(data, sheet_title=None):
             w(r,7,f'=F{r}','',True)
         r+=1
     act_end=r-1
+    act_total_row=r
+    w(r,4,'TOTAL','bold')
     c6=ws.cell(row=r,column=6,value=f'=SUM(F{act_start}:F{act_end})')
     st(c6,'gld',True)
     c7=ws.cell(row=r,column=7,value=f'=SUM(G{act_start}:G{act_end})')
     st(c7,'gld',True)
-    w(r,4,'TOTAL','bold')
-    act_total_row=r; r+=2
+    r+=2
 
     # ── RÉCAP FINAL ──────────────────────────────────────────────────────────
     ws.merge_cells(f'A{r}:H{r}')
@@ -571,38 +581,44 @@ def generate_quotation_excel(data, sheet_title=None):
         w(r,i+1,h,'hdr' if i<5 else '')
     r+=1
 
+    # Taux référencé depuis la cellule infos
+    rate_ref = rate_cell_ref or str(rate)
+
     recap_start=r
     # Hébergement
     w(r,1,'Hebergement'); w(r,2,f'{margin_accom}%')
-    w(r,3,f'=G{total_row_accom}','',True); w(r,4,f'=H{total_row_accom}','',True)
-    rate_ref = rate_cell_ref or str(rate)
-    w(r,5,f'=CEILING(D{r}/$'+rate_ref+',10)','',True); r+=1
+    w(r,3,f'=G{total_row_accom}','',True)
+    w(r,4,f'=H{total_row_accom}','',True)
+    w(r,5,f'=CEILING(D{r}/{rate_ref},10)','',True); r+=1
     # Transport
     w(r,1,'Transport'); w(r,2,f'{margin_trans}%')
-    w(r,3,f'=G{trans_total_row}','',True); w(r,4,f'=H{trans_total_row}','',True)
-    w(r,5,f'=CEILING(D{r}/$'+rate_ref+',10)','',True); r+=1
+    w(r,3,f'=G{trans_total_row}','',True)
+    w(r,4,f'=H{trans_total_row}','',True)
+    w(r,5,f'=CEILING(D{r}/{rate_ref},10)','',True); r+=1
     # Meals
     w(r,1,'Meals & Services'); w(r,2,f'{margin_extras}%')
-    w(r,3,f'=D{extras_total_row}','',True); w(r,4,f'=E{extras_total_row}','',True)
-    w(r,5,f'=CEILING(D{r}/$'+rate_ref+',10)','',True); r+=1
+    w(r,3,f'=D{extras_total_row}','',True)
+    w(r,4,f'=E{extras_total_row}','',True)
+    w(r,5,f'=CEILING(D{r}/{rate_ref},10)','',True); r+=1
     # Activities
     w(r,1,'Activities'); w(r,2,f'{margin_act}%')
-    w(r,3,f'=F{act_total_row}','',True); w(r,4,f'=G{act_total_row}','',True)
-    w(r,5,f'=CEILING(D{r}/$'+rate_ref+',10)','',True); r+=1
+    w(r,3,f'=F{act_total_row}','',True)
+    w(r,4,f'=G{act_total_row}','',True)
+    w(r,5,f'=CEILING(D{r}/{rate_ref},10)','',True); r+=1
     recap_end=r-1
 
-    # Total général — arrondi à la dizaine supérieure
+    # Total général
     for j,v in enumerate(['TOTAL GENERAL','',
                            f'=SUM(C{recap_start}:C{recap_end})',
                            f'=SUM(D{recap_start}:D{recap_end})',
-                           f'=CEILING(SUM(D{recap_start}:D{recap_end})/$'+rate_ref+',10)',
+                           f'=CEILING(SUM(D{recap_start}:D{recap_end})/{rate_ref},10)',
                            '','','']):
         c2=ws.cell(row=r,column=j+1,value=v)
         st(c2,'gld')
         if j in[2,3,4]: c2.number_format='#,##0.00'
     total_gen_row=r; r+=1
 
-    # Prix par personne — arrondi à la dizaine supérieure
+    # Prix par personne
     for j,v in enumerate([f'PRIX PAR PERSONNE ({pax} pax)','','','',
                            f'=CEILING(E{total_gen_row}/{pax},10)',
                            '','','']):
