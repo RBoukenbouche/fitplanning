@@ -355,83 +355,86 @@ def generate_invoice(data):
     return buf, words
 
 # ── EXPORT QUOTATION EXCEL ────────────────────────────────────────────────────
-def generate_quotation_excel(data):
+def generate_quotation_excel(data, sheet_title=None):
     from openpyxl import Workbook
     from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
     from openpyxl.utils import get_column_letter
 
     wb = Workbook()
     ws = wb.active
-    ws.title = data.get('ref', 'Quotation')
+    ws.title = (sheet_title or data.get('ref', 'Quotation'))[:31]
 
-    navy='1A2E4A'; gold='C9A84C'; light_blue='E8EFF8'
-    white='FFFFFF'
-
-    def hdr(cell, bg=navy, fg=white, bold=True, sz=10):
-        cell.font=Font(bold=bold,color=fg,size=sz)
-        cell.fill=PatternFill('solid',fgColor=bg)
-        cell.alignment=Alignment(horizontal='center',vertical='center')
-
-    def sec(cell):
-        cell.font=Font(bold=True,color=white,size=10)
-        cell.fill=PatternFill('solid',fgColor=navy)
-        cell.alignment=Alignment(horizontal='left',vertical='center')
-
-    def gld(cell):
-        cell.font=Font(bold=True,color=navy,size=10)
-        cell.fill=PatternFill('solid',fgColor=gold)
-        cell.alignment=Alignment(horizontal='right',vertical='center')
-
+    # Styles
+    navy='1A2E4A'; gold='C9A84C'; lb='E8EFF8'; white='FFFFFF'
     thin=Border(left=Side(style='thin',color='D8E2EF'),right=Side(style='thin',color='D8E2EF'),
                 top=Side(style='thin',color='D8E2EF'),bottom=Side(style='thin',color='D8E2EF'))
 
-    def bc(row,col,val,style='',num=False):
-        cell=ws.cell(row=row,column=col,value=val)
+    def st(cell,style='',num=False,formula=False):
         cell.border=thin
-        if style=='hdr': hdr(cell)
-        elif style=='sec': sec(cell)
-        elif style=='gld': gld(cell)
-        elif style=='bold': cell.font=Font(bold=True,size=10)
+        if style=='hdr':
+            cell.font=Font(bold=True,color=white,size=10)
+            cell.fill=PatternFill('solid',fgColor=navy)
+            cell.alignment=Alignment(horizontal='center',vertical='center')
+        elif style=='sec':
+            cell.font=Font(bold=True,color=white,size=10)
+            cell.fill=PatternFill('solid',fgColor=navy)
+            cell.alignment=Alignment(horizontal='left',vertical='center')
+        elif style=='gld':
+            cell.font=Font(bold=True,color=navy,size=10)
+            cell.fill=PatternFill('solid',fgColor=gold)
+            cell.alignment=Alignment(horizontal='right',vertical='center')
         elif style=='lbl':
             cell.font=Font(bold=True,color='6B7C93',size=9)
-            cell.fill=PatternFill('solid',fgColor=light_blue)
+            cell.fill=PatternFill('solid',fgColor=lb)
+        elif style=='bold':
+            cell.font=Font(bold=True,size=10)
         if num: cell.number_format='#,##0.00'
         return cell
 
+    def w(row,col,val,style='',num=False):
+        cell=ws.cell(row=row,column=col,value=val)
+        st(cell,style,num)
+        return cell
+
+    # Données
     currency=data.get('currency','EUR'); rate=float(data.get('rate',10.5))
     pax=int(data.get('pax',1)); num_days=int(data.get('numDays',0))
     num_cats=int(data.get('numCats',1)); arrival=data.get('arr','')
-    sell=lambda c,m: c/(1-(m/100)) if m<100 else c
+    margin_accom=float(data.get('marginAccom',0))
+    margin_trans=float(data.get('marginTrans',20))
+    margin_extras=float(data.get('marginExtras',20))
+    margin_act=float(data.get('marginAct',20))
 
     r=1
+    # TITRE
     ws.merge_cells(f'A{r}:H{r}')
-    hdr(ws.cell(row=r,column=1,value='VISIT MOROCCO TRAVEL & EVENTS — QUOTATION'),sz=13)
+    c=ws.cell(row=r,column=1,value='VISIT MOROCCO TRAVEL & EVENTS — QUOTATION')
+    c.font=Font(bold=True,color=white,size=13); c.fill=PatternFill('solid',fgColor=navy)
+    c.alignment=Alignment(horizontal='center',vertical='center')
     ws.row_dimensions[r].height=28; r+=1
 
-    for lbl,val in [('Réf',data.get('ref','')),('Version',data.get('version','')),
-                    ('Client',data.get('client','')),('Statut',data.get('status','')),
-                    ('Arrivée',arrival),('Départ',data.get('dep','')),
-                    ('Jours',num_days),(f'1 {currency} =',f"{rate} MAD")]:
-        pass
-
+    # INFOS GÉNÉRALES
     info=[('Réf. Devis',data.get('ref',''),'Version',data.get('version',''),'Statut',data.get('status',''),'Date',data.get('quoteDate','')),
           ('Client',data.get('client',''),'Contact',data.get('contact',''),'Passagers',pax,'Devise',currency),
           ('Arrivée',arrival,'Départ',data.get('dep',''),'Jours',num_days,'Taux',f"1 {currency} = {rate} MAD")]
     for row_data in info:
         for i,v in enumerate(row_data):
             c=ws.cell(row=r,column=i+1,value=v); c.border=thin
-            if i%2==0: c.font=Font(bold=True,color='6B7C93',size=9); c.fill=PatternFill('solid',fgColor=light_blue)
+            if i%2==0: c.font=Font(bold=True,color='6B7C93',size=9); c.fill=PatternFill('solid',fgColor=lb)
             else: c.font=Font(size=10)
         r+=1
     r+=1
 
-    # HEBERGEMENT
-    margin_accom=float(data.get('marginAccom',0))
-    ws.merge_cells(f'A{r}:H{r}'); sec(ws.cell(row=r,column=1,value='🏨 HEBERGEMENT')); ws.row_dimensions[r].height=20; r+=1
-    for i,(h,t) in enumerate([('Jour','hdr'),('Date','hdr'),('Hotel','hdr'),('Type Chambre','hdr'),('Unites','hdr'),('Tarif Unit. MAD','hdr'),('Total Achat MAD','hdr'),('','hdr')]):
-        bc(r,i+1,h,t)
-    r+=1
-    accom_data=data.get('accomData',{}); total_accom=0
+    # ── HÉBERGEMENT ──────────────────────────────────────────────────────────
+    ws.merge_cells(f'A{r}:H{r}')
+    st(ws.cell(row=r,column=1,value=f'🏨 HEBERGEMENT  (Marge: {margin_accom}%)'), 'sec')
+    ws.row_dimensions[r].height=20; r+=1
+    for i,h in enumerate(['Jour','Date','Hotel','Type Chambre','Unites','Tarif Unit. (MAD)','Total Achat (MAD)','Total Vente (MAD)']):
+        w(r,i+1,h,'hdr')
+    header_row=r; r+=1
+
+    accom_data=data.get('accomData',{})
+    accom_start=r
     for i in range(num_days):
         for c in range(num_cats):
             rd=(accom_data.get(str(i)) or accom_data.get(i) or {})
@@ -439,111 +442,171 @@ def generate_quotation_excel(data):
             hotel=cd.get('hotel',''); room=cd.get('roomType','')
             units=float(cd.get('units',0) or 0); rate_u=float(cd.get('rate',0) or 0)
             if not hotel: continue
-            total=units*rate_u; total_accom+=total
             dl=fmt_short(add_days(arrival,i)) if arrival else f'Jour {i+1}'
-            for j,v in enumerate([f'Jour {i+1}',dl,hotel,room,units,rate_u,total,'']):
-                bc(r,j+1,v,'num' if j in[4,5,6] else '')
+            w(r,1,f'Jour {i+1}'); w(r,2,dl); w(r,3,hotel); w(r,4,room)
+            w(r,5,units,'',True); w(r,6,rate_u,'',True)
+            # Formule total achat = unités × tarif
+            c7=w(r,7,f'=E{r}*F{r}','',True)
+            # Formule total vente = total achat / (1 - marge)
+            if margin_accom < 100:
+                c8=w(r,8,f'=G{r}/(1-{margin_accom/100})','',True)
+            else:
+                c8=w(r,8,f'=G{r}','',True)
             r+=1
-    accom_sell=sell(total_accom,margin_accom)
-    bc(r,6,'Total Achat','bold'); bc(r,7,total_accom,'',True); r+=1
-    ws.merge_cells(f'A{r}:F{r}'); gld(ws.cell(row=r,column=1,value='TOTAL VENTE HEBERGEMENT'))
-    c2=ws.cell(row=r,column=7,value=accom_sell); gld(c2); c2.number_format='#,##0.00'; r+=2
+    accom_end=r-1
 
-    # GUIDE & TRANSPORT
-    margin_trans=float(data.get('marginTrans',20))
-    ws.merge_cells(f'A{r}:H{r}'); sec(ws.cell(row=r,column=1,value='🚗 GUIDE & TRANSPORT')); ws.row_dimensions[r].height=20; r+=1
-    for i,h in enumerate(['Jour','Date','Description','Vehicule MAD','Guide MAD','Qte','Total Achat MAD','']):
-        bc(r,i+1,h,'hdr')
+    # Ligne total hébergement
+    total_row_accom=r
+    w(r,5,'TOTAL','bold'); 
+    c6=w(r,6,'','bold')
+    c7=ws.cell(row=r,column=7,value=f'=SUM(G{accom_start}:G{accom_end})')
+    st(c7,'gld',True)
+    c8=ws.cell(row=r,column=8,value=f'=SUM(H{accom_start}:H{accom_end})')
+    st(c8,'gld',True)
+    r+=2
+
+    # ── GUIDE & TRANSPORT ────────────────────────────────────────────────────
+    ws.merge_cells(f'A{r}:H{r}')
+    st(ws.cell(row=r,column=1,value=f'🚗 GUIDE & TRANSPORT  (Marge: {margin_trans}%)'), 'sec')
+    ws.row_dimensions[r].height=20; r+=1
+    for i,h in enumerate(['Jour','Date','Description','Vehicule (MAD)','Guide (MAD)','Qte','Total Achat (MAD)','Total Vente (MAD)']):
+        w(r,i+1,h,'hdr')
     r+=1
-    trans_data=data.get('transData',{}); total_trans=0
+    trans_data=data.get('transData',{}); trans_start=r
     for i in range(num_days):
         rt=trans_data.get(str(i)) or trans_data.get(i) or []
         desc=rt[0] if rt else ''
+        if not desc: continue
         veh=float(rt[1] or 0) if len(rt)>1 else 0
         guide=float(rt[2] or 0) if len(rt)>2 else 0
         qty=float(rt[3] or 1) if len(rt)>3 else 1
-        if not desc: continue
-        total=(veh+guide)*qty; total_trans+=total
         dl=fmt_short(add_days(arrival,i)) if arrival else f'Jour {i+1}'
-        for j,v in enumerate([f'Jour {i+1}',dl,desc,veh,guide,qty,total,'']):
-            bc(r,j+1,v,'num' if j in[3,4,5,6] else '')
+        w(r,1,f'Jour {i+1}'); w(r,2,dl); w(r,3,desc)
+        w(r,4,veh,'',True); w(r,5,guide,'',True); w(r,6,qty,'',True)
+        # Total achat = (véhicule + guide) × qté
+        c7=w(r,7,f'=(D{r}+E{r})*F{r}','',True)
+        if margin_trans < 100:
+            c8=w(r,8,f'=G{r}/(1-{margin_trans/100})','',True)
+        else:
+            c8=w(r,8,f'=G{r}','',True)
         r+=1
-    trans_sell=sell(total_trans,margin_trans)
-    bc(r,6,'Total Achat','bold'); bc(r,7,total_trans,'',True); r+=1
-    ws.merge_cells(f'A{r}:F{r}'); gld(ws.cell(row=r,column=1,value='TOTAL VENTE TRANSPORT'))
-    c2=ws.cell(row=r,column=7,value=trans_sell); gld(c2); c2.number_format='#,##0.00'; r+=2
+    trans_end=r-1
+    c7=ws.cell(row=r,column=7,value=f'=SUM(G{trans_start}:G{trans_end})')
+    st(c7,'gld',True)
+    c8=ws.cell(row=r,column=8,value=f'=SUM(H{trans_start}:H{trans_end})')
+    st(c8,'gld',True)
+    w(r,5,'TOTAL','bold')
+    trans_total_row=r; r+=2
 
-    # MEALS & SERVICES
-    margin_extras=float(data.get('marginExtras',20))
-    ws.merge_cells(f'A{r}:H{r}'); sec(ws.cell(row=r,column=1,value='🍽️ MEALS & SERVICES')); ws.row_dimensions[r].height=20; r+=1
-    for i,h in enumerate(['Description','Tarif MAD','Qte','Total Achat MAD','','','','']):
-        bc(r,i+1,h,'hdr' if i<4 else '')
+    # ── MEALS & SERVICES ─────────────────────────────────────────────────────
+    ws.merge_cells(f'A{r}:H{r}')
+    st(ws.cell(row=r,column=1,value=f'🍽️ MEALS & SERVICES  (Marge: {margin_extras}%)'), 'sec')
+    ws.row_dimensions[r].height=20; r+=1
+    for i,h in enumerate(['Description','Tarif Unit. (MAD)','Qte','Total Achat (MAD)','Total Vente (MAD)','','','']):
+        w(r,i+1,h,'hdr' if i<5 else '')
     r+=1
-    extras_data=data.get('extrasData',{}); total_extras=0
+    extras_data=data.get('extrasData',{}); extras_start=r
     for val in (extras_data.values() if isinstance(extras_data,dict) else []):
         desc=val[0] if len(val)>0 else ''
         tarif=float(val[1] or 0) if len(val)>1 else 0
         qty=float(val[2] or 0) if len(val)>2 else 0
         if not desc: continue
-        total=tarif*qty; total_extras+=total
-        for j,v in enumerate([desc,tarif,qty,total,'','','','']):
-            bc(r,j+1,v,'num' if j in[1,2,3] else '')
+        w(r,1,desc); w(r,2,tarif,'',True); w(r,3,qty,'',True)
+        w(r,4,f'=B{r}*C{r}','',True)
+        if margin_extras < 100:
+            w(r,5,f'=D{r}/(1-{margin_extras/100})','',True)
+        else:
+            w(r,5,f'=D{r}','',True)
         r+=1
-    extras_sell=sell(total_extras,margin_extras)
-    bc(r,2,'Total Achat','bold'); bc(r,4,total_extras,'',True); r+=1
-    ws.merge_cells(f'A{r}:C{r}'); gld(ws.cell(row=r,column=1,value='TOTAL VENTE MEALS & SERVICES'))
-    c2=ws.cell(row=r,column=4,value=extras_sell); gld(c2); c2.number_format='#,##0.00'; r+=2
+    extras_end=r-1
+    c4=ws.cell(row=r,column=4,value=f'=SUM(D{extras_start}:D{extras_end})')
+    st(c4,'gld',True)
+    c5=ws.cell(row=r,column=5,value=f'=SUM(E{extras_start}:E{extras_end})')
+    st(c5,'gld',True)
+    w(r,2,'TOTAL','bold')
+    extras_total_row=r; r+=2
 
-    # ACTIVITIES
-    margin_act=float(data.get('marginAct',20))
-    ws.merge_cells(f'A{r}:H{r}'); sec(ws.cell(row=r,column=1,value='🎭 ACTIVITIES & EXPERIENCES')); ws.row_dimensions[r].height=20; r+=1
-    for i,h in enumerate(['Jour','Date','Description','Tarif MAD','Qte','Total Achat MAD','','']):
-        bc(r,i+1,h,'hdr' if i<6 else '')
+    # ── ACTIVITIES ───────────────────────────────────────────────────────────
+    ws.merge_cells(f'A{r}:H{r}')
+    st(ws.cell(row=r,column=1,value=f'🎭 ACTIVITIES & EXPERIENCES  (Marge: {margin_act}%)'), 'sec')
+    ws.row_dimensions[r].height=20; r+=1
+    for i,h in enumerate(['Jour','Date','Description','Tarif Unit. (MAD)','Qte','Total Achat (MAD)','Total Vente (MAD)','']):
+        w(r,i+1,h,'hdr' if i<7 else '')
     r+=1
-    act_data=data.get('actData',{}); total_act=0
+    act_data=data.get('actData',{}); act_start=r
     for i in range(num_days):
         ra=act_data.get(str(i)) or act_data.get(i) or []
         desc=ra[0] if ra else ''
         tarif=float(ra[1] or 0) if len(ra)>1 else 0
         qty=float(ra[2] or 0) if len(ra)>2 else 0
         if not desc: continue
-        total=tarif*qty; total_act+=total
         dl=fmt_short(add_days(arrival,i)) if arrival else f'Jour {i+1}'
-        for j,v in enumerate([f'Jour {i+1}',dl,desc,tarif,qty,total,'','']):
-            bc(r,j+1,v,'num' if j in[3,4,5] else '')
+        w(r,1,f'Jour {i+1}'); w(r,2,dl); w(r,3,desc)
+        w(r,4,tarif,'',True); w(r,5,qty,'',True)
+        w(r,6,f'=D{r}*E{r}','',True)
+        if margin_act < 100:
+            w(r,7,f'=F{r}/(1-{margin_act/100})','',True)
+        else:
+            w(r,7,f'=F{r}','',True)
         r+=1
-    act_sell=sell(total_act,margin_act)
-    bc(r,5,'Total Achat','bold'); bc(r,6,total_act,'',True); r+=1
-    ws.merge_cells(f'A{r}:E{r}'); gld(ws.cell(row=r,column=1,value='TOTAL VENTE ACTIVITIES'))
-    c2=ws.cell(row=r,column=6,value=act_sell); gld(c2); c2.number_format='#,##0.00'; r+=2
+    act_end=r-1
+    c6=ws.cell(row=r,column=6,value=f'=SUM(F{act_start}:F{act_end})')
+    st(c6,'gld',True)
+    c7=ws.cell(row=r,column=7,value=f'=SUM(G{act_start}:G{act_end})')
+    st(c7,'gld',True)
+    w(r,4,'TOTAL','bold')
+    act_total_row=r; r+=2
 
-    # RECAP FINAL
-    ws.merge_cells(f'A{r}:H{r}'); sec(ws.cell(row=r,column=1,value='💰 RECAP FINAL')); ws.row_dimensions[r].height=20; r+=1
-    for i,h in enumerate(['Section','Marge','Total Achat MAD','Total Vente MAD',f'Total Vente {currency}','','','']):
-        bc(r,i+1,h,'hdr' if i<5 else '')
+    # ── RÉCAP FINAL ──────────────────────────────────────────────────────────
+    ws.merge_cells(f'A{r}:H{r}')
+    st(ws.cell(row=r,column=1,value='💰 RECAP FINAL'), 'sec')
+    ws.row_dimensions[r].height=20; r+=1
+    for i,h in enumerate(['Section','Marge %','Total Achat (MAD)','Total Vente (MAD)',f'Total Vente ({currency})','','','']):
+        w(r,i+1,h,'hdr' if i<5 else '')
     r+=1
-    total_sell_mad=accom_sell+trans_sell+extras_sell+act_sell
-    total_cost=total_accom+total_trans+total_extras+total_act
-    total_devise=int(((total_sell_mad/rate)+9)//10)*10
-    per_pax=int(((total_sell_mad/rate/pax)+9)//10)*10
-    for name,mg,cost,sv in [('Hebergement',margin_accom,total_accom,accom_sell),
-                              ('Transport',margin_trans,total_trans,trans_sell),
-                              ('Meals & Services',margin_extras,total_extras,extras_sell),
-                              ('Activities',margin_act,total_act,act_sell)]:
-        for j,v in enumerate([name,f'{mg}%',cost,sv,round(sv/rate,2),'','','']):
-            bc(r,j+1,v,'num' if j in[2,3,4] else '')
-        r+=1
-    for j,v in enumerate(['TOTAL GENERAL','',total_cost,total_sell_mad,total_devise,'','','']):
-        c2=bc(r,j+1,v,'gld'); 
+
+    recap_start=r
+    # Hébergement
+    w(r,1,'Hebergement'); w(r,2,f'{margin_accom}%')
+    w(r,3,f'=G{total_row_accom}','',True); w(r,4,f'=H{total_row_accom}','',True)
+    w(r,5,f'=CEILING(D{r}/{rate},10)','',True); r+=1
+    # Transport
+    w(r,1,'Transport'); w(r,2,f'{margin_trans}%')
+    w(r,3,f'=G{trans_total_row}','',True); w(r,4,f'=H{trans_total_row}','',True)
+    w(r,5,f'=CEILING(D{r}/{rate},10)','',True); r+=1
+    # Meals
+    w(r,1,'Meals & Services'); w(r,2,f'{margin_extras}%')
+    w(r,3,f'=D{extras_total_row}','',True); w(r,4,f'=E{extras_total_row}','',True)
+    w(r,5,f'=CEILING(D{r}/{rate},10)','',True); r+=1
+    # Activities
+    w(r,1,'Activities'); w(r,2,f'{margin_act}%')
+    w(r,3,f'=F{act_total_row}','',True); w(r,4,f'=G{act_total_row}','',True)
+    w(r,5,f'=CEILING(D{r}/{rate},10)','',True); r+=1
+    recap_end=r-1
+
+    # Total général — arrondi à la dizaine supérieure
+    for j,v in enumerate(['TOTAL GENERAL','',
+                           f'=SUM(C{recap_start}:C{recap_end})',
+                           f'=SUM(D{recap_start}:D{recap_end})',
+                           f'=CEILING(SUM(D{recap_start}:D{recap_end})/{rate},10)',
+                           '','','']):
+        c2=ws.cell(row=r,column=j+1,value=v)
+        st(c2,'gld')
         if j in[2,3,4]: c2.number_format='#,##0.00'
-    r+=1
-    for j,v in enumerate([f'PRIX PAR PERSONNE ({pax} pax)','','','',per_pax,'','','']):
-        c2=bc(r,j+1,v,'gld' if j in[0,4] else '')
+    total_gen_row=r; r+=1
+
+    # Prix par personne — arrondi à la dizaine supérieure
+    for j,v in enumerate([f'PRIX PAR PERSONNE ({pax} pax)','','','',
+                           f'=CEILING(E{total_gen_row}/{pax},10)',
+                           '','','']):
+        c2=ws.cell(row=r,column=j+1,value=v)
+        st(c2,'gld' if j in[0,4] else '')
         if j==4: c2.number_format='#,##0.00'
     r+=1
 
-    for i,w in enumerate([12,11,35,16,14,12,16,10]):
-        ws.column_dimensions[get_column_letter(i+1)].width=w
+    # Largeurs colonnes
+    for i,width in enumerate([12,11,35,16,14,10,16,16]):
+        ws.column_dimensions[get_column_letter(i+1)].width=width
 
     buf=io.BytesIO(); wb.save(buf); buf.seek(0)
     return buf
@@ -584,6 +647,57 @@ def route_export_quotation():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
+@app.route('/export-all-versions', methods=['POST'])
+def route_export_all_versions():
+    try:
+        from openpyxl import Workbook
+        data = request.get_json()
+        versions = data.get('versions', [])
+        if not versions:
+            return jsonify({'error': 'No versions provided'}), 400
+
+        # Créer un workbook avec un onglet par version
+        wb = None
+        for i, version_data in enumerate(versions):
+            buf = generate_quotation_excel(version_data)
+            from openpyxl import load_workbook
+            tmp_wb = load_workbook(buf)
+            if wb is None:
+                wb = tmp_wb
+            else:
+                # Copier la feuille dans le workbook principal
+                ws_src = tmp_wb.active
+                ws_new = wb.create_sheet(title=ws_src.title)
+                for row in ws_src.iter_rows():
+                    for cell in row:
+                        new_cell = ws_new.cell(row=cell.row, column=cell.column, value=cell.value)
+                        if cell.has_style:
+                            new_cell.font = cell.font.copy()
+                            new_cell.fill = cell.fill.copy()
+                            new_cell.border = cell.border.copy()
+                            new_cell.alignment = cell.alignment.copy()
+                            new_cell.number_format = cell.number_format
+                for col_dim in ws_src.column_dimensions.values():
+                    ws_new.column_dimensions[col_dim.index].width = col_dim.width
+                for row_dim in ws_src.row_dimensions.values():
+                    ws_new.row_dimensions[row_dim.index].height = row_dim.height
+
+        buf_out = io.BytesIO()
+        wb.save(buf_out)
+        buf_out.seek(0)
+
+        ref = versions[0].get('ref', 'QT') if versions else 'QT'
+        client = versions[0].get('client', 'Client').replace(' ', '_') if versions else 'Client'
+        filename = f"AllVersions_{ref}_{client}.xlsx"
+        return send_file(
+            buf_out,
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            as_attachment=True,
+            download_name=filename
+        )
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/health', methods=['GET'])
 def health():
