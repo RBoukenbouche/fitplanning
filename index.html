@@ -234,6 +234,7 @@
     <button class="btn btn-ghost" onclick="newDevis()">＋ Nouveau</button>
     <button class="btn btn-ghost" onclick="openModal()">📁 Mes devis (<span id="devisCount">0</span>)</button>
     <button class="btn btn-outline" onclick="exportExcel()">⬇ Excel</button>
+    <button class="btn" style="background:#2B5EA7;color:#fff;" onclick="exportAllVersions()">⬇ All Versions</button>
     <button class="btn btn-green" onclick="saveDevis()">💾 Sauvegarder</button>
     <button class="btn" style="background:#7B2D8B;" onclick="openPreview()">👁 Preview</button>
     <button class="btn btn-gold" onclick="printQuotation()">🖨 PDF</button>
@@ -260,7 +261,7 @@
       <div class="field"><label>Date de départ</label><input type="date" id="departureDate" onchange="onDatesChange();markUnsaved()"></div>
     </div>
     <div class="grid-4" style="margin-top:10px">
-      <div class="field"><label>Jours</label><input type="text" id="daysDisplay" readonly value="—"></div>
+      <div class="field"><label>Jours</label><input type="number" id="daysDisplay" min="1" placeholder="Ex: 5" oninput="onDaysManualChange();markUnsaved()" style="cursor:text;"></div>
       <div class="field"><label>Devise finale</label>
         <select id="currency" onchange="updateGT();markUnsaved()"><option value="EUR">EUR — Euro</option><option value="USD">USD — Dollar</option></select>
       </div>
@@ -400,7 +401,7 @@ let numDays=0,arrivalDate=null,numCats=1,extrasCount=0,currentDevisKey=null,isSa
 const fmt=v=>Number(v||0).toLocaleString('fr-MA',{minimumFractionDigits:2,maximumFractionDigits:2});
 const sell=(c,m)=>m<100?c/(1-m/100):c;
 const dayLbl=i=>`Jour ${i+1}`;
-const dateLbl=i=>{if(!arrivalDate)return'—';const d=new Date(arrivalDate);d.setDate(d.getDate()+i);return d.toLocaleDateString('fr-MA',{day:'2-digit',month:'2-digit',year:'numeric'});};
+const dateLbl=i=>{if(!arrivalDate)return'TBD';const d=new Date(arrivalDate);d.setDate(d.getDate()+i);return d.toLocaleDateString('fr-MA',{day:'2-digit',month:'2-digit',year:'numeric'});};
 const cur=()=>document.getElementById('currency').value;
 
 function showToast(msg,type='success'){const t=document.getElementById('toast');t.textContent=msg;t.className=`toast ${type} show`;setTimeout(()=>t.className='toast',3000);}
@@ -409,9 +410,28 @@ function markSaved(lbl=''){isSaved=true;document.getElementById('saveDot').class
 
 function onDatesChange(){
   const a=document.getElementById('arrivalDate').value,d=document.getElementById('departureDate').value;
-  if(a&&d){const diff=Math.round((new Date(d)-new Date(a))/86400000);
-    if(diff>0){numDays=diff;arrivalDate=a;document.getElementById('daysDisplay').value=`${diff} jour${diff>1?'s':''}`;rebuildAll();}
-    else document.getElementById('daysDisplay').value='⚠ Dates invalides';}
+  if(a&&d){
+    const diff=Math.round((new Date(d)-new Date(a))/86400000);
+    if(diff>0){
+      numDays=diff; arrivalDate=a;
+      document.getElementById('daysDisplay').value=diff;
+      rebuildAll();
+    } else {
+      document.getElementById('daysDisplay').value='';
+      document.getElementById('daysDisplay').placeholder='⚠ Dates invalides';
+    }
+  }
+}
+
+function onDaysManualChange(){
+  const val = parseInt(document.getElementById('daysDisplay').value)||0;
+  if(val>0){
+    numDays=val;
+    // Si pas de dates, arrivalDate reste null → affiche Jour 1, Jour 2...
+    const a=document.getElementById('arrivalDate').value;
+    arrivalDate = a || null;
+    rebuildAll();
+  }
 }
 function rebuildAll(){rebuildAccom();rebuildTrans();rebuildAct();recalcAll();}
 
@@ -445,7 +465,7 @@ function rebuildAccom(savedData){
   document.getElementById('catBadge').textContent=`${numCats} CATÉGORIE${numCats>1?'S':''}`;
   recalcAccom();
 }
-function addCategory(){if(!numDays){alert('Saisissez les dates d\'abord.');return;}const d=readAccomData();numCats++;rebuildAccom(d);}
+function addCategory(){if(!numDays){alert('Saisissez le nombre de jours d\'abord.');return;}const d=readAccomData();numCats++;rebuildAccom(d);}
 function removeCategory(ci){if(numCats<=1)return;const d=readAccomData();const nd={};for(let i=0;i<numDays;i++){nd[i]={};let nc=0;for(let c=0;c<numCats;c++){if(c===ci)continue;nd[i][nc]=(d[i]&&d[i][c])?d[i][c]:{};nc++;}}numCats--;rebuildAccom(nd);}
 function recalcAccom(){let cost=0;for(let i=0;i<numDays;i++)for(let c=0;c<numCats;c++){const r=document.getElementById(`ar-${i}-${c}`);if(!r)continue;const inp=r.querySelectorAll('input');const t=(parseFloat(inp[1]?.value)||0)*(parseFloat(inp[2]?.value)||0);cost+=t;const el=document.getElementById(`at-${i}-${c}`);if(el)el.textContent=fmt(t);}const m=parseFloat(document.getElementById('marginAccom').value)||0;document.getElementById('accomSummary').textContent=`${fmt(cost)} → ${fmt(sell(cost,m))} MAD`;updateGT();}
 
@@ -491,7 +511,7 @@ function restoreSnapshot(snap){
   numDays=snap.numDays||0;arrivalDate=snap.arrivalDate||null;numCats=snap.numCats||1;extrasCount=0;
   const f=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v||'';};
   f('quoteRef',snap.ref);f('quoteDate',snap.quoteDate);f('version',snap.version);f('status',snap.status);f('clientName',snap.clientName);f('pax',snap.pax);f('arrivalDate',snap.arrivalDate);f('departureDate',snap.departureDate);f('currency',snap.currency);f('eurRate',snap.eurRate);f('quickNote',snap.quickNote);f('notes',snap.notes);f('marginAccom',snap.marginAccom);f('marginTrans',snap.marginTrans);f('marginAct',snap.marginAct);f('marginExtras',snap.marginExtras);
-  if(numDays>0){document.getElementById('daysDisplay').value=`${numDays} jour${numDays>1?'s':''}`;rebuildAccom(snap.accomData||{});rebuildTrans(snap.transData||{});rebuildAct(snap.actData||{});}
+  if(numDays>0){document.getElementById('daysDisplay').value=numDays;rebuildAccom(snap.accomData||{});rebuildTrans(snap.transData||{});rebuildAct(snap.actData||{});}
   document.getElementById('extrasBody').innerHTML='';
   const extRows=Object.values(snap.extrasData||{});
   if(extRows.length>0){extRows.forEach(vals=>{const id=extrasCount++;const tr=document.createElement('tr');tr.innerHTML=`<td><input type="text" value="${vals[0]||''}" oninput="recalcExtras();markUnsaved()"></td><td style="text-align:right"><input type="number" min="0" step="0.01" value="${vals[1]||0}" oninput="recalcExtras();markUnsaved()"></td><td style="text-align:right"><input type="number" min="0" value="${vals[2]||0}" oninput="recalcExtras();markUnsaved()"></td><td class="gen-total" id="et-${id}">0,00</td>`;document.getElementById('extrasBody').appendChild(tr);});}else initExtras();
@@ -614,7 +634,7 @@ function newDevis(){
   document.getElementById('quoteRef').value=getNextRef();
   document.getElementById('version').value='v1';document.getElementById('status').value='draft';
   document.getElementById('pax').value='2';document.getElementById('eurRate').value='10.5';
-  document.getElementById('daysDisplay').value='—';
+  document.getElementById('daysDisplay').value='';
   document.getElementById('marginAccom').value='0';document.getElementById('marginTrans').value='20';
   document.getElementById('marginAct').value='20';document.getElementById('marginExtras').value='20';
   numDays=0;arrivalDate=null;numCats=1;extrasCount=0;currentDevisKey=null;
@@ -622,6 +642,52 @@ function newDevis(){
   initExtras();recalcAll();
   document.getElementById('saveDot').className='save-dot';
   document.getElementById('saveLabel').textContent='Nouveau devis';isSaved=false;
+}
+
+async function exportAllVersions(){
+  if(!currentDevisKey){showToast('⚠ Sauvegardez le devis avant d\'exporter','error');return;}
+  const snap = takeSnapshot();
+  const ref = snap.ref || 'QT';
+  // Récupérer toutes les versions de ce devis
+  const all = JSON.parse(localStorage.getItem ? '{}' : '{}');
+  const allKeys = Object.keys(localStorage).filter(k=>k.startsWith('vm_devis_'+ref+'_'));
+  if(allKeys.length === 0){showToast('⚠ Aucune version sauvegardée','error');return;}
+  showToast(`⏳ Génération ${allKeys.length} version(s)...`,'success');
+  try {
+    const versions = allKeys.map(k=>{
+      const d = JSON.parse(localStorage.getItem(k)||'{}');
+      return {
+        ref: d.ref, version: d.version, status: d.status,
+        client: d.clientName, contact: d.contactName||'',
+        pax: parseInt(d.pax)||1, arr: d.arrivalDate, dep: d.departureDate,
+        numDays: d.numDays, numCats: d.numCats||1,
+        currency: d.currency, rate: parseFloat(d.eurRate)||10.5,
+        quoteDate: d.quoteDate,
+        marginAccom: parseFloat(d.marginAccom)||0,
+        marginTrans: parseFloat(d.marginTrans)||20,
+        marginAct: parseFloat(d.marginAct)||20,
+        marginExtras: parseFloat(d.marginExtras)||20,
+        accomData: d.accomData||{},
+        transData: d.transData||{},
+        actData: d.actData||{},
+        extrasData: d.extrasData||{}
+      };
+    });
+    const resp = await fetch('https://fitplanning.onrender.com/export-all-versions', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({versions})
+    });
+    if(!resp.ok) throw new Error('Server error');
+    const blob = await resp.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href=url; a.download=`AllVersions_${ref}_${snap.clientName||'Client'}.xlsx`;
+    a.click(); URL.revokeObjectURL(url);
+    showToast(`✅ ${allKeys.length} version(s) exportées !`,'success');
+  } catch(e) {
+    showToast('⚠ Erreur export — réessayez dans 30s','error');
+    console.error(e);
+  }
 }
 
 function readGenRows(bodyId){const saved={};document.querySelectorAll(`#${bodyId} tr`).forEach((tr,i)=>{saved[i]=Array.from(tr.querySelectorAll('input')).map(el=>el.value);});return saved;}
