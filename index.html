@@ -4,6 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<!-- ✅ SUPABASE SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const _supa = supabase.createClient(
+    'https://fdgprtdivvdxqtvpmjud.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkZ3BydGRpdnZkeHF0dnBtanVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5MTQyNTcsImV4cCI6MjA5MTQ5MDI1N30.qpYIbHfMkCqOAZg0xxTAAh36dr8HbfBl4sEx6GCIGys'
+  );
+</script>
+
 <style>
   :root {
     --navy:#1A2E4A; --blue:#2B5EA7; --blue-light:#4A7BC8; --blue-pale:#E8EFF8;
@@ -13,15 +23,11 @@
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text);}
-
-  /* HEADER */
   .app-header{background:var(--navy);padding:11px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--gold);}
   .logo-text{font-family:'Cormorant Garamond',serif;color:var(--gold);font-size:20px;letter-spacing:1px;}
   .logo-sub{color:rgba(255,255,255,.45);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-top:1px;}
   .header-divider{width:1px;height:32px;background:rgba(255,255,255,.15);margin:0 12px;}
   .header-actions{display:flex;gap:7px;align-items:center;}
-
-  /* TOUS LES BOUTONS EN BLANC PAR DÉFAUT */
   .btn{padding:7px 14px;border-radius:4px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;border:none;transition:all .18s;white-space:nowrap;color:#fff;}
   .btn-gold{background:var(--gold);color:var(--navy);font-weight:700;}
   .btn-gold:hover{background:#B8922A;color:var(--navy);}
@@ -33,14 +39,10 @@
   .btn-ghost:hover{border-color:var(--gold);color:var(--gold);}
   .btn-danger{background:transparent;color:var(--red);border:1px solid var(--red);font-size:11px;padding:5px 10px;}
   .btn-danger:hover{background:var(--red);color:#fff;}
-
-  /* SAVE INDICATOR */
   .save-indicator{font-size:11px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:5px;}
   .save-dot{width:7px;height:7px;border-radius:50%;background:#6B7C93;flex-shrink:0;}
   .save-dot.saved{background:#27AE60;}
   .save-dot.unsaved{background:#E67E22;}
-
-  /* MODAL */
   .modal-overlay{position:fixed;inset:0;background:rgba(10,20,40,.6);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;}
   .modal-overlay.open{display:flex;}
   .modal{background:#fff;border-radius:8px;width:100%;max-width:820px;max-height:88vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3);}
@@ -69,8 +71,6 @@
   .status-sent{background:#DBEAFE;color:#1E40AF;}
   .status-confirmed{background:#D1FAE5;color:#065F46;}
   .no-devis{text-align:center;padding:40px 20px;color:var(--text-muted);font-size:13px;}
-
-  /* MAIN */
   .main{max-width:1260px;margin:0 auto;padding:20px;}
   .info-card{background:#fff;border:1px solid var(--border);border-top:3px solid var(--blue);border-radius:6px;padding:18px 22px;margin-bottom:16px;}
   .card-title{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--navy);margin-bottom:12px;padding-bottom:9px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
@@ -107,7 +107,6 @@
   .margin-row{background:#F0F4FA;padding:8px 13px;display:flex;align-items:center;gap:12px;border-top:1px solid var(--border);flex-wrap:wrap;}
   .margin-row label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);}
   .margin-row input[type=number]{width:55px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px;font-weight:700;color:var(--blue);background:#fff;outline:none;}
-  /* Supprimer les flèches sur tous les champs numériques */
   input[type=number]::-webkit-inner-spin-button,
   input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
   input[type=number]{-moz-appearance:textfield;}
@@ -148,7 +147,6 @@
 </head>
 <body>
 
-
 <!-- LOGIN PAGE -->
 <div id="loginPage" style="position:fixed;inset:0;background:linear-gradient(135deg,#1A2E4A 0%,#2B5EA7 100%);display:flex;align-items:center;justify-content:center;z-index:9999;">
   <div style="background:#fff;border-radius:12px;padding:40px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.3);">
@@ -165,7 +163,7 @@
     <div style="margin-bottom:20px;position:relative;">
       <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#6B7C93;display:block;margin-bottom:5px;">Mot de passe</label>
       <input type="password" id="loginPwd" placeholder="••••••••" style="width:100%;border:1px solid #D8E2EF;border-radius:6px;padding:10px 40px 10px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:#1E2A3A;background:#F7F8FA;outline:none;" onkeydown="if(event.key==='Enter')doLogin()">
-      <button onclick="togglePwd()" style="position:absolute;right:10px;top:30px;background:none;border:none;cursor:pointer;color:#6B7C93;font-size:16px;" id="pwdToggle">👁</button>
+      <button onclick="togglePwd()" style="position:absolute;right:10px;top:30px;background:none;border:none;cursor:pointer;color:#6B7C93;font-size:16px;">👁</button>
     </div>
     <div id="loginError" style="color:#C0392B;font-size:11px;margin-bottom:10px;display:none;text-align:center;">Identifiants incorrects</div>
     <button onclick="doLogin()" style="width:100%;background:#1A2E4A;color:#fff;border:none;border-radius:6px;padding:12px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;">Se connecter</button>
@@ -393,11 +391,15 @@
     <label>Notes / Remarques</label>
     <textarea id="notes" placeholder="Conditions particulières, inclusions, exclusions..." oninput="markUnsaved()"></textarea>
   </div>
-  <div class="app-footer">Visit Morocco Travel & Events &nbsp;|&nbsp; helfassi@visitmoroccodmc.com &nbsp;|&nbsp; www.visitmoroccodmc.com</div>
+  <div class="app-footer">Visit Morocco Travel & Events &nbsp;|&nbsp; incoming@visitmoroccodmc.com &nbsp;|&nbsp; www.visitmoroccodmc.com</div>
 </div>
 
 <script>
-let numDays=0,arrivalDate=null,numCats=1,extrasCount=0,currentDevisKey=null,isSaved=true;
+// ─── VARIABLES GLOBALES ───────────────────────────────────────────────────────
+let numDays=0,arrivalDate=null,numCats=1,extrasCount=0,currentDevisId=null,isSaved=true;
+let currentAgent=null;
+let _cachedDevis=[];
+
 const fmt=v=>Number(v||0).toLocaleString('fr-MA',{minimumFractionDigits:2,maximumFractionDigits:2});
 const sell=(c,m)=>m<100?c/(1-m/100):c;
 const dayLbl=i=>`Jour ${i+1}`;
@@ -408,30 +410,16 @@ function showToast(msg,type='success'){const t=document.getElementById('toast');
 function markUnsaved(){isSaved=false;document.getElementById('saveDot').className='save-dot unsaved';document.getElementById('saveLabel').textContent='Non sauvegardé';}
 function markSaved(lbl=''){isSaved=true;document.getElementById('saveDot').className='save-dot saved';document.getElementById('saveLabel').textContent=lbl||'Sauvegardé';}
 
+// ─── DATES & TABLEAUX ─────────────────────────────────────────────────────────
 function onDatesChange(){
   const a=document.getElementById('arrivalDate').value,d=document.getElementById('departureDate').value;
-  if(a&&d){
-    const diff=Math.round((new Date(d)-new Date(a))/86400000);
-    if(diff>0){
-      numDays=diff; arrivalDate=a;
-      document.getElementById('daysDisplay').value=diff;
-      rebuildAll();
-    } else {
-      document.getElementById('daysDisplay').value='';
-      document.getElementById('daysDisplay').placeholder='⚠ Dates invalides';
-    }
-  }
+  if(a&&d){const diff=Math.round((new Date(d)-new Date(a))/86400000);
+    if(diff>0){numDays=diff;arrivalDate=a;document.getElementById('daysDisplay').value=diff;rebuildAll();}
+    else{document.getElementById('daysDisplay').value='';document.getElementById('daysDisplay').placeholder='⚠ Dates invalides';}}
 }
-
 function onDaysManualChange(){
-  const val = parseInt(document.getElementById('daysDisplay').value)||0;
-  if(val>0){
-    numDays=val;
-    // Si pas de dates, arrivalDate reste null → affiche Jour 1, Jour 2...
-    const a=document.getElementById('arrivalDate').value;
-    arrivalDate = a || null;
-    rebuildAll();
-  }
+  const val=parseInt(document.getElementById('daysDisplay').value)||0;
+  if(val>0){numDays=val;const a=document.getElementById('arrivalDate').value;arrivalDate=a||null;rebuildAll();}
 }
 function rebuildAll(){rebuildAccom();rebuildTrans();rebuildAct();recalcAll();}
 
@@ -505,7 +493,7 @@ function updateGT(){
 }
 function recalcAll(){recalcAccom();recalcTrans();recalcAct();recalcExtras();}
 
-function takeSnapshot(){return{agent:currentAgent?currentAgent.name:'',agentEmail:currentAgent?currentAgent.email:'incoming[at]visitmoroccodmc[dot]com',ref:document.getElementById('quoteRef').value,quoteDate:document.getElementById('quoteDate').value,version:document.getElementById('version').value,status:document.getElementById('status').value,clientName:document.getElementById('clientName').value,pax:document.getElementById('pax').value,arrivalDate:document.getElementById('arrivalDate').value,departureDate:document.getElementById('departureDate').value,numDays,numCats,currency:document.getElementById('currency').value,eurRate:document.getElementById('eurRate').value,quickNote:document.getElementById('quickNote').value,notes:document.getElementById('notes').value,marginAccom:document.getElementById('marginAccom').value,marginTrans:document.getElementById('marginTrans').value,marginAct:document.getElementById('marginAct').value,marginExtras:document.getElementById('marginExtras').value,accomData:readAccomData(),transData:readGenRows('transBody'),actData:readGenRows('actBody'),extrasData:readGenRows('extrasBody'),savedAt:new Date().toISOString()};}
+function takeSnapshot(){return{agent:currentAgent?currentAgent.name:'',agentEmail:currentAgent?currentAgent.email:'incoming@visitmoroccodmc.com',ref:document.getElementById('quoteRef').value,quoteDate:document.getElementById('quoteDate').value,version:document.getElementById('version').value,status:document.getElementById('status').value,clientName:document.getElementById('clientName').value,pax:document.getElementById('pax').value,arrivalDate:document.getElementById('arrivalDate').value,departureDate:document.getElementById('departureDate').value,numDays,numCats,currency:document.getElementById('currency').value,eurRate:document.getElementById('eurRate').value,quickNote:document.getElementById('quickNote').value,notes:document.getElementById('notes').value,marginAccom:document.getElementById('marginAccom').value,marginTrans:document.getElementById('marginTrans').value,marginAct:document.getElementById('marginAct').value,marginExtras:document.getElementById('marginExtras').value,accomData:readAccomData(),transData:readGenRows('transBody'),actData:readGenRows('actBody'),extrasData:readGenRows('extrasBody'),savedAt:new Date().toISOString()};}
 
 function restoreSnapshot(snap){
   numDays=snap.numDays||0;arrivalDate=snap.arrivalDate||null;numCats=snap.numCats||1;extrasCount=0;
@@ -518,298 +506,195 @@ function restoreSnapshot(snap){
   recalcAll();updateGT();
 }
 
-function getAllDevis(){const keys=Object.keys(localStorage).filter(k=>k.startsWith('vm_devis_'));const result={};keys.forEach(k=>{try{result[k]=JSON.parse(localStorage.getItem(k));}catch(e){}});return result;}
+// ─── SUPABASE : DEVIS ─────────────────────────────────────────────────────────
 
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyTpFjkBtcIDwYHhJjwbQ84pRjlFce1Fepj3w4l6c2FWS1WuHqe7pTL9WL7oPz3zX4b/exec';
-
-function saveDevis(){
-  const snap=takeSnapshot();const ref=snap.ref||'sans-ref';
-  let newVerNum=1;
-  if(currentDevisKey){const ex=JSON.parse(localStorage.getItem(currentDevisKey)||'{}');const cv=parseInt((ex.version||'v1').replace('v',''))||1;newVerNum=cv+1;}
-  else{const all=getAllDevis();const same=Object.values(all).filter(v=>v.ref===ref).map(v=>parseInt((v.version||'v1').replace('v',''))||1);if(same.length>0)newVerNum=Math.max(...same)+1;}
-  snap.version=`v${newVerNum}`;document.getElementById('version').value=snap.version;
-  const key=`vm_devis_${ref}_${snap.version}_${Date.now()}`;
-  localStorage.setItem(key,JSON.stringify(snap));currentDevisKey=key;
-  markSaved(`${snap.version} sauvegardé`);updateDevisCount();
-  showToast(`✅ Devis ${ref} ${snap.version} sauvegardé !`,'success');
-  // Envoyer au Google Sheet
-  syncToSheet(snap);
-}
-
-function syncToSheet(snap){
-  // Calcul totaux
-  const rate = parseFloat(snap.eurRate)||10.5;
-  let totalMad = 0;
-  const sell = (c,m) => m<100 ? c/(1-m/100) : c;
-  let aC=0,tC=0,xC=0,eC=0;
-  const ad = snap.accomData||{};
-  for(let i=0;i<snap.numDays;i++) for(let c=0;c<snap.numCats;c++){const r=(ad[i]||{})[c]||{};aC+=(parseFloat(r.units)||0)*(parseFloat(r.rate)||0);}
-  const td = snap.transData||{};
-  for(let i=0;i<snap.numDays;i++){const r=td[i]||[];tC+=((parseFloat(r[1])||0)+(parseFloat(r[2])||0))*(parseFloat(r[3])||1);}
-  const xd = snap.actData||{};
-  for(let i=0;i<snap.numDays;i++){const r=xd[i]||[];xC+=(parseFloat(r[1])||0)*(parseFloat(r[2])||0);}
-  Object.values(snap.extrasData||{}).forEach(r=>{eC+=(parseFloat(r[1])||0)*(parseFloat(r[2])||0);});
-  const aS=sell(aC,parseFloat(snap.marginAccom)||0);
-  const tS=sell(tC,parseFloat(snap.marginTrans)||20);
-  const xS=sell(xC,parseFloat(snap.marginAct)||20);
-  const eS=sell(eC,parseFloat(snap.marginExtras)||20);
-  totalMad = aS+tS+xS+eS;
-  const totalDevise = Math.ceil((totalMad/rate)/10)*10;
-
-  // Résumés hébergement/transport
-  const accomSummary = Object.values(ad).map(day=>Object.values(day).map(r=>r.hotel||'').filter(Boolean).join(', ')).filter(Boolean).join(' | ');
-  const transSummary = Object.values(td).map(r=>r[0]||'').filter(Boolean).join(' | ');
-  const actSummary = Object.values(xd).map(r=>r[0]||'').filter(Boolean).join(' | ');
-  const extrasSummary = Object.values(snap.extrasData||{}).map(r=>r[0]||'').filter(Boolean).join(' | ');
-
-  const payload = {
-    agent: snap.agent || 'Agent Visit Morocco',
-    ref: snap.ref, version: snap.version, status: snap.status,
-    client: snap.clientName, contact: snap.contactName||'',
-    pax: snap.pax, arr: snap.arrivalDate, dep: snap.departureDate,
-    numDays: snap.numDays, currency: snap.currency, rate: snap.eurRate,
-    marginAccom: snap.marginAccom, marginTrans: snap.marginTrans,
-    marginAct: snap.marginAct, marginExtras: snap.marginExtras,
-    totalMad: Math.round(totalMad), totalDevise,
-    accomSummary, transSummary, actSummary, extrasSummary,
-    notes: snap.notes||''
-  };
-
-  fetch(SHEET_URL, {
-    method:'POST', mode:'no-cors',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify(payload)
-  }).catch(()=>{});
-}
-
-function loadDevis(key){
-  if(!isSaved&&currentDevisKey){if(!confirm('Modifications non sauvegardées. Continuer ?'))return;}
-  const snap=JSON.parse(localStorage.getItem(key)||'{}');
-  restoreSnapshot(snap);currentDevisKey=key;markSaved(`${snap.version} chargé`);closeModal();
-  showToast(`📂 Devis ${snap.ref} ${snap.version} chargé`,'success');
-}
-
-function deleteAllVersions(ref,e){
-  e.stopPropagation();if(!confirm(`Supprimer toutes les versions du devis ${ref} ?`))return;
-  Object.keys(localStorage).filter(k=>k.startsWith(`vm_devis_${ref}_`)).forEach(k=>localStorage.removeItem(k));
-  if(currentDevisKey&&currentDevisKey.includes(`vm_devis_${ref}_`)){currentDevisKey=null;markUnsaved();}
-  updateDevisCount();renderDevisList();showToast(`🗑 Devis ${ref} supprimé`,'error');
-}
-
-function updateDevisCount(){document.getElementById('devisCount').textContent=Object.keys(localStorage).filter(k=>k.startsWith('vm_devis_')).length;}
-
-function openModal(){renderDevisList();document.getElementById('modalOverlay').classList.add('open');}
-function closeModal(){document.getElementById('modalOverlay').classList.remove('open');}
-document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('modalOverlay'))closeModal();});
-
-function renderDevisList(){
-  const search=document.getElementById('searchInput').value.toLowerCase();
-  const statusF=document.getElementById('filterStatus').value;
-  const all=getAllDevis();const list=document.getElementById('devisList');
-  const grouped={};
-  Object.entries(all).forEach(([k,v])=>{const ref=v.ref||'?';if(!grouped[ref])grouped[ref]=[];grouped[ref].push({key:k,data:v});});
-  const refs=Object.keys(grouped).filter(ref=>{const latest=grouped[ref][grouped[ref].length-1].data;return(!search||ref.toLowerCase().includes(search)||(latest.clientName||'').toLowerCase().includes(search))&&(!statusF||latest.status===statusF);});
-  if(refs.length===0){list.innerHTML=`<div class="no-devis">📭 Aucun devis trouvé<br><small>Sauvegardez votre premier devis</small></div>`;return;}
-  list.innerHTML='';
-  refs.sort().forEach(ref=>{
-    const versions=grouped[ref].sort((a,b)=>a.data.savedAt>b.data.savedAt?1:-1);
-    const latest=versions[versions.length-1];
-    const sc={'draft':'status-draft','sent':'status-sent','confirmed':'status-confirmed'}[latest.data.status]||'status-draft';
-    const sl={'draft':'Brouillon','sent':'Envoyé','confirmed':'Confirmé'}[latest.data.status]||'—';
-    const chips=versions.map(v=>`<span class="ver-chip ${v.key===latest.key?'latest':''}" onclick="loadDevis('${v.key}')">${v.data.version}</span>`).join('');
-    const card=document.createElement('div');card.className='devis-card';
-    card.innerHTML=`<div class="devis-ref">${ref}</div>
-      <div class="devis-client"><div style="font-weight:600">${latest.data.clientName||'—'}</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px">${latest.data.arrivalDate||'?'} → ${latest.data.departureDate||'?'} · ${latest.data.numDays||0} jours</div></div>
-      <div class="devis-meta"><span class="status-pill ${sc}">${sl}</span><div class="devis-versions">${chips}</div><div class="devis-date">${latest.data.savedAt?new Date(latest.data.savedAt).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):'—'}</div></div>
-      <button class="btn btn-danger" onclick="deleteAllVersions('${ref}',event)">🗑</button>`;
-    list.appendChild(card);
-  });
-}
-
-function newDevis(){
-  if(!isSaved&&currentDevisKey){if(!confirm('Modifications non sauvegardées. Continuer ?'))return;}
-  ['accomBody','transBody','actBody','extrasBody'].forEach(id=>document.getElementById(id).innerHTML='');
-  ['quoteRef','clientName','arrivalDate','departureDate','quickNote','notes'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('quoteDate').value=new Date().toISOString().split('T')[0];
-  document.getElementById('quoteRef').value=getNextRef();
-  document.getElementById('version').value='v1';document.getElementById('status').value='draft';
-  document.getElementById('pax').value='2';document.getElementById('eurRate').value='10.5';
-  document.getElementById('daysDisplay').value='';
-  document.getElementById('marginAccom').value='0';document.getElementById('marginTrans').value='20';
-  document.getElementById('marginAct').value='20';document.getElementById('marginExtras').value='20';
-  numDays=0;arrivalDate=null;numCats=1;extrasCount=0;currentDevisKey=null;
-  document.getElementById('catBadge').textContent='1 CATÉGORIE';
-  initExtras();recalcAll();
-  document.getElementById('saveDot').className='save-dot';
-  document.getElementById('saveLabel').textContent='Nouveau devis';isSaved=false;
-}
-
-async function exportAllVersions(){
-  if(!currentDevisKey){showToast('⚠ Sauvegardez le devis avant d\'exporter','error');return;}
-  const snap = takeSnapshot();
-  const ref = snap.ref || 'QT';
-  // Récupérer toutes les versions de ce devis
-  const all = JSON.parse(localStorage.getItem ? '{}' : '{}');
-  const allKeys = Object.keys(localStorage).filter(k=>k.startsWith('vm_devis_'+ref+'_'));
-  if(allKeys.length === 0){showToast('⚠ Aucune version sauvegardée','error');return;}
-  showToast(`⏳ Génération ${allKeys.length} version(s)...`,'success');
+async function getAllDevis(){
   try {
-    const versions = allKeys.map(k=>{
-      const d = JSON.parse(localStorage.getItem(k)||'{}');
-      return {
-        ref: d.ref, version: d.version, status: d.status,
-        client: d.clientName, contact: d.contactName||'',
-        pax: parseInt(d.pax)||1, arr: d.arrivalDate, dep: d.departureDate,
-        numDays: d.numDays, numCats: d.numCats||1,
-        currency: d.currency, rate: parseFloat(d.eurRate)||10.5,
-        quoteDate: d.quoteDate,
-        marginAccom: parseFloat(d.marginAccom)||0,
-        marginTrans: parseFloat(d.marginTrans)||20,
-        marginAct: parseFloat(d.marginAct)||20,
-        marginExtras: parseFloat(d.marginExtras)||20,
-        accomData: d.accomData||{},
-        transData: d.transData||{},
-        actData: d.actData||{},
-        extrasData: d.extrasData||{}
-      };
-    });
-    const resp = await fetch('https://fitplanning.onrender.com/export-all-versions', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({versions})
-    });
-    if(!resp.ok) throw new Error('Server error');
-    const blob = await resp.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href=url; a.download=`AllVersions_${ref}_${snap.clientName||'Client'}.xlsx`;
-    a.click(); URL.revokeObjectURL(url);
-    showToast(`✅ ${allKeys.length} version(s) exportées !`,'success');
-  } catch(e) {
-    showToast('⚠ Erreur export — réessayez dans 30s','error');
-    console.error(e);
+    let query = _supa.from('devis').select('*').order('created_at', {ascending: false});
+    if(currentAgent && currentAgent.role !== 'admin'){
+      query = query.eq('agent', currentAgent.name);
+    }
+    const {data, error} = await query;
+    if(error) throw error;
+    _cachedDevis = data || [];
+    return _cachedDevis;
+  } catch(e){
+    console.error('getAllDevis error:', e);
+    return [];
   }
 }
 
-function readGenRows(bodyId){const saved={};document.querySelectorAll(`#${bodyId} tr`).forEach((tr,i)=>{saved[i]=Array.from(tr.querySelectorAll('input')).map(el=>el.value);});return saved;}
-function printQuotation(){window.print();}
-async function exportExcel(){
-  if(!currentDevisKey){showToast('⚠ Sauvegardez le devis avant d\'exporter','error');return;}
+async function saveDevis(){
   const snap = takeSnapshot();
-  showToast('⏳ Génération Excel...','success');
+  const ref = snap.ref || 'sans-ref';
+  // Calculer le numéro de version
+  const existing = _cachedDevis.filter(d => d.ref === ref);
+  const maxVer = existing.length > 0 ? Math.max(...existing.map(d => d.version || 1)) : 0;
+  const newVerNum = currentDevisId ? (maxVer) : (maxVer + 1);
+  snap.version = `v${newVerNum}`;
+  document.getElementById('version').value = snap.version;
+
   try {
-    const payload = {
-      ref: snap.ref, version: snap.version, status: snap.status,
-      client: snap.clientName, contact: snap.contactName||'',
-      pax: parseInt(snap.pax)||1, arr: snap.arrivalDate, dep: snap.departureDate,
-      numDays: snap.numDays, numCats: snap.numCats||1,
-      currency: snap.currency, rate: parseFloat(snap.eurRate)||10.5,
-      quoteDate: snap.quoteDate,
-      marginAccom: parseFloat(snap.marginAccom)||0,
-      marginTrans: parseFloat(snap.marginTrans)||20,
-      marginAct: parseFloat(snap.marginAct)||20,
-      marginExtras: parseFloat(snap.marginExtras)||20,
-      accomData: snap.accomData||{},
-      transData: snap.transData||{},
-      actData: snap.actData||{},
-      extrasData: snap.extrasData||{}
-    };
-    const resp = await fetch('https://fitplanning.onrender.com/export-quotation', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify(payload)
-    });
-    if(!resp.ok) throw new Error('Server error');
-    const blob = await resp.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href=url;
-    a.download=`Quotation_${snap.ref}_${snap.clientName||'Client'}.xlsx`;
-    a.click(); URL.revokeObjectURL(url);
-    showToast('✅ Quotation Excel téléchargée !','success');
-  } catch(e) {
-    showToast('⚠ Erreur export — réessayez dans 30s','error');
-    console.error(e);
+    let result;
+    if(currentDevisId){
+      // Mise à jour version existante
+      const {data, error} = await _supa.from('devis').update({
+        ref, agent: currentAgent.name, client: snap.clientName,
+        status: snap.status, version: newVerNum,
+        data: snap, updated_at: new Date().toISOString()
+      }).eq('id', currentDevisId).select().single();
+      if(error) throw error;
+      result = data;
+    } else {
+      // Nouveau devis
+      const {data, error} = await _supa.from('devis').insert({
+        ref, agent: currentAgent.name, client: snap.clientName,
+        status: snap.status, version: newVerNum, data: snap
+      }).select().single();
+      if(error) throw error;
+      result = data;
+      currentDevisId = result.id;
+    }
+    markSaved(`v${newVerNum} sauvegardé`);
+    await updateDevisCount();
+    showToast(`✅ Devis ${ref} v${newVerNum} sauvegardé !`, 'success');
+    syncToSheet(snap);
+  } catch(e){
+    console.error('saveDevis error:', e);
+    showToast('⚠ Erreur sauvegarde Supabase', 'error');
   }
 }
 
-
-function openPreview() {
-  const snap = takeSnapshot();
-  const PREVIEW_URL = 'https://fitplanning-alpha.vercel.app/preview.html';
-  // Encoder les données dans l'URL via sessionStorage partagé
-  const data = {
-    ref: snap.ref || 'QT-001',
-    version: snap.version || 'v1',
-    quoteDate: snap.quoteDate || new Date().toISOString().split('T')[0],
-    status: snap.status || 'sent',
-    client: snap.clientName || '',
-    contact: snap.contactName || '',
-    paxNames: snap.paxNames || snap.clientName || '',
-    pax: parseInt(snap.pax) || 2,
-    arr: snap.arrivalDate || '',
-    dep: snap.departureDate || '',
-    numDays: snap.numDays || 0,
-    numCats: snap.numCats || 1,
-    currency: snap.currency || 'EUR',
-    rate: parseFloat(snap.eurRate) || 10.5,
-    totalSellMad: 0,
-    agent: document.getElementById('quickNote')?.value || 'Agent Visit Morocco',
-    agentEmail: currentAgent ? currentAgent.email : 'incoming[at]visitmoroccodmc[dot]com',
-    agentPhone: '+212 524 42 03 87',
-    agentMobile: '+212 665 877 863',
-    accomData: snap.accomData || {},
-    mealsData: snap.mealsData || [],
-    transData: snap.transData || {},
-    actData: snap.actData || [],
-    extData: snap.extrasData ? Object.values(snap.extrasData).map(r => ({desc: r[0]||'', rate: r[1]||0, qty: r[2]||1})) : [],
-    incLines: snap.incLines || [],
-    marginAccom: parseFloat(snap.marginAccom) || 0,
-    marginTrans: parseFloat(snap.marginTrans) || 20,
-    marginAct: parseFloat(snap.marginAct) || 20,
-    marginExtras: parseFloat(snap.marginExtras) || 20,
-    notes: snap.notes || '',
-  };
-  // Sauvegarder dans localStorage pour que preview.html puisse le lire
-  localStorage.setItem('vm_preview_data', JSON.stringify(data));
-  window.open(PREVIEW_URL, '_blank');
+async function loadDevis(id){
+  if(!isSaved && currentDevisId){ if(!confirm('Modifications non sauvegardées. Continuer ?')) return; }
+  const devis = _cachedDevis.find(d => d.id === id);
+  if(!devis){ showToast('⚠ Devis introuvable', 'error'); return; }
+  restoreSnapshot(devis.data);
+  currentDevisId = id;
+  markSaved(`v${devis.version} chargé`);
+  closeModal();
+  showToast(`📂 Devis ${devis.ref} v${devis.version} chargé`, 'success');
 }
 
-
-// ── SYSTÈME DE SESSIONS ───────────────────────────────────────────────────────
-const DEFAULT_AGENTS = [
-  {name:'admin',    pwd:'admin2025?',    email:'',                                    role:'admin',  prefix:'QT'},
-  {name:'Abdelkay', pwd:'Abdelkay2025?', email:'incoming[at]visitmoroccodmc[dot]com', role:'agent',  prefix:'ABDEL'},
-  {name:'Siham',    pwd:'Siham2025?',    email:'incoming[at]visitmoroccodmc[dot]com', role:'agent',  prefix:'SIH'},
-  {name:'Mohamed',  pwd:'Mohamed2025?',  email:'incoming[at]visitmoroccodmc[dot]com', role:'agent',  prefix:'MOH'},
-];
-
-function getAgents(){
-  try{ return JSON.parse(localStorage.getItem('vm_agents')||'null') || DEFAULT_AGENTS; }
-  catch(e){ return DEFAULT_AGENTS; }
+async function deleteDevis(id, ref, e){
+  e.stopPropagation();
+  if(!confirm(`Supprimer le devis ${ref} ?`)) return;
+  try {
+    const {error} = await _supa.from('devis').delete().eq('id', id);
+    if(error) throw error;
+    if(currentDevisId === id){ currentDevisId = null; markUnsaved(); }
+    await updateDevisCount();
+    renderDevisList();
+    showToast(`🗑 Devis ${ref} supprimé`, 'error');
+  } catch(e){
+    showToast('⚠ Erreur suppression', 'error');
+  }
 }
-function saveAgents(agents){ localStorage.setItem('vm_agents', JSON.stringify(agents)); }
 
-let currentAgent = null;
+async function updateDevisCount(){
+  const all = await getAllDevis();
+  document.getElementById('devisCount').textContent = all.length;
+}
 
-
-function getNextRef(){
+async function getNextRef(){
   if(!currentAgent) return 'QT-001';
   const prefix = currentAgent.prefix || 'QT';
-  const all = getAllDevis();
-  // Trouver le numéro max pour ce préfixe
+  const all = await getAllDevis();
   let maxNum = 0;
-  Object.values(all).forEach(d => {
+  all.forEach(d => {
     const ref = d.ref || '';
     if(ref.startsWith(prefix + '-')){
       const num = parseInt(ref.replace(prefix + '-', '')) || 0;
       if(num > maxNum) maxNum = num;
     }
   });
-  const nextNum = String(maxNum + 1).padStart(3, '0');
-  return `${prefix}-${nextNum}`;
+  return `${prefix}-${String(maxNum + 1).padStart(3, '0')}`;
 }
 
-function refreshLoginSelect(){
-  const agents = getAgents();
+function openModal(){ renderDevisList(); document.getElementById('modalOverlay').classList.add('open'); }
+function closeModal(){ document.getElementById('modalOverlay').classList.remove('open'); }
+document.getElementById('modalOverlay').addEventListener('click', e => { if(e.target === document.getElementById('modalOverlay')) closeModal(); });
+
+async function renderDevisList(){
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const statusF = document.getElementById('filterStatus').value;
+  const all = await getAllDevis();
+  const list = document.getElementById('devisList');
+
+  // Grouper par ref
+  const grouped = {};
+  all.forEach(d => {
+    const ref = d.ref || '?';
+    if(!grouped[ref]) grouped[ref] = [];
+    grouped[ref].push(d);
+  });
+
+  const refs = Object.keys(grouped).filter(ref => {
+    const latest = grouped[ref][0];
+    return (!search || ref.toLowerCase().includes(search) || (latest.client||'').toLowerCase().includes(search))
+        && (!statusF || latest.status === statusF);
+  });
+
+  if(refs.length === 0){
+    list.innerHTML = `<div class="no-devis">📭 Aucun devis trouvé<br><small>Sauvegardez votre premier devis</small></div>`;
+    return;
+  }
+  list.innerHTML = '';
+  refs.sort().forEach(ref => {
+    const versions = grouped[ref].sort((a,b) => a.version - b.version);
+    const latest = versions[versions.length - 1];
+    const sc = {'draft':'status-draft','sent':'status-sent','confirmed':'status-confirmed'}[latest.status] || 'status-draft';
+    const sl = {'draft':'Brouillon','sent':'Envoyé','confirmed':'Confirmé'}[latest.status] || '—';
+    const chips = versions.map(v => `<span class="ver-chip ${v.id===latest.id?'latest':''}" onclick="loadDevis('${v.id}')">v${v.version}</span>`).join('');
+    const savedAt = latest.updated_at ? new Date(latest.updated_at).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+    const card = document.createElement('div'); card.className = 'devis-card';
+    card.innerHTML = `<div class="devis-ref">${ref}</div>
+      <div class="devis-client"><div style="font-weight:600">${latest.client||'—'}</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${latest.data?.arrivalDate||'?'} → ${latest.data?.departureDate||'?'} · ${latest.data?.numDays||0} jours</div></div>
+      <div class="devis-meta"><span class="status-pill ${sc}">${sl}</span><div class="devis-versions">${chips}</div><div class="devis-date">${savedAt}</div></div>
+      <button class="btn btn-danger" onclick="deleteDevis('${latest.id}','${ref}',event)">🗑</button>`;
+    list.appendChild(card);
+  });
+}
+
+async function newDevis(){
+  if(!isSaved && currentDevisId){ if(!confirm('Modifications non sauvegardées. Continuer ?')) return; }
+  ['accomBody','transBody','actBody','extrasBody'].forEach(id => document.getElementById(id).innerHTML = '');
+  ['quoteRef','clientName','arrivalDate','departureDate','quickNote','notes'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('quoteDate').value = new Date().toISOString().split('T')[0];
+  document.getElementById('quoteRef').value = await getNextRef();
+  document.getElementById('version').value = 'v1';
+  document.getElementById('status').value = 'draft';
+  document.getElementById('pax').value = '2';
+  document.getElementById('eurRate').value = '10.5';
+  document.getElementById('daysDisplay').value = '';
+  document.getElementById('marginAccom').value = '0';
+  document.getElementById('marginTrans').value = '20';
+  document.getElementById('marginAct').value = '20';
+  document.getElementById('marginExtras').value = '20';
+  numDays=0; arrivalDate=null; numCats=1; extrasCount=0; currentDevisId=null;
+  document.getElementById('catBadge').textContent = '1 CATÉGORIE';
+  initExtras(); recalcAll();
+  document.getElementById('saveDot').className = 'save-dot';
+  document.getElementById('saveLabel').textContent = 'Nouveau devis';
+  isSaved = false;
+}
+
+// ─── SUPABASE : AGENTS ────────────────────────────────────────────────────────
+
+async function getAgents(){
+  try {
+    const {data, error} = await _supa.from('agents').select('*').order('name');
+    if(error) throw error;
+    return data || [];
+  } catch(e){
+    console.error('getAgents error:', e);
+    return [];
+  }
+}
+
+async function refreshLoginSelect(){
+  const agents = await getAgents();
   const sel = document.getElementById('loginAgent');
   sel.innerHTML = '<option value="">-- Sélectionner --</option>';
   agents.forEach(a => {
@@ -819,11 +704,22 @@ function refreshLoginSelect(){
   });
 }
 
-function initLogin(){
-  refreshLoginSelect();
-  // Vérifier session existante
-  const saved = sessionStorage.getItem('vm_current_agent');
-  if(saved){ currentAgent = JSON.parse(saved); showApp(); }
+async function doLogin(){
+  const name = document.getElementById('loginAgent').value;
+  const pwd = document.getElementById('loginPwd').value;
+  if(!name || !pwd){ document.getElementById('loginError').style.display='block'; return; }
+  try {
+    const {data, error} = await _supa.from('agents').select('*').eq('name', name).eq('pwd', pwd).single();
+    if(error || !data){
+      document.getElementById('loginError').style.display = 'block';
+      return;
+    }
+    currentAgent = data;
+    sessionStorage.setItem('vm_current_agent', JSON.stringify(data));
+    showApp();
+  } catch(e){
+    document.getElementById('loginError').style.display = 'block';
+  }
 }
 
 function togglePwd(){
@@ -831,31 +727,17 @@ function togglePwd(){
   inp.type = inp.type === 'password' ? 'text' : 'password';
 }
 
-function doLogin(){
-  const name = document.getElementById('loginAgent').value;
-  const pwd = document.getElementById('loginPwd').value;
-  const agents = getAgents();
-  const agent = agents.find(a => a.name === name && a.pwd === pwd);
-  if(agent){
-    currentAgent = agent;
-    sessionStorage.setItem('vm_current_agent', JSON.stringify(agent));
-    showApp();
-  } else {
-    document.getElementById('loginError').style.display = 'block';
-  }
-}
-
-function showApp(){
+async function showApp(){
   document.getElementById('loginPage').style.display = 'none';
   if(currentAgent.role === 'admin'){
     document.getElementById('adminBtn').style.display = 'inline-flex';
   }
-  // Auto-générer la référence pour le devis en cours
+  const ref = await getNextRef();
   const currentRef = document.getElementById('quoteRef').value;
   if(!currentRef || currentRef === 'QT-001'){
-    document.getElementById('quoteRef').value = getNextRef();
+    document.getElementById('quoteRef').value = ref;
   }
-  updateDevisCount();
+  await updateDevisCount();
 }
 
 function doLogout(){
@@ -868,72 +750,128 @@ function doLogout(){
   document.getElementById('adminBtn').style.display = 'none';
 }
 
-// Admin Panel
-function openAdminPanel(){
-  renderAgentsList();
-  document.getElementById('adminPanel').classList.add('open');
-}
+// ─── ADMIN AGENTS ─────────────────────────────────────────────────────────────
+function openAdminPanel(){ renderAgentsList(); document.getElementById('adminPanel').classList.add('open'); }
 function closeAdminPanel(){ document.getElementById('adminPanel').classList.remove('open'); }
 
-function renderAgentsList(){
-  const agents = getAgents();
+async function renderAgentsList(){
+  const agents = await getAgents();
   const div = document.getElementById('agentsList');
-  div.innerHTML = agents.map((a,i) => `
+  div.innerHTML = agents.map((a) => `
     <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border:1px solid #D8E2EF;border-radius:6px;margin-bottom:6px;background:#F7F8FA;">
       <div style="flex:1;">
         <div style="font-weight:600;font-size:13px;color:#1A2E4A;">${a.name} <span style="font-size:10px;color:#6B7C93;">(${a.role})</span></div>
-        <div style="font-size:11px;color:#6B7C93;">Pwd: ${a.pwd}</div>
+        <div style="font-size:11px;color:#6B7C93;">${a.email||''}</div>
       </div>
-      ${a.name !== 'admin' ? `<button class="btn btn-danger" onclick="removeAgent(${i})">🗑</button>` : ''}
+      ${a.name !== 'admin' ? `<button class="btn btn-danger" onclick="removeAgent('${a.id}','${a.name}')">🗑</button>` : ''}
     </div>
   `).join('');
 }
 
-function addAgent(){
+async function addAgent(){
   const name = document.getElementById('newAgentName').value.trim();
   const pwd = document.getElementById('newAgentPwd').value.trim();
   if(!name || !pwd){ alert('Nom et mot de passe requis'); return; }
-  const agents = getAgents();
-  if(agents.find(a => a.name === name)){ alert('Agent déjà existant'); return; }
   const prefix = name.substring(0,4).toUpperCase();
-  agents.push({name, pwd, email:'incoming[at]visitmoroccodmc[dot]com', role:'agent', prefix});
-  saveAgents(agents);
-  document.getElementById('newAgentName').value = '';
-  document.getElementById('newAgentPwd').value = '';
-  refreshLoginSelect();
-  renderAgentsList();
-  showToast(`✅ Agent ${name} ajouté !`, 'success');
+  try {
+    const {error} = await _supa.from('agents').insert({
+      name, pwd, email:'incoming@visitmoroccodmc.com', role:'agent', prefix
+    });
+    if(error) throw error;
+    document.getElementById('newAgentName').value = '';
+    document.getElementById('newAgentPwd').value = '';
+    await refreshLoginSelect();
+    await renderAgentsList();
+    showToast(`✅ Agent ${name} ajouté !`, 'success');
+  } catch(e){
+    if(e.code === '23505') alert('Agent déjà existant');
+    else showToast('⚠ Erreur ajout agent', 'error');
+  }
 }
 
-function removeAgent(index){
-  const agents = getAgents();
-  if(!confirm(`Supprimer l'agent ${agents[index].name} ?`)) return;
-  agents.splice(index, 1);
-  saveAgents(agents);
-  refreshLoginSelect();
-  renderAgentsList();
-  showToast('🗑 Agent supprimé', 'error');
+async function removeAgent(id, name){
+  if(!confirm(`Supprimer l'agent ${name} ?`)) return;
+  try {
+    const {error} = await _supa.from('agents').delete().eq('id', id);
+    if(error) throw error;
+    await refreshLoginSelect();
+    await renderAgentsList();
+    showToast('🗑 Agent supprimé', 'error');
+  } catch(e){
+    showToast('⚠ Erreur suppression agent', 'error');
+  }
 }
 
-// Filtrer les devis par agent
-const _getAllDevis_orig = getAllDevis;
-getAllDevis = function(){
-  const all = _getAllDevis_orig();
-  if(!currentAgent || currentAgent.role === 'admin') return all;
-  // Filtrer par agent
-  const filtered = {};
-  Object.entries(all).forEach(([k,v]) => {
-    if(v.agent === currentAgent.name) filtered[k] = v;
-  });
-  return filtered;
-};
+// ─── GOOGLE SHEET SYNC ────────────────────────────────────────────────────────
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyTpFjkBtcIDwYHhJjwbQ84pRjlFce1Fepj3w4l6c2FWS1WuHqe7pTL9WL7oPz3zX4b/exec';
 
-// INIT
+function syncToSheet(snap){
+  const rate=parseFloat(snap.eurRate)||10.5;
+  const sellFn=(c,m)=>m<100?c/(1-m/100):c;
+  let aC=0,tC=0,xC=0,eC=0;
+  const ad=snap.accomData||{};
+  for(let i=0;i<snap.numDays;i++)for(let c=0;c<snap.numCats;c++){const r=(ad[i]||{})[c]||{};aC+=(parseFloat(r.units)||0)*(parseFloat(r.rate)||0);}
+  const td=snap.transData||{};
+  for(let i=0;i<snap.numDays;i++){const r=td[i]||[];tC+=((parseFloat(r[1])||0)+(parseFloat(r[2])||0))*(parseFloat(r[3])||1);}
+  const xd=snap.actData||{};
+  for(let i=0;i<snap.numDays;i++){const r=xd[i]||[];xC+=(parseFloat(r[1])||0)*(parseFloat(r[2])||0);}
+  Object.values(snap.extrasData||{}).forEach(r=>{eC+=(parseFloat(r[1])||0)*(parseFloat(r[2])||0);});
+  const totalMad=sellFn(aC,parseFloat(snap.marginAccom)||0)+sellFn(tC,parseFloat(snap.marginTrans)||20)+sellFn(xC,parseFloat(snap.marginAct)||20)+sellFn(eC,parseFloat(snap.marginExtras)||20);
+  const payload={agent:snap.agent,ref:snap.ref,version:snap.version,status:snap.status,client:snap.clientName,pax:snap.pax,arr:snap.arrivalDate,dep:snap.departureDate,numDays:snap.numDays,currency:snap.currency,rate:snap.eurRate,totalMad:Math.round(totalMad),totalDevise:Math.ceil((totalMad/rate)/10)*10,notes:snap.notes||''};
+  fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});
+}
+
+// ─── EXPORT & PREVIEW ─────────────────────────────────────────────────────────
+function readGenRows(bodyId){const saved={};document.querySelectorAll(`#${bodyId} tr`).forEach((tr,i)=>{saved[i]=Array.from(tr.querySelectorAll('input')).map(el=>el.value);});return saved;}
+function printQuotation(){window.print();}
+
+async function exportExcel(){
+  if(!currentDevisId){showToast('⚠ Sauvegardez le devis avant d\'exporter','error');return;}
+  const snap=takeSnapshot();
+  showToast('⏳ Génération Excel...','success');
+  try {
+    const payload={ref:snap.ref,version:snap.version,status:snap.status,client:snap.clientName,contact:snap.contactName||'',pax:parseInt(snap.pax)||1,arr:snap.arrivalDate,dep:snap.departureDate,numDays:snap.numDays,numCats:snap.numCats||1,currency:snap.currency,rate:parseFloat(snap.eurRate)||10.5,quoteDate:snap.quoteDate,marginAccom:parseFloat(snap.marginAccom)||0,marginTrans:parseFloat(snap.marginTrans)||20,marginAct:parseFloat(snap.marginAct)||20,marginExtras:parseFloat(snap.marginExtras)||20,accomData:snap.accomData||{},transData:snap.transData||{},actData:snap.actData||{},extrasData:snap.extrasData||{}};
+    const resp=await fetch('https://fitplanning.onrender.com/export-quotation',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if(!resp.ok) throw new Error('Server error');
+    const blob=await resp.blob();const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`Quotation_${snap.ref}_${snap.clientName||'Client'}.xlsx`;a.click();URL.revokeObjectURL(url);
+    showToast('✅ Quotation Excel téléchargée !','success');
+  } catch(e){ showToast('⚠ Erreur export — réessayez dans 30s','error'); }
+}
+
+async function exportAllVersions(){
+  if(!currentDevisId){showToast('⚠ Sauvegardez le devis avant d\'exporter','error');return;}
+  const snap=takeSnapshot();
+  const ref=snap.ref||'QT';
+  const allVersions=_cachedDevis.filter(d=>d.ref===ref);
+  if(allVersions.length===0){showToast('⚠ Aucune version trouvée','error');return;}
+  showToast(`⏳ Génération ${allVersions.length} version(s)...`,'success');
+  try {
+    const versions=allVersions.map(d=>({ref:d.ref,version:`v${d.version}`,status:d.status,client:d.client,pax:parseInt(d.data?.pax)||1,arr:d.data?.arrivalDate,dep:d.data?.departureDate,numDays:d.data?.numDays,numCats:d.data?.numCats||1,currency:d.data?.currency,rate:parseFloat(d.data?.eurRate)||10.5,quoteDate:d.data?.quoteDate,marginAccom:parseFloat(d.data?.marginAccom)||0,marginTrans:parseFloat(d.data?.marginTrans)||20,marginAct:parseFloat(d.data?.marginAct)||20,marginExtras:parseFloat(d.data?.marginExtras)||20,accomData:d.data?.accomData||{},transData:d.data?.transData||{},actData:d.data?.actData||{},extrasData:d.data?.extrasData||{}}));
+    const resp=await fetch('https://fitplanning.onrender.com/export-all-versions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({versions})});
+    if(!resp.ok) throw new Error('Server error');
+    const blob=await resp.blob();const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`AllVersions_${ref}_${snap.clientName||'Client'}.xlsx`;a.click();URL.revokeObjectURL(url);
+    showToast(`✅ ${allVersions.length} version(s) exportées !`,'success');
+  } catch(e){ showToast('⚠ Erreur export — réessayez dans 30s','error'); }
+}
+
+function openPreview(){
+  const snap=takeSnapshot();
+  const PREVIEW_URL='https://fitplanning-alpha.vercel.app/preview.html';
+  const data={ref:snap.ref||'QT-001',version:snap.version||'v1',quoteDate:snap.quoteDate||new Date().toISOString().split('T')[0],status:snap.status||'sent',client:snap.clientName||'',contact:snap.contactName||'',paxNames:snap.paxNames||snap.clientName||'',pax:parseInt(snap.pax)||2,arr:snap.arrivalDate||'',dep:snap.departureDate||'',numDays:snap.numDays||0,numCats:snap.numCats||1,currency:snap.currency||'EUR',rate:parseFloat(snap.eurRate)||10.5,totalSellMad:0,agent:document.getElementById('quickNote')?.value||'Agent Visit Morocco',agentEmail:currentAgent?currentAgent.email:'incoming@visitmoroccodmc.com',agentPhone:'+212 524 42 03 87',agentMobile:'+212 665 877 863',accomData:snap.accomData||{},mealsData:snap.mealsData||[],transData:snap.transData||{},actData:snap.actData||[],extData:snap.extrasData?Object.values(snap.extrasData).map(r=>({desc:r[0]||'',rate:r[1]||0,qty:r[2]||1})):[],incLines:snap.incLines||[],marginAccom:parseFloat(snap.marginAccom)||0,marginTrans:parseFloat(snap.marginTrans)||20,marginAct:parseFloat(snap.marginAct)||20,marginExtras:parseFloat(snap.marginExtras)||20,notes:snap.notes||''};
+  localStorage.setItem('vm_preview_data',JSON.stringify(data));
+  window.open(PREVIEW_URL,'_blank');
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+async function initLogin(){
+  await refreshLoginSelect();
+  const saved = sessionStorage.getItem('vm_current_agent');
+  if(saved){ currentAgent = JSON.parse(saved); await showApp(); }
+}
+
+document.getElementById('quoteDate').value = new Date().toISOString().split('T')[0];
+initExtras();
 initLogin();
-document.getElementById('quoteDate').value=new Date().toISOString().split('T')[0];
-document.getElementById('saveDot').className='save-dot';
-document.getElementById('saveLabel').textContent='Nouveau devis';
-initExtras();recalcAll();updateDevisCount();
 </script>
 </body>
 </html>
