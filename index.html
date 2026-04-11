@@ -872,6 +872,12 @@ async function initLogin(){
 document.getElementById('quoteDate').value = new Date().toISOString().split('T')[0];
 initExtras();
 initLogin();
+
+// Ping Render toutes les 10 minutes
+setInterval(() => {
+  fetch('https://fitplanning.onrender.com/export-quotation', { method: 'HEAD' }).catch(() => {});
+}, 10 * 60 * 1000);
+fetch('https://fitplanning.onrender.com/export-quotation', { method: 'HEAD' }).catch(() => {});
 </script>
 </body>
 </html>
