@@ -102,8 +102,8 @@
   .td-total,.gen-total{font-weight:700;color:var(--green);text-align:right !important;padding-right:9px !important;font-size:11.5px;}
   .td-day{background:#F0F4FA;font-size:10.5px;font-weight:700;color:var(--blue);white-space:nowrap;min-width:52px;padding:5px 8px !important;}
   .td-date{color:var(--text-muted);font-size:10.5px;white-space:nowrap;min-width:82px;padding:5px 8px !important;}
-  .remove-cat-btn{background:none;border:none;color:var(--red);font-size:13px;cursor:pointer;padding:2px 4px;border-radius:3px;opacity:.6;}
-  .remove-cat-btn:hover{opacity:1;background:#FDECEA;}
+  .remove-cat-btn,.remove-act-row-btn{background:none;border:none;color:var(--red);font-size:13px;cursor:pointer;padding:2px 4px;border-radius:3px;opacity:.6;}
+  .remove-cat-btn:hover,.remove-act-row-btn:hover{opacity:1;background:#FDECEA;}
   .margin-row{background:#F0F4FA;padding:8px 13px;display:flex;align-items:center;gap:12px;border-top:1px solid var(--border);flex-wrap:wrap;}
   .margin-row label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);}
   .margin-row input[type=number]{width:55px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px;font-weight:700;color:var(--blue);background:#fff;outline:none;}
@@ -115,6 +115,8 @@
   .margin-stat strong{font-size:12.5px;color:var(--green);font-weight:700;}
   .add-cat-btn,.add-row-btn{display:flex;align-items:center;gap:5px;padding:7px 13px;background:none;border:none;border-top:1px dashed var(--border);width:100%;color:var(--blue-light);font-size:11px;font-weight:500;cursor:pointer;transition:background .15s;font-family:'DM Sans',sans-serif;}
   .add-cat-btn:hover,.add-row-btn:hover{background:var(--blue-pale);}
+  .add-act-day-btn{display:flex;align-items:center;gap:4px;padding:3px 8px;background:none;border:1px dashed var(--border);border-radius:3px;color:var(--blue-light);font-size:10px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s;}
+  .add-act-day-btn:hover{background:var(--blue-pale);}
   .grand-total-card{background:var(--navy);border-radius:6px;margin-bottom:16px;overflow:hidden;}
   .gt-recap{padding:20px 24px 14px;}
   .gt-title{font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--gold);margin-bottom:14px;text-transform:uppercase;letter-spacing:2px;}
@@ -232,7 +234,6 @@
     <button class="btn btn-ghost" onclick="newDevis()">＋ Nouveau</button>
     <button class="btn btn-ghost" onclick="openModal()">📁 Mes devis (<span id="devisCount">0</span>)</button>
     <button class="btn btn-outline" onclick="exportExcel()">⬇ Excel</button>
-    <button class="btn" style="background:#2B5EA7;color:#fff;" onclick="exportAllVersions()">⬇ All Versions</button>
     <button class="btn btn-green" onclick="saveDevis()">💾 Sauvegarder</button>
     <button class="btn" style="background:#7B2D8B;" onclick="openPreview()">👁 Preview</button>
     <button class="btn btn-gold" onclick="printQuotation()">🖨 PDF</button>
@@ -316,15 +317,16 @@
     </div>
   </div>
 
-  <!-- ACTIVITÉS -->
+  <!-- ACTIVITÉS — multi-lignes par jour -->
   <div class="section-card">
-    <div class="section-header"><div class="section-title">🎭 Activities & Experiences</div></div>
-    <div class="table-wrap"><table class="gen-table">
+    <div class="section-header"><div class="section-title">🎭 Meals & Experiences</div></div>
+    <div class="table-wrap"><table class="gen-table" id="actTable">
       <thead><tr>
         <th style="width:52px">Jour</th><th style="width:87px">Date</th><th>Monument / Visite / Expérience</th>
         <th class="right" style="width:115px">Tarif (MAD)</th>
         <th class="right" style="width:55px">Qté</th>
         <th class="right" style="width:105px">Coût (MAD)</th>
+        <th style="width:32px"></th>
       </tr></thead>
       <tbody id="actBody"></tbody>
     </table></div>
@@ -334,9 +336,9 @@
     </div>
   </div>
 
-  <!-- EXTRAS -->
+  <!-- EXTRAS — renommé Other Services -->
   <div class="section-card">
-    <div class="section-header"><div class="section-title">🍽️ Meals & Services</div></div>
+    <div class="section-header"><div class="section-title">➕ Other Services</div></div>
     <div class="table-wrap"><table class="gen-table">
       <thead><tr>
         <th>Service / Extra</th>
@@ -362,8 +364,8 @@
         <tbody>
           <tr><td>🏨 Hébergement</td><td id="gt-m-a">0%</td><td id="gt-c-a">0,00</td><td id="gt-s-a">0,00</td><td class="cur-val" id="gt-e-a">0,00</td></tr>
           <tr><td>🚗 Guide & Transport</td><td id="gt-m-t">20%</td><td id="gt-c-t">0,00</td><td id="gt-s-t">0,00</td><td class="cur-val" id="gt-e-t">0,00</td></tr>
-          <tr><td>🎭 Activities & Exp.</td><td id="gt-m-x">20%</td><td id="gt-c-x">0,00</td><td id="gt-s-x">0,00</td><td class="cur-val" id="gt-e-x">0,00</td></tr>
-          <tr><td>🍽️ Meals & Services</td><td id="gt-m-e">20%</td><td id="gt-c-e">0,00</td><td id="gt-s-e">0,00</td><td class="cur-val" id="gt-e-e">0,00</td></tr>
+          <tr><td>🎭 Meals & Experiences</td><td id="gt-m-x">20%</td><td id="gt-c-x">0,00</td><td id="gt-s-x">0,00</td><td class="cur-val" id="gt-e-x">0,00</td></tr>
+          <tr><td>➕ Other Services</td><td id="gt-m-e">20%</td><td id="gt-c-e">0,00</td><td id="gt-s-e">0,00</td><td class="cur-val" id="gt-e-e">0,00</td></tr>
           <tr class="total-row"><td>TOTAL GÉNÉRAL</td><td>—</td><td id="gt-c-tot">0,00</td><td id="gt-s-tot">0,00</td><td class="cur-val" id="gt-e-tot">0,00</td></tr>
         </tbody>
       </table>
@@ -399,6 +401,9 @@
 let numDays=0,arrivalDate=null,numCats=1,extrasCount=0,currentDevisId=null,isSaved=true;
 let currentAgent=null;
 let _cachedDevis=[];
+// actRows: { dayIndex, rowId, desc, rate, qty }[]
+let actRows=[];
+let actRowCount=0;
 
 const fmt=v=>Number(v||0).toLocaleString('fr-MA',{minimumFractionDigits:2,maximumFractionDigits:2});
 const sell=(c,m)=>m<100?c/(1-m/100):c;
@@ -410,7 +415,7 @@ function showToast(msg,type='success'){const t=document.getElementById('toast');
 function markUnsaved(){isSaved=false;document.getElementById('saveDot').className='save-dot unsaved';document.getElementById('saveLabel').textContent='Non sauvegardé';}
 function markSaved(lbl=''){isSaved=true;document.getElementById('saveDot').className='save-dot saved';document.getElementById('saveLabel').textContent=lbl||'Sauvegardé';}
 
-// ─── DATES & TABLEAUX ─────────────────────────────────────────────────────────
+// ─── DATES ────────────────────────────────────────────────────────────────────
 function onDatesChange(){
   const a=document.getElementById('arrivalDate').value,d=document.getElementById('departureDate').value;
   if(a&&d){const diff=Math.round((new Date(d)-new Date(a))/86400000);
@@ -423,6 +428,7 @@ function onDaysManualChange(){
 }
 function rebuildAll(){rebuildAccom();rebuildTrans();rebuildAct();recalcAll();}
 
+// ─── HÉBERGEMENT ──────────────────────────────────────────────────────────────
 function readAccomData(){const d={};for(let i=0;i<numDays;i++){d[i]={};for(let c=0;c<numCats;c++){const r=document.getElementById(`ar-${i}-${c}`);if(r){const inputs=r.querySelectorAll('input');const sel=r.querySelector('select');d[i][c]={hotel:inputs[0]?.value||'',roomType:sel?.value||'',units:inputs[1]?.value||'0',rate:inputs[2]?.value||'0'};}}}return d;}
 
 function rebuildAccom(savedData){
@@ -457,12 +463,106 @@ function addCategory(){if(!numDays){alert('Saisissez le nombre de jours d\'abord
 function removeCategory(ci){if(numCats<=1)return;const d=readAccomData();const nd={};for(let i=0;i<numDays;i++){nd[i]={};let nc=0;for(let c=0;c<numCats;c++){if(c===ci)continue;nd[i][nc]=(d[i]&&d[i][c])?d[i][c]:{};nc++;}}numCats--;rebuildAccom(nd);}
 function recalcAccom(){let cost=0;for(let i=0;i<numDays;i++)for(let c=0;c<numCats;c++){const r=document.getElementById(`ar-${i}-${c}`);if(!r)continue;const inp=r.querySelectorAll('input');const t=(parseFloat(inp[1]?.value)||0)*(parseFloat(inp[2]?.value)||0);cost+=t;const el=document.getElementById(`at-${i}-${c}`);if(el)el.textContent=fmt(t);}const m=parseFloat(document.getElementById('marginAccom').value)||0;document.getElementById('accomSummary').textContent=`${fmt(cost)} → ${fmt(sell(cost,m))} MAD`;updateGT();}
 
+// ─── TRANSPORT ────────────────────────────────────────────────────────────────
 function rebuildTrans(saved){const tbody=document.getElementById('transBody');const sv=saved||readGenRows('transBody');tbody.innerHTML='';for(let i=0;i<numDays;i++){const s=sv[i]||[];const tr=document.createElement('tr');tr.id=`tr-${i}`;tr.innerHTML=`<td class="td-day">${dayLbl(i)}</td><td class="td-date">${dateLbl(i)}</td><td><input type="text" placeholder="Route / Description" value="${s[0]||''}" oninput="markUnsaved()"></td><td style="text-align:right"><input type="number" min="0" step="0.01" value="${s[1]||0}" oninput="recalcTrans();markUnsaved()"></td><td style="text-align:right"><input type="number" min="0" step="0.01" value="${s[2]||0}" oninput="recalcTrans();markUnsaved()"></td><td style="text-align:right"><input type="number" min="0" value="${s[3]||1}" oninput="recalcTrans();markUnsaved()"></td><td class="gen-total" id="tt-${i}">0,00</td>`;tbody.appendChild(tr);}recalcTrans();}
 function recalcTrans(){let cost=0;for(let i=0;i<numDays;i++){const r=document.getElementById(`tr-${i}`);if(!r)continue;const inp=r.querySelectorAll('input');const t=((parseFloat(inp[1]?.value)||0)+(parseFloat(inp[2]?.value)||0))*(parseFloat(inp[3]?.value)||1);cost+=t;const el=document.getElementById(`tt-${i}`);if(el)el.textContent=fmt(t);}const m=parseFloat(document.getElementById('marginTrans').value)||0;document.getElementById('transSummary').textContent=`${fmt(cost)} → ${fmt(sell(cost,m))} MAD`;updateGT();}
 
-function rebuildAct(saved){const tbody=document.getElementById('actBody');const sv=saved||readGenRows('actBody');tbody.innerHTML='';for(let i=0;i<numDays;i++){const s=sv[i]||[];const tr=document.createElement('tr');tr.id=`ax-${i}`;tr.innerHTML=`<td class="td-day">${dayLbl(i)}</td><td class="td-date">${dateLbl(i)}</td><td><input type="text" placeholder="Monument / Visite / Expérience" value="${s[0]||''}" oninput="markUnsaved()"></td><td style="text-align:right"><input type="number" min="0" step="0.01" value="${s[1]||0}" oninput="recalcAct();markUnsaved()"></td><td style="text-align:right"><input type="number" min="0" value="${s[2]||0}" oninput="recalcAct();markUnsaved()"></td><td class="gen-total" id="xt-${i}">0,00</td>`;tbody.appendChild(tr);}recalcAct();}
-function recalcAct(){let cost=0;for(let i=0;i<numDays;i++){const r=document.getElementById(`ax-${i}`);if(!r)continue;const inp=r.querySelectorAll('input');const t=(parseFloat(inp[1]?.value)||0)*(parseFloat(inp[2]?.value)||0);cost+=t;const el=document.getElementById(`xt-${i}`);if(el)el.textContent=fmt(t);}const m=parseFloat(document.getElementById('marginAct').value)||0;document.getElementById('actSummary').textContent=`${fmt(cost)} → ${fmt(sell(cost,m))} MAD`;updateGT();}
+// ─── ACTIVITÉS — multi-lignes par jour ────────────────────────────────────────
+function rebuildAct(savedRows){
+  // savedRows: tableau [{dayIndex, rowId, desc, rate, qty}, ...]
+  if(savedRows) actRows = savedRows.map(r=>({...r}));
+  // Si aucune ligne sauvegardée, initialiser une ligne par jour
+  if(!actRows || actRows.length===0){
+    actRows=[];
+    for(let i=0;i<numDays;i++){
+      actRows.push({dayIndex:i, rowId:actRowCount++, desc:'', rate:0, qty:0});
+    }
+  }
+  renderActTable();
+}
 
+function renderActTable(){
+  const tbody=document.getElementById('actBody');
+  tbody.innerHTML='';
+  // Grouper par jour pour afficher séparateur
+  let lastDay=-1;
+  actRows.forEach((row,idx)=>{
+    if(row.dayIndex!==lastDay){
+      // Séparateur de jour
+      const sep=document.createElement('tr');
+      sep.className='day-sep';
+      sep.innerHTML=`<td colspan="7" style="display:flex;align-items:center;justify-content:space-between;">
+        <span>📅 ${dayLbl(row.dayIndex)} — ${dateLbl(row.dayIndex)}</span>
+        <button class="add-act-day-btn" onclick="addActRow(${row.dayIndex})">＋ Ajouter</button>
+      </td>`;
+      tbody.appendChild(sep);
+      lastDay=row.dayIndex;
+    }
+    const tr=document.createElement('tr');
+    tr.className='data-row';
+    tr.id=`act-row-${row.rowId}`;
+    tr.innerHTML=`
+      <td class="td-day" style="color:var(--text-muted);font-size:10px;">${dayLbl(row.dayIndex)}</td>
+      <td class="td-date" style="font-size:10px;">${dateLbl(row.dayIndex)}</td>
+      <td><input type="text" placeholder="Monument / Visite / Expérience" value="${row.desc||''}" oninput="updateActRow(${row.rowId},'desc',this.value);recalcAct();markUnsaved()"></td>
+      <td style="text-align:right"><input type="number" min="0" step="0.01" value="${row.rate||0}" oninput="updateActRow(${row.rowId},'rate',this.value);recalcAct();markUnsaved()"></td>
+      <td style="text-align:right"><input type="number" min="0" value="${row.qty||0}" oninput="updateActRow(${row.rowId},'qty',this.value);recalcAct();markUnsaved()"></td>
+      <td class="gen-total" id="act-total-${row.rowId}">0,00</td>
+      <td style="text-align:center"><button class="remove-act-row-btn" onclick="removeActRow(${row.rowId})">×</button></td>`;
+    tbody.appendChild(tr);
+  });
+  recalcAct();
+}
+
+function addActRow(dayIndex){
+  actRows.push({dayIndex, rowId:actRowCount++, desc:'', rate:0, qty:0});
+  renderActTable();
+  markUnsaved();
+}
+
+function removeActRow(rowId){
+  // Garder au moins une ligne par jour
+  const dayIndex=actRows.find(r=>r.rowId===rowId)?.dayIndex;
+  const dayRows=actRows.filter(r=>r.dayIndex===dayIndex);
+  if(dayRows.length<=1){showToast('⚠ Au moins une ligne par jour','error');return;}
+  actRows=actRows.filter(r=>r.rowId!==rowId);
+  renderActTable();
+  markUnsaved();
+}
+
+function updateActRow(rowId,field,value){
+  const row=actRows.find(r=>r.rowId===rowId);
+  if(row) row[field]=value;
+}
+
+function recalcAct(){
+  let cost=0;
+  actRows.forEach(row=>{
+    const t=(parseFloat(row.rate)||0)*(parseFloat(row.qty)||0);
+    cost+=t;
+    const el=document.getElementById(`act-total-${row.rowId}`);
+    if(el) el.textContent=fmt(t);
+  });
+  const m=parseFloat(document.getElementById('marginAct').value)||0;
+  document.getElementById('actSummary').textContent=`${fmt(cost)} → ${fmt(sell(cost,m))} MAD`;
+  updateGT();
+}
+
+function readActData(){
+  // Sync actRows depuis les inputs DOM avant snapshot
+  actRows.forEach(row=>{
+    const tr=document.getElementById(`act-row-${row.rowId}`);
+    if(tr){
+      const inputs=tr.querySelectorAll('input');
+      row.desc=inputs[0]?.value||'';
+      row.rate=inputs[1]?.value||0;
+      row.qty=inputs[2]?.value||0;
+    }
+  });
+  return actRows.map(r=>({...r}));
+}
+
+// ─── EXTRAS ───────────────────────────────────────────────────────────────────
 function initExtras(){for(let i=0;i<5;i++)addExtrasRow();}
 function addExtrasRow(){const id=extrasCount++;const tr=document.createElement('tr');tr.innerHTML=`<td><input type="text" placeholder="Description du service" oninput="recalcExtras();markUnsaved()"></td><td style="text-align:right"><input type="number" min="0" step="0.01" value="0" oninput="recalcExtras();markUnsaved()"></td><td style="text-align:right"><input type="number" min="0" value="0" oninput="recalcExtras();markUnsaved()"></td><td class="gen-total" id="et-${id}">0,00</td>`;document.getElementById('extrasBody').appendChild(tr);}
 function recalcExtras(){let cost=0;document.querySelectorAll('#extrasBody tr').forEach(tr=>{const inp=tr.querySelectorAll('input');const t=(parseFloat(inp[1]?.value)||0)*(parseFloat(inp[2]?.value)||0);cost+=t;const last=tr.querySelector('td:last-child');if(last)last.textContent=fmt(t);});const m=parseFloat(document.getElementById('marginExtras').value)||0;document.getElementById('extrasSummary').textContent=`${fmt(cost)} → ${fmt(sell(cost,m))} MAD`;updateGT();}
@@ -477,7 +577,7 @@ function updateGT(){
   let aC=0,tC=0,xC=0,eC=0;
   for(let i=0;i<numDays;i++)for(let cc=0;cc<numCats;cc++){const r=document.getElementById(`ar-${i}-${cc}`);if(!r)continue;const inp=r.querySelectorAll('input');aC+=(parseFloat(inp[1]?.value)||0)*(parseFloat(inp[2]?.value)||0);}
   for(let i=0;i<numDays;i++){const r=document.getElementById(`tr-${i}`);if(!r)continue;const inp=r.querySelectorAll('input');tC+=((parseFloat(inp[1]?.value)||0)+(parseFloat(inp[2]?.value)||0))*(parseFloat(inp[3]?.value)||1);}
-  for(let i=0;i<numDays;i++){const r=document.getElementById(`ax-${i}`);if(!r)continue;const inp=r.querySelectorAll('input');xC+=(parseFloat(inp[1]?.value)||0)*(parseFloat(inp[2]?.value)||0);}
+  actRows.forEach(row=>{xC+=(parseFloat(row.rate)||0)*(parseFloat(row.qty)||0);});
   document.querySelectorAll('#extrasBody tr').forEach(tr=>{const inp=tr.querySelectorAll('input');eC+=(parseFloat(inp[1]?.value)||0)*(parseFloat(inp[2]?.value)||0);});
   const mA=parseFloat(document.getElementById('marginAccom').value)||0,mT=parseFloat(document.getElementById('marginTrans').value)||0,mX=parseFloat(document.getElementById('marginAct').value)||0,mE=parseFloat(document.getElementById('marginExtras').value)||0;
   const aS=sell(aC,mA),tS=sell(tC,mT),xS=sell(xC,mX),eS=sell(eC,mE);
@@ -493,13 +593,55 @@ function updateGT(){
 }
 function recalcAll(){recalcAccom();recalcTrans();recalcAct();recalcExtras();}
 
-function takeSnapshot(){return{agent:currentAgent?currentAgent.name:'',agentEmail:currentAgent?currentAgent.email:'incoming@visitmoroccodmc.com',ref:document.getElementById('quoteRef').value,quoteDate:document.getElementById('quoteDate').value,version:document.getElementById('version').value,status:document.getElementById('status').value,clientName:document.getElementById('clientName').value,pax:document.getElementById('pax').value,arrivalDate:document.getElementById('arrivalDate').value,departureDate:document.getElementById('departureDate').value,numDays,numCats,currency:document.getElementById('currency').value,eurRate:document.getElementById('eurRate').value,quickNote:document.getElementById('quickNote').value,notes:document.getElementById('notes').value,marginAccom:document.getElementById('marginAccom').value,marginTrans:document.getElementById('marginTrans').value,marginAct:document.getElementById('marginAct').value,marginExtras:document.getElementById('marginExtras').value,accomData:readAccomData(),transData:readGenRows('transBody'),actData:readGenRows('actBody'),extrasData:readGenRows('extrasBody'),savedAt:new Date().toISOString()};}
+// ─── SNAPSHOT ─────────────────────────────────────────────────────────────────
+function takeSnapshot(){
+  return{
+    agent:currentAgent?currentAgent.name:'',
+    agentEmail:currentAgent?currentAgent.email:'incoming@visitmoroccodmc.com',
+    ref:document.getElementById('quoteRef').value,
+    quoteDate:document.getElementById('quoteDate').value,
+    version:document.getElementById('version').value,
+    status:document.getElementById('status').value,
+    clientName:document.getElementById('clientName').value,
+    pax:document.getElementById('pax').value,
+    arrivalDate:document.getElementById('arrivalDate').value,
+    departureDate:document.getElementById('departureDate').value,
+    numDays,numCats,
+    currency:document.getElementById('currency').value,
+    eurRate:document.getElementById('eurRate').value,
+    quickNote:document.getElementById('quickNote').value,
+    notes:document.getElementById('notes').value,
+    marginAccom:document.getElementById('marginAccom').value,
+    marginTrans:document.getElementById('marginTrans').value,
+    marginAct:document.getElementById('marginAct').value,
+    marginExtras:document.getElementById('marginExtras').value,
+    accomData:readAccomData(),
+    transData:readGenRows('transBody'),
+    actData:readActData(),
+    extrasData:readGenRows('extrasBody'),
+    savedAt:new Date().toISOString()
+  };
+}
 
 function restoreSnapshot(snap){
-  numDays=snap.numDays||0;arrivalDate=snap.arrivalDate||null;numCats=snap.numCats||1;extrasCount=0;
+  numDays=snap.numDays||0;arrivalDate=snap.arrivalDate||null;numCats=snap.numCats||1;extrasCount=0;actRows=[];actRowCount=0;
   const f=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v||'';};
-  f('quoteRef',snap.ref);f('quoteDate',snap.quoteDate);f('version',snap.version);f('status',snap.status);f('clientName',snap.clientName);f('pax',snap.pax);f('arrivalDate',snap.arrivalDate);f('departureDate',snap.departureDate);f('currency',snap.currency);f('eurRate',snap.eurRate);f('quickNote',snap.quickNote);f('notes',snap.notes);f('marginAccom',snap.marginAccom);f('marginTrans',snap.marginTrans);f('marginAct',snap.marginAct);f('marginExtras',snap.marginExtras);
-  if(numDays>0){document.getElementById('daysDisplay').value=numDays;rebuildAccom(snap.accomData||{});rebuildTrans(snap.transData||{});rebuildAct(snap.actData||{});}
+  f('quoteRef',snap.ref);f('quoteDate',snap.quoteDate);f('version',snap.version);f('status',snap.status);
+  f('clientName',snap.clientName);f('pax',snap.pax);f('arrivalDate',snap.arrivalDate);f('departureDate',snap.departureDate);
+  f('currency',snap.currency);f('eurRate',snap.eurRate);f('quickNote',snap.quickNote);f('notes',snap.notes);
+  f('marginAccom',snap.marginAccom);f('marginTrans',snap.marginTrans);f('marginAct',snap.marginAct);f('marginExtras',snap.marginExtras);
+  if(numDays>0){
+    document.getElementById('daysDisplay').value=numDays;
+    rebuildAccom(snap.accomData||{});
+    rebuildTrans(snap.transData||{});
+    // Restaurer actRows
+    if(snap.actData && Array.isArray(snap.actData) && snap.actData.length>0){
+      actRows=snap.actData.map(r=>({...r,rowId:actRowCount++}));
+      renderActTable();
+    } else {
+      rebuildAct(null);
+    }
+  }
   document.getElementById('extrasBody').innerHTML='';
   const extRows=Object.values(snap.extrasData||{});
   if(extRows.length>0){extRows.forEach(vals=>{const id=extrasCount++;const tr=document.createElement('tr');tr.innerHTML=`<td><input type="text" value="${vals[0]||''}" oninput="recalcExtras();markUnsaved()"></td><td style="text-align:right"><input type="number" min="0" step="0.01" value="${vals[1]||0}" oninput="recalcExtras();markUnsaved()"></td><td style="text-align:right"><input type="number" min="0" value="${vals[2]||0}" oninput="recalcExtras();markUnsaved()"></td><td class="gen-total" id="et-${id}">0,00</td>`;document.getElementById('extrasBody').appendChild(tr);});}else initExtras();
@@ -507,84 +649,69 @@ function restoreSnapshot(snap){
 }
 
 // ─── SUPABASE : DEVIS ─────────────────────────────────────────────────────────
-
 async function getAllDevis(){
-  try {
-    let query = _supa.from('devis').select('*').order('created_at', {ascending: false});
-    if(currentAgent && currentAgent.role !== 'admin'){
-      query = query.eq('agent', currentAgent.name);
-    }
-    const {data, error} = await query;
-    if(error) throw error;
-    _cachedDevis = data || [];
+  try{
+    let query=_supa.from('devis').select('*').order('created_at',{ascending:false});
+    if(currentAgent&&currentAgent.role!=='admin') query=query.eq('agent',currentAgent.name);
+    const{data,error}=await query;
+    if(error)throw error;
+    _cachedDevis=data||[];
     return _cachedDevis;
-  } catch(e){
-    console.error('getAllDevis error:', e);
-    return [];
-  }
+  }catch(e){console.error('getAllDevis error:',e);return[];}
 }
 
 async function saveDevis(){
-  const snap = takeSnapshot();
-  const ref = snap.ref || 'sans-ref';
-  snap.agent = currentAgent.name;
+  const snap=takeSnapshot();
+  const ref=snap.ref||'sans-ref';
+  snap.agent=currentAgent.name;
 
   if(!currentDevisId){
-    const existing = _cachedDevis.filter(d => d.ref === ref);
-    const maxVer = existing.length > 0 ? Math.max(...existing.map(d => d.version || 1)) : 0;
-    const newVerNum = maxVer + 1;
-    snap.version = `v${newVerNum}`;
-    document.getElementById('version').value = snap.version;
-    try {
-      const {data, error} = await _supa.from('devis').insert({
-        ref, agent: currentAgent.name, client: snap.clientName,
-        status: snap.status, version: newVerNum, data: snap
-      }).select().single();
-      if(error) throw error;
-      currentDevisId = data.id;
+    const existing=_cachedDevis.filter(d=>d.ref===ref);
+    const maxVer=existing.length>0?Math.max(...existing.map(d=>d.version||1)):0;
+    const newVerNum=maxVer+1;
+    snap.version=`v${newVerNum}`;
+    document.getElementById('version').value=snap.version;
+    try{
+      const{data,error}=await _supa.from('devis').insert({ref,agent:currentAgent.name,client:snap.clientName,status:snap.status,version:newVerNum,data:snap}).select().single();
+      if(error)throw error;
+      currentDevisId=data.id;
       markSaved(`v${newVerNum} sauvegardé`);
       await updateDevisCount();
-      showToast(`✅ Devis ${ref} v${newVerNum} sauvegardé !`, 'success');
+      showToast(`✅ Devis ${ref} v${newVerNum} sauvegardé !`,'success');
       syncToSheet(snap);
-    } catch(e){ showToast('⚠ Erreur sauvegarde Supabase', 'error'); }
+    }catch(e){showToast('⚠ Erreur sauvegarde Supabase','error');}
     return;
   }
 
-  const currentVer = parseInt((document.getElementById('version').value||'v1').replace('v','')) || 1;
-  const choice = await showSaveDialog(ref, currentVer);
-  if(!choice) return;
+  const currentVer=parseInt((document.getElementById('version').value||'v1').replace('v',''))||1;
+  const choice=await showSaveDialog(ref,currentVer);
+  if(!choice)return;
 
-  try {
-    if(choice === 'new'){
-      const finalVerNum = currentVer + 1;
-      snap.version = `v${finalVerNum}`;
-      document.getElementById('version').value = snap.version;
-      const {data, error} = await _supa.from('devis').insert({
-        ref, agent: currentAgent.name, client: snap.clientName,
-        status: snap.status, version: finalVerNum, data: snap
-      }).select().single();
-      if(error) throw error;
-      currentDevisId = data.id;
+  try{
+    if(choice==='new'){
+      const finalVerNum=currentVer+1;
+      snap.version=`v${finalVerNum}`;
+      document.getElementById('version').value=snap.version;
+      const{data,error}=await _supa.from('devis').insert({ref,agent:currentAgent.name,client:snap.clientName,status:snap.status,version:finalVerNum,data:snap}).select().single();
+      if(error)throw error;
+      currentDevisId=data.id;
       markSaved(`v${finalVerNum} sauvegardé`);
-      showToast(`✅ Devis ${ref} v${finalVerNum} — nouvelle version !`, 'success');
-    } else {
-      snap.version = `v${currentVer}`;
-      const {error} = await _supa.from('devis').update({
-        client: snap.clientName, status: snap.status,
-        data: snap, updated_at: new Date().toISOString()
-      }).eq('id', currentDevisId);
-      if(error) throw error;
+      showToast(`✅ Devis ${ref} v${finalVerNum} — nouvelle version !`,'success');
+    }else{
+      snap.version=`v${currentVer}`;
+      const{error}=await _supa.from('devis').update({client:snap.clientName,status:snap.status,data:snap,updated_at:new Date().toISOString()}).eq('id',currentDevisId);
+      if(error)throw error;
       markSaved(`v${currentVer} écrasé`);
-      showToast(`✅ Devis ${ref} v${currentVer} mis à jour !`, 'success');
+      showToast(`✅ Devis ${ref} v${currentVer} mis à jour !`,'success');
     }
     await updateDevisCount();
     syncToSheet(snap);
-  } catch(e){ showToast('⚠ Erreur sauvegarde Supabase', 'error'); }
+  }catch(e){showToast('⚠ Erreur sauvegarde Supabase','error');}
 }
 
-function showSaveDialog(ref, currentVer){
-  return new Promise(resolve => {
-    const overlay = document.createElement('div');
+function showSaveDialog(ref,currentVer){
+  return new Promise(resolve=>{
+    const overlay=document.createElement('div');
     overlay.style.cssText='position:fixed;inset:0;background:rgba(10,20,40,.6);z-index:9998;display:flex;align-items:center;justify-content:center;padding:20px;';
     overlay.innerHTML=`
       <div style="background:#fff;border-radius:8px;width:100%;max-width:420px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3);">
@@ -595,16 +722,14 @@ function showSaveDialog(ref, currentVer){
           <p style="font-size:13px;color:#6B7C93;margin-bottom:18px;">Ce devis existe déjà en <strong style="color:#1A2E4A;">v${currentVer}</strong>. Que souhaitez-vous faire ?</p>
           <div style="display:flex;flex-direction:column;gap:10px;">
             <button id="btnNewVer" style="background:#1A6B4A;color:#fff;border:none;border-radius:6px;padding:12px 16px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;text-align:left;">
-              ✦ Nouvelle version — v${currentVer + 1}<br>
+              ✦ Nouvelle version — v${currentVer+1}<br>
               <span style="font-size:11px;font-weight:400;opacity:.8;">Conserve v${currentVer} et crée une nouvelle entrée</span>
             </button>
             <button id="btnOverwrite" style="background:#2B5EA7;color:#fff;border:none;border-radius:6px;padding:12px 16px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;text-align:left;">
               ✎ Écraser v${currentVer}<br>
               <span style="font-size:11px;font-weight:400;opacity:.8;">Remplace les données actuelles (correction de frappe...)</span>
             </button>
-            <button id="btnCancel" style="background:transparent;color:#6B7C93;border:1px solid #D8E2EF;border-radius:6px;padding:10px 16px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">
-              Annuler
-            </button>
+            <button id="btnCancel" style="background:transparent;color:#6B7C93;border:1px solid #D8E2EF;border-radius:6px;padding:10px 16px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">Annuler</button>
           </div>
         </div>
       </div>`;
@@ -616,89 +741,66 @@ function showSaveDialog(ref, currentVer){
 }
 
 async function loadDevis(id){
-  if(!isSaved && currentDevisId){ if(!confirm('Modifications non sauvegardées. Continuer ?')) return; }
-  const devis = _cachedDevis.find(d => d.id === id);
-  if(!devis){ showToast('⚠ Devis introuvable', 'error'); return; }
+  if(!isSaved&&currentDevisId){if(!confirm('Modifications non sauvegardées. Continuer ?'))return;}
+  const devis=_cachedDevis.find(d=>d.id===id);
+  if(!devis){showToast('⚠ Devis introuvable','error');return;}
   restoreSnapshot(devis.data);
-  currentDevisId = id;
+  currentDevisId=id;
   markSaved(`v${devis.version} chargé`);
   closeModal();
-  showToast(`📂 Devis ${devis.ref} v${devis.version} chargé`, 'success');
+  showToast(`📂 Devis ${devis.ref} v${devis.version} chargé`,'success');
 }
 
-async function deleteDevis(id, ref, e){
+async function deleteDevis(id,ref,e){
   e.stopPropagation();
-  if(!confirm(`Supprimer le devis ${ref} ?`)) return;
-  try {
-    const {error} = await _supa.from('devis').delete().eq('id', id);
-    if(error) throw error;
-    if(currentDevisId === id){ currentDevisId = null; markUnsaved(); }
+  if(!confirm(`Supprimer le devis ${ref} ?`))return;
+  try{
+    const{error}=await _supa.from('devis').delete().eq('id',id);
+    if(error)throw error;
+    if(currentDevisId===id){currentDevisId=null;markUnsaved();}
     await updateDevisCount();
     renderDevisList();
-    showToast(`🗑 Devis ${ref} supprimé`, 'error');
-  } catch(e){
-    showToast('⚠ Erreur suppression', 'error');
-  }
+    showToast(`🗑 Devis ${ref} supprimé`,'error');
+  }catch(e){showToast('⚠ Erreur suppression','error');}
 }
 
 async function updateDevisCount(){
-  const all = await getAllDevis();
-  document.getElementById('devisCount').textContent = all.length;
+  const all=await getAllDevis();
+  document.getElementById('devisCount').textContent=all.length;
 }
 
 async function getNextRef(){
-  if(!currentAgent) return 'QT-001';
-  const prefix = currentAgent.prefix || 'QT';
-  const all = await getAllDevis();
-  let maxNum = 0;
-  all.forEach(d => {
-    const ref = d.ref || '';
-    if(ref.startsWith(prefix + '-')){
-      const num = parseInt(ref.replace(prefix + '-', '')) || 0;
-      if(num > maxNum) maxNum = num;
-    }
-  });
-  return `${prefix}-${String(maxNum + 1).padStart(3, '0')}`;
+  if(!currentAgent)return'QT-001';
+  const prefix=currentAgent.prefix||'QT';
+  const all=await getAllDevis();
+  let maxNum=0;
+  all.forEach(d=>{const ref=d.ref||'';if(ref.startsWith(prefix+'-')){const num=parseInt(ref.replace(prefix+'-',''))||0;if(num>maxNum)maxNum=num;}});
+  return`${prefix}-${String(maxNum+1).padStart(3,'0')}`;
 }
 
-function openModal(){ renderDevisList(); document.getElementById('modalOverlay').classList.add('open'); }
-function closeModal(){ document.getElementById('modalOverlay').classList.remove('open'); }
-document.getElementById('modalOverlay').addEventListener('click', e => { if(e.target === document.getElementById('modalOverlay')) closeModal(); });
+function openModal(){renderDevisList();document.getElementById('modalOverlay').classList.add('open');}
+function closeModal(){document.getElementById('modalOverlay').classList.remove('open');}
+document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('modalOverlay'))closeModal();});
 
 async function renderDevisList(){
-  const search = document.getElementById('searchInput').value.toLowerCase();
-  const statusF = document.getElementById('filterStatus').value;
-  const all = await getAllDevis();
-  const list = document.getElementById('devisList');
-
-  // Grouper par ref
-  const grouped = {};
-  all.forEach(d => {
-    const ref = d.ref || '?';
-    if(!grouped[ref]) grouped[ref] = [];
-    grouped[ref].push(d);
-  });
-
-  const refs = Object.keys(grouped).filter(ref => {
-    const latest = grouped[ref][0];
-    return (!search || ref.toLowerCase().includes(search) || (latest.client||'').toLowerCase().includes(search))
-        && (!statusF || latest.status === statusF);
-  });
-
-  if(refs.length === 0){
-    list.innerHTML = `<div class="no-devis">📭 Aucun devis trouvé<br><small>Sauvegardez votre premier devis</small></div>`;
-    return;
-  }
-  list.innerHTML = '';
-  refs.sort().forEach(ref => {
-    const versions = grouped[ref].sort((a,b) => a.version - b.version);
-    const latest = versions[versions.length - 1];
-    const sc = {'draft':'status-draft','sent':'status-sent','confirmed':'status-confirmed'}[latest.status] || 'status-draft';
-    const sl = {'draft':'Brouillon','sent':'Envoyé','confirmed':'Confirmé'}[latest.status] || '—';
-    const chips = versions.map(v => `<span class="ver-chip ${v.id===latest.id?'latest':''}" onclick="loadDevis('${v.id}')">v${v.version}</span>`).join('');
-    const savedAt = latest.updated_at ? new Date(latest.updated_at).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
-    const card = document.createElement('div'); card.className = 'devis-card';
-    card.innerHTML = `<div class="devis-ref">${ref}</div>
+  const search=document.getElementById('searchInput').value.toLowerCase();
+  const statusF=document.getElementById('filterStatus').value;
+  const all=await getAllDevis();
+  const list=document.getElementById('devisList');
+  const grouped={};
+  all.forEach(d=>{const ref=d.ref||'?';if(!grouped[ref])grouped[ref]=[];grouped[ref].push(d);});
+  const refs=Object.keys(grouped).filter(ref=>{const latest=grouped[ref][0];return(!search||ref.toLowerCase().includes(search)||(latest.client||'').toLowerCase().includes(search))&&(!statusF||latest.status===statusF);});
+  if(refs.length===0){list.innerHTML=`<div class="no-devis">📭 Aucun devis trouvé<br><small>Sauvegardez votre premier devis</small></div>`;return;}
+  list.innerHTML='';
+  refs.sort().forEach(ref=>{
+    const versions=grouped[ref].sort((a,b)=>a.version-b.version);
+    const latest=versions[versions.length-1];
+    const sc={'draft':'status-draft','sent':'status-sent','confirmed':'status-confirmed'}[latest.status]||'status-draft';
+    const sl={'draft':'Brouillon','sent':'Envoyé','confirmed':'Confirmé'}[latest.status]||'—';
+    const chips=versions.map(v=>`<span class="ver-chip ${v.id===latest.id?'latest':''}" onclick="loadDevis('${v.id}')">v${v.version}</span>`).join('');
+    const savedAt=latest.updated_at?new Date(latest.updated_at).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):'—';
+    const card=document.createElement('div');card.className='devis-card';
+    card.innerHTML=`<div class="devis-ref">${ref}</div>
       <div class="devis-client"><div style="font-weight:600">${latest.client||'—'}</div>
       <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${latest.data?.arrivalDate||'?'} → ${latest.data?.departureDate||'?'} · ${latest.data?.numDays||0} jours</div></div>
       <div class="devis-meta"><span class="status-pill ${sc}">${sl}</span><div class="devis-versions">${chips}</div><div class="devis-date">${savedAt}</div></div>
@@ -708,153 +810,115 @@ async function renderDevisList(){
 }
 
 async function newDevis(){
-  if(!isSaved && currentDevisId){ if(!confirm('Modifications non sauvegardées. Continuer ?')) return; }
-  ['accomBody','transBody','actBody','extrasBody'].forEach(id => document.getElementById(id).innerHTML = '');
-  ['quoteRef','clientName','arrivalDate','departureDate','quickNote','notes'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('quoteDate').value = new Date().toISOString().split('T')[0];
-  document.getElementById('quoteRef').value = await getNextRef();
-  document.getElementById('version').value = 'v1';
-  document.getElementById('status').value = 'draft';
-  document.getElementById('pax').value = '2';
-  document.getElementById('eurRate').value = '10.5';
-  document.getElementById('daysDisplay').value = '';
-  document.getElementById('marginAccom').value = '0';
-  document.getElementById('marginTrans').value = '20';
-  document.getElementById('marginAct').value = '20';
-  document.getElementById('marginExtras').value = '20';
-  numDays=0; arrivalDate=null; numCats=1; extrasCount=0; currentDevisId=null;
-  document.getElementById('catBadge').textContent = '1 CATÉGORIE';
-  initExtras(); recalcAll();
-  document.getElementById('saveDot').className = 'save-dot';
-  document.getElementById('saveLabel').textContent = 'Nouveau devis';
-  isSaved = false;
+  if(!isSaved&&currentDevisId){if(!confirm('Modifications non sauvegardées. Continuer ?'))return;}
+  ['accomBody','transBody','actBody','extrasBody'].forEach(id=>document.getElementById(id).innerHTML='');
+  ['quoteRef','clientName','arrivalDate','departureDate','quickNote','notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('quoteDate').value=new Date().toISOString().split('T')[0];
+  document.getElementById('quoteRef').value=await getNextRef();
+  document.getElementById('version').value='v1';
+  document.getElementById('status').value='draft';
+  document.getElementById('pax').value='2';
+  document.getElementById('eurRate').value='10.5';
+  document.getElementById('daysDisplay').value='';
+  document.getElementById('marginAccom').value='0';
+  document.getElementById('marginTrans').value='20';
+  document.getElementById('marginAct').value='20';
+  document.getElementById('marginExtras').value='20';
+  numDays=0;arrivalDate=null;numCats=1;extrasCount=0;currentDevisId=null;actRows=[];actRowCount=0;
+  document.getElementById('catBadge').textContent='1 CATÉGORIE';
+  initExtras();recalcAll();
+  document.getElementById('saveDot').className='save-dot';
+  document.getElementById('saveLabel').textContent='Nouveau devis';
+  isSaved=false;
 }
 
 // ─── SUPABASE : AGENTS ────────────────────────────────────────────────────────
-
 async function getAgents(){
-  try {
-    const {data, error} = await _supa.from('agents').select('*').order('name');
-    if(error) throw error;
-    return data || [];
-  } catch(e){
-    console.error('getAgents error:', e);
-    return [];
-  }
+  try{const{data,error}=await _supa.from('agents').select('*').order('name');if(error)throw error;return data||[];}
+  catch(e){console.error('getAgents error:',e);return[];}
 }
 
 async function refreshLoginSelect(){
-  const agents = await getAgents();
-  const sel = document.getElementById('loginAgent');
-  sel.innerHTML = '<option value="">-- Sélectionner --</option>';
-  agents.forEach(a => {
-    const opt = document.createElement('option');
-    opt.value = a.name; opt.textContent = a.name;
-    sel.appendChild(opt);
-  });
+  const agents=await getAgents();
+  const sel=document.getElementById('loginAgent');
+  sel.innerHTML='<option value="">-- Sélectionner --</option>';
+  agents.forEach(a=>{const opt=document.createElement('option');opt.value=a.name;opt.textContent=a.name;sel.appendChild(opt);});
 }
 
 async function doLogin(){
-  const name = document.getElementById('loginAgent').value;
-  const pwd = document.getElementById('loginPwd').value;
-  if(!name || !pwd){ document.getElementById('loginError').style.display='block'; return; }
-  try {
-    const {data, error} = await _supa.from('agents').select('*').eq('name', name).eq('pwd', pwd).single();
-    if(error || !data){
-      document.getElementById('loginError').style.display = 'block';
-      return;
-    }
-    currentAgent = data;
-    sessionStorage.setItem('vm_current_agent', JSON.stringify(data));
+  const name=document.getElementById('loginAgent').value;
+  const pwd=document.getElementById('loginPwd').value;
+  if(!name||!pwd){document.getElementById('loginError').style.display='block';return;}
+  try{
+    const{data,error}=await _supa.from('agents').select('*').eq('name',name).eq('pwd',pwd).single();
+    if(error||!data){document.getElementById('loginError').style.display='block';return;}
+    currentAgent=data;
+    sessionStorage.setItem('vm_current_agent',JSON.stringify(data));
     showApp();
-  } catch(e){
-    document.getElementById('loginError').style.display = 'block';
-  }
+  }catch(e){document.getElementById('loginError').style.display='block';}
 }
 
-function togglePwd(){
-  const inp = document.getElementById('loginPwd');
-  inp.type = inp.type === 'password' ? 'text' : 'password';
-}
+function togglePwd(){const inp=document.getElementById('loginPwd');inp.type=inp.type==='password'?'text':'password';}
 
 async function showApp(){
-  document.getElementById('loginPage').style.display = 'none';
-  if(currentAgent.role === 'admin'){
-    document.getElementById('adminBtn').style.display = 'inline-flex';
-  }
-  const ref = await getNextRef();
-  const currentRef = document.getElementById('quoteRef').value;
-  if(!currentRef || currentRef === 'QT-001'){
-    document.getElementById('quoteRef').value = ref;
-  }
+  document.getElementById('loginPage').style.display='none';
+  if(currentAgent.role==='admin') document.getElementById('adminBtn').style.display='inline-flex';
+  const ref=await getNextRef();
+  const currentRef=document.getElementById('quoteRef').value;
+  if(!currentRef||currentRef==='QT-001') document.getElementById('quoteRef').value=ref;
   await updateDevisCount();
 }
 
 function doLogout(){
-  if(!confirm('Déconnexion ?')) return;
-  currentAgent = null;
+  if(!confirm('Déconnexion ?'))return;
+  currentAgent=null;
   sessionStorage.removeItem('vm_current_agent');
-  document.getElementById('loginPage').style.display = 'flex';
-  document.getElementById('loginPwd').value = '';
-  document.getElementById('loginError').style.display = 'none';
-  document.getElementById('adminBtn').style.display = 'none';
+  document.getElementById('loginPage').style.display='flex';
+  document.getElementById('loginPwd').value='';
+  document.getElementById('loginError').style.display='none';
+  document.getElementById('adminBtn').style.display='none';
 }
 
-// ─── ADMIN AGENTS ─────────────────────────────────────────────────────────────
-function openAdminPanel(){ renderAgentsList(); document.getElementById('adminPanel').classList.add('open'); }
-function closeAdminPanel(){ document.getElementById('adminPanel').classList.remove('open'); }
+function openAdminPanel(){renderAgentsList();document.getElementById('adminPanel').classList.add('open');}
+function closeAdminPanel(){document.getElementById('adminPanel').classList.remove('open');}
 
 async function renderAgentsList(){
-  const agents = await getAgents();
-  const div = document.getElementById('agentsList');
-  div.innerHTML = agents.map((a) => `
+  const agents=await getAgents();
+  const div=document.getElementById('agentsList');
+  div.innerHTML=agents.map(a=>`
     <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border:1px solid #D8E2EF;border-radius:6px;margin-bottom:6px;background:#F7F8FA;">
-      <div style="flex:1;">
-        <div style="font-weight:600;font-size:13px;color:#1A2E4A;">${a.name} <span style="font-size:10px;color:#6B7C93;">(${a.role})</span></div>
-        <div style="font-size:11px;color:#6B7C93;">${a.email||''}</div>
-      </div>
-      ${a.name !== 'admin' ? `<button class="btn btn-danger" onclick="removeAgent('${a.id}','${a.name}')">🗑</button>` : ''}
-    </div>
-  `).join('');
+      <div style="flex:1;"><div style="font-weight:600;font-size:13px;color:#1A2E4A;">${a.name} <span style="font-size:10px;color:#6B7C93;">(${a.role})</span></div><div style="font-size:11px;color:#6B7C93;">${a.email||''}</div></div>
+      ${a.name!=='admin'?`<button class="btn btn-danger" onclick="removeAgent('${a.id}','${a.name}')">🗑</button>`:''}
+    </div>`).join('');
 }
 
 async function addAgent(){
-  const name = document.getElementById('newAgentName').value.trim();
-  const pwd = document.getElementById('newAgentPwd').value.trim();
-  if(!name || !pwd){ alert('Nom et mot de passe requis'); return; }
-  const prefix = name.substring(0,4).toUpperCase();
-  try {
-    const {error} = await _supa.from('agents').insert({
-      name, pwd, email:'incoming@visitmoroccodmc.com', role:'agent', prefix
-    });
-    if(error) throw error;
-    document.getElementById('newAgentName').value = '';
-    document.getElementById('newAgentPwd').value = '';
-    await refreshLoginSelect();
-    await renderAgentsList();
-    showToast(`✅ Agent ${name} ajouté !`, 'success');
-  } catch(e){
-    if(e.code === '23505') alert('Agent déjà existant');
-    else showToast('⚠ Erreur ajout agent', 'error');
-  }
+  const name=document.getElementById('newAgentName').value.trim();
+  const pwd=document.getElementById('newAgentPwd').value.trim();
+  if(!name||!pwd){alert('Nom et mot de passe requis');return;}
+  const prefix=name.substring(0,4).toUpperCase();
+  try{
+    const{error}=await _supa.from('agents').insert({name,pwd,email:'incoming@visitmoroccodmc.com',role:'agent',prefix});
+    if(error)throw error;
+    document.getElementById('newAgentName').value='';
+    document.getElementById('newAgentPwd').value='';
+    await refreshLoginSelect();await renderAgentsList();
+    showToast(`✅ Agent ${name} ajouté !`,'success');
+  }catch(e){if(e.code==='23505')alert('Agent déjà existant');else showToast('⚠ Erreur ajout agent','error');}
 }
 
-async function removeAgent(id, name){
-  if(!confirm(`Supprimer l'agent ${name} ?`)) return;
-  try {
-    const {error} = await _supa.from('agents').delete().eq('id', id);
-    if(error) throw error;
-    await refreshLoginSelect();
-    await renderAgentsList();
-    showToast('🗑 Agent supprimé', 'error');
-  } catch(e){
-    showToast('⚠ Erreur suppression agent', 'error');
-  }
+async function removeAgent(id,name){
+  if(!confirm(`Supprimer l'agent ${name} ?`))return;
+  try{
+    const{error}=await _supa.from('agents').delete().eq('id',id);
+    if(error)throw error;
+    await refreshLoginSelect();await renderAgentsList();
+    showToast('🗑 Agent supprimé','error');
+  }catch(e){showToast('⚠ Erreur suppression agent','error');}
 }
 
 // ─── GOOGLE SHEET SYNC ────────────────────────────────────────────────────────
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyTpFjkBtcIDwYHhJjwbQ84pRjlFce1Fepj3w4l6c2FWS1WuHqe7pTL9WL7oPz3zX4b/exec';
-
+const SHEET_URL='https://script.google.com/macros/s/AKfycbyTpFjkBtcIDwYHhJjwbQ84pRjlFce1Fepj3w4l6c2FWS1WuHqe7pTL9WL7oPz3zX4b/exec';
 function syncToSheet(snap){
   const rate=parseFloat(snap.eurRate)||10.5;
   const sellFn=(c,m)=>m<100?c/(1-m/100):c;
@@ -863,8 +927,7 @@ function syncToSheet(snap){
   for(let i=0;i<snap.numDays;i++)for(let c=0;c<snap.numCats;c++){const r=(ad[i]||{})[c]||{};aC+=(parseFloat(r.units)||0)*(parseFloat(r.rate)||0);}
   const td=snap.transData||{};
   for(let i=0;i<snap.numDays;i++){const r=td[i]||[];tC+=((parseFloat(r[1])||0)+(parseFloat(r[2])||0))*(parseFloat(r[3])||1);}
-  const xd=snap.actData||{};
-  for(let i=0;i<snap.numDays;i++){const r=xd[i]||[];xC+=(parseFloat(r[1])||0)*(parseFloat(r[2])||0);}
+  (snap.actData||[]).forEach(r=>{xC+=(parseFloat(r.rate)||0)*(parseFloat(r.qty)||0);});
   Object.values(snap.extrasData||{}).forEach(r=>{eC+=(parseFloat(r[1])||0)*(parseFloat(r[2])||0);});
   const totalMad=sellFn(aC,parseFloat(snap.marginAccom)||0)+sellFn(tC,parseFloat(snap.marginTrans)||20)+sellFn(xC,parseFloat(snap.marginAct)||20)+sellFn(eC,parseFloat(snap.marginExtras)||20);
   const payload={agent:snap.agent,ref:snap.ref,version:snap.version,status:snap.status,client:snap.clientName,pax:snap.pax,arr:snap.arrivalDate,dep:snap.departureDate,numDays:snap.numDays,currency:snap.currency,rate:snap.eurRate,totalMad:Math.round(totalMad),totalDevise:Math.ceil((totalMad/rate)/10)*10,notes:snap.notes||''};
@@ -878,36 +941,65 @@ function printQuotation(){window.print();}
 async function exportExcel(){
   if(!currentDevisId){showToast('⚠ Sauvegardez le devis avant d\'exporter','error');return;}
   const snap=takeSnapshot();
-  showToast('⏳ Génération Excel...','success');
-  try {
-    const payload={ref:snap.ref,version:snap.version,status:snap.status,client:snap.clientName,contact:snap.contactName||'',pax:parseInt(snap.pax)||1,arr:snap.arrivalDate,dep:snap.departureDate,numDays:snap.numDays,numCats:snap.numCats||1,currency:snap.currency,rate:parseFloat(snap.eurRate)||10.5,quoteDate:snap.quoteDate,marginAccom:parseFloat(snap.marginAccom)||0,marginTrans:parseFloat(snap.marginTrans)||20,marginAct:parseFloat(snap.marginAct)||20,marginExtras:parseFloat(snap.marginExtras)||20,accomData:snap.accomData||{},transData:snap.transData||{},actData:snap.actData||{},extrasData:snap.extrasData||{}};
-    const resp=await fetch('https://fitplanning.onrender.com/export-quotation',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    if(!resp.ok) throw new Error('Server error');
-    const blob=await resp.blob();const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`Quotation_${snap.ref}_${snap.clientName||'Client'}.xlsx`;a.click();URL.revokeObjectURL(url);
-    showToast('✅ Quotation Excel téléchargée !','success');
-  } catch(e){ showToast('⚠ Erreur export — réessayez dans 30s','error'); }
-}
-
-async function exportAllVersions(){
-  if(!currentDevisId){showToast('⚠ Sauvegardez le devis avant d\'exporter','error');return;}
-  const snap=takeSnapshot();
   const ref=snap.ref||'QT';
+  // Récupérer TOUTES les versions du devis ouvert
   const allVersions=_cachedDevis.filter(d=>d.ref===ref);
   if(allVersions.length===0){showToast('⚠ Aucune version trouvée','error');return;}
   showToast(`⏳ Génération ${allVersions.length} version(s)...`,'success');
-  try {
-    const versions=allVersions.map(d=>({ref:d.ref,version:`v${d.version}`,status:d.status,client:d.client,pax:parseInt(d.data?.pax)||1,arr:d.data?.arrivalDate,dep:d.data?.departureDate,numDays:d.data?.numDays,numCats:d.data?.numCats||1,currency:d.data?.currency,rate:parseFloat(d.data?.eurRate)||10.5,quoteDate:d.data?.quoteDate,marginAccom:parseFloat(d.data?.marginAccom)||0,marginTrans:parseFloat(d.data?.marginTrans)||20,marginAct:parseFloat(d.data?.marginAct)||20,marginExtras:parseFloat(d.data?.marginExtras)||20,accomData:d.data?.accomData||{},transData:d.data?.transData||{},actData:d.data?.actData||{},extrasData:d.data?.extrasData||{}}));
+  try{
+    const versions=allVersions.map(d=>({
+      ref:d.ref,version:`v${d.version}`,status:d.status,
+      client:d.client,contact:d.data?.contactName||'',
+      pax:parseInt(d.data?.pax)||1,
+      arr:d.data?.arrivalDate,dep:d.data?.departureDate,
+      numDays:d.data?.numDays,numCats:d.data?.numCats||1,
+      currency:d.data?.currency,rate:parseFloat(d.data?.eurRate)||10.5,
+      quoteDate:d.data?.quoteDate,
+      marginAccom:parseFloat(d.data?.marginAccom)||0,
+      marginTrans:parseFloat(d.data?.marginTrans)||20,
+      marginAct:parseFloat(d.data?.marginAct)||20,
+      marginExtras:parseFloat(d.data?.marginExtras)||20,
+      accomData:d.data?.accomData||{},
+      transData:d.data?.transData||{},
+      actData:d.data?.actData||[],
+      extrasData:d.data?.extrasData||{}
+    }));
     const resp=await fetch('https://fitplanning.onrender.com/export-all-versions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({versions})});
-    if(!resp.ok) throw new Error('Server error');
-    const blob=await resp.blob();const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`AllVersions_${ref}_${snap.clientName||'Client'}.xlsx`;a.click();URL.revokeObjectURL(url);
+    if(!resp.ok)throw new Error('Server error');
+    const blob=await resp.blob();const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');a.href=url;
+    a.download=`Quotation_${ref}_${snap.clientName||'Client'}_AllVersions.xlsx`;
+    a.click();URL.revokeObjectURL(url);
     showToast(`✅ ${allVersions.length} version(s) exportées !`,'success');
-  } catch(e){ showToast('⚠ Erreur export — réessayez dans 30s','error'); }
+  }catch(e){showToast('⚠ Erreur export — réessayez dans 30s','error');}
 }
 
 function openPreview(){
   const snap=takeSnapshot();
   const PREVIEW_URL='https://fitplanning-alpha.vercel.app/preview.html';
-  const data={ref:snap.ref||'QT-001',version:snap.version||'v1',quoteDate:snap.quoteDate||new Date().toISOString().split('T')[0],status:snap.status||'sent',client:snap.clientName||'',contact:snap.contactName||'',paxNames:snap.paxNames||snap.clientName||'',pax:parseInt(snap.pax)||2,arr:snap.arrivalDate||'',dep:snap.departureDate||'',numDays:snap.numDays||0,numCats:snap.numCats||1,currency:snap.currency||'EUR',rate:parseFloat(snap.eurRate)||10.5,totalSellMad:0,agent:document.getElementById('quickNote')?.value||'Agent Visit Morocco',agentEmail:currentAgent?currentAgent.email:'incoming@visitmoroccodmc.com',agentPhone:'+212 524 42 03 87',agentMobile:'+212 665 877 863',accomData:snap.accomData||{},mealsData:snap.mealsData||[],transData:snap.transData||{},actData:snap.actData||[],extData:snap.extrasData?Object.values(snap.extrasData).map(r=>({desc:r[0]||'',rate:r[1]||0,qty:r[2]||1})):[],incLines:snap.incLines||[],marginAccom:parseFloat(snap.marginAccom)||0,marginTrans:parseFloat(snap.marginTrans)||20,marginAct:parseFloat(snap.marginAct)||20,marginExtras:parseFloat(snap.marginExtras)||20,notes:snap.notes||''};
+  const data={
+    ref:snap.ref||'QT-001',version:snap.version||'v1',
+    quoteDate:snap.quoteDate||new Date().toISOString().split('T')[0],
+    status:snap.status||'sent',client:snap.clientName||'',
+    contact:snap.contactName||'',paxNames:snap.paxNames||snap.clientName||'',
+    pax:parseInt(snap.pax)||2,arr:snap.arrivalDate||'',dep:snap.departureDate||'',
+    numDays:snap.numDays||0,numCats:snap.numCats||1,
+    currency:snap.currency||'EUR',rate:parseFloat(snap.eurRate)||10.5,
+    totalSellMad:0,
+    agent:currentAgent?currentAgent.name:'Agent Visit Morocco',
+    agentEmail:currentAgent?currentAgent.email:'incoming@visitmoroccodmc.com',
+    agentPhone:'+212 524 42 03 87',agentMobile:'+212 665 877 863',
+    accomData:snap.accomData||{},mealsData:snap.mealsData||[],
+    transData:snap.transData||{},
+    actData:snap.actData||[],
+    extData:snap.extrasData?Object.values(snap.extrasData).map(r=>({desc:r[0]||'',rate:r[1]||0,qty:r[2]||1})):[],
+    incLines:snap.incLines||[],
+    marginAccom:parseFloat(snap.marginAccom)||0,
+    marginTrans:parseFloat(snap.marginTrans)||20,
+    marginAct:parseFloat(snap.marginAct)||20,
+    marginExtras:parseFloat(snap.marginExtras)||20,
+    notes:snap.notes||''
+  };
   localStorage.setItem('vm_preview_data',JSON.stringify(data));
   window.open(PREVIEW_URL,'_blank');
 }
@@ -915,13 +1007,26 @@ function openPreview(){
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 async function initLogin(){
   await refreshLoginSelect();
-  const saved = sessionStorage.getItem('vm_current_agent');
-  if(saved){ currentAgent = JSON.parse(saved); await showApp(); }
+  const saved=sessionStorage.getItem('vm_current_agent');
+  if(saved){currentAgent=JSON.parse(saved);await showApp();}
 }
 
-document.getElementById('quoteDate').value = new Date().toISOString().split('T')[0];
+document.getElementById('quoteDate').value=new Date().toISOString().split('T')[0];
 initExtras();
 initLogin();
+
+// Ping Render toutes les 10 minutes
+setInterval(()=>{fetch('https://fitplanning.onrender.com/export-all-versions',{method:'HEAD'}).catch(()=>{});},10*60*1000);
+fetch('https://fitplanning.onrender.com/export-all-versions',{method:'HEAD'}).catch(()=>{});
+
+// Realtime
+_supa.channel('devis-changes')
+  .on('postgres_changes',{event:'*',schema:'public',table:'devis'},()=>{
+    updateDevisCount();
+    const modal=document.getElementById('modalOverlay');
+    if(modal.classList.contains('open'))renderDevisList();
+  })
+  .subscribe();
 </script>
 </body>
 </html>
