@@ -527,42 +527,92 @@ async function getAllDevis(){
 async function saveDevis(){
   const snap = takeSnapshot();
   const ref = snap.ref || 'sans-ref';
-  // Calculer le numéro de version
-  const existing = _cachedDevis.filter(d => d.ref === ref);
-  const maxVer = existing.length > 0 ? Math.max(...existing.map(d => d.version || 1)) : 0;
-  const newVerNum = currentDevisId ? (maxVer) : (maxVer + 1);
-  snap.version = `v${newVerNum}`;
-  document.getElementById('version').value = snap.version;
+  snap.agent = currentAgent.name;
 
-  try {
-    let result;
-    if(currentDevisId){
-      // Mise à jour version existante
-      const {data, error} = await _supa.from('devis').update({
-        ref, agent: currentAgent.name, client: snap.clientName,
-        status: snap.status, version: newVerNum,
-        data: snap, updated_at: new Date().toISOString()
-      }).eq('id', currentDevisId).select().single();
-      if(error) throw error;
-      result = data;
-    } else {
-      // Nouveau devis
+  if(!currentDevisId){
+    const existing = _cachedDevis.filter(d => d.ref === ref);
+    const maxVer = existing.length > 0 ? Math.max(...existing.map(d => d.version || 1)) : 0;
+    const newVerNum = maxVer + 1;
+    snap.version = `v${newVerNum}`;
+    document.getElementById('version').value = snap.version;
+    try {
       const {data, error} = await _supa.from('devis').insert({
         ref, agent: currentAgent.name, client: snap.clientName,
         status: snap.status, version: newVerNum, data: snap
       }).select().single();
       if(error) throw error;
-      result = data;
-      currentDevisId = result.id;
-    }
-    markSaved(`v${newVerNum} sauvegardé`);
-    await updateDevisCount();
-    showToast(`✅ Devis ${ref} v${newVerNum} sauvegardé !`, 'success');
-    syncToSheet(snap);
-  } catch(e){
-    console.error('saveDevis error:', e);
-    showToast('⚠ Erreur sauvegarde Supabase', 'error');
+      currentDevisId = data.id;
+      markSaved(`v${newVerNum} sauvegardé`);
+      await updateDevisCount();
+      showToast(`✅ Devis ${ref} v${newVerNum} sauvegardé !`, 'success');
+      syncToSheet(snap);
+    } catch(e){ showToast('⚠ Erreur sauvegarde Supabase', 'error'); }
+    return;
   }
+
+  const currentVer = parseInt((document.getElementById('version').value||'v1').replace('v','')) || 1;
+  const choice = await showSaveDialog(ref, currentVer);
+  if(!choice) return;
+
+  try {
+    if(choice === 'new'){
+      const finalVerNum = currentVer + 1;
+      snap.version = `v${finalVerNum}`;
+      document.getElementById('version').value = snap.version;
+      const {data, error} = await _supa.from('devis').insert({
+        ref, agent: currentAgent.name, client: snap.clientName,
+        status: snap.status, version: finalVerNum, data: snap
+      }).select().single();
+      if(error) throw error;
+      currentDevisId = data.id;
+      markSaved(`v${finalVerNum} sauvegardé`);
+      showToast(`✅ Devis ${ref} v${finalVerNum} — nouvelle version !`, 'success');
+    } else {
+      snap.version = `v${currentVer}`;
+      const {error} = await _supa.from('devis').update({
+        client: snap.clientName, status: snap.status,
+        data: snap, updated_at: new Date().toISOString()
+      }).eq('id', currentDevisId);
+      if(error) throw error;
+      markSaved(`v${currentVer} écrasé`);
+      showToast(`✅ Devis ${ref} v${currentVer} mis à jour !`, 'success');
+    }
+    await updateDevisCount();
+    syncToSheet(snap);
+  } catch(e){ showToast('⚠ Erreur sauvegarde Supabase', 'error'); }
+}
+
+function showSaveDialog(ref, currentVer){
+  return new Promise(resolve => {
+    const overlay = document.createElement('div');
+    overlay.style.cssText='position:fixed;inset:0;background:rgba(10,20,40,.6);z-index:9998;display:flex;align-items:center;justify-content:center;padding:20px;';
+    overlay.innerHTML=`
+      <div style="background:#fff;border-radius:8px;width:100%;max-width:420px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3);">
+        <div style="background:#1A2E4A;padding:16px 22px;border-bottom:2px solid #C9A84C;">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:18px;color:#C9A84C;">💾 Sauvegarder ${ref}</div>
+        </div>
+        <div style="padding:22px;">
+          <p style="font-size:13px;color:#6B7C93;margin-bottom:18px;">Ce devis existe déjà en <strong style="color:#1A2E4A;">v${currentVer}</strong>. Que souhaitez-vous faire ?</p>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <button id="btnNewVer" style="background:#1A6B4A;color:#fff;border:none;border-radius:6px;padding:12px 16px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;text-align:left;">
+              ✦ Nouvelle version — v${currentVer + 1}<br>
+              <span style="font-size:11px;font-weight:400;opacity:.8;">Conserve v${currentVer} et crée une nouvelle entrée</span>
+            </button>
+            <button id="btnOverwrite" style="background:#2B5EA7;color:#fff;border:none;border-radius:6px;padding:12px 16px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;text-align:left;">
+              ✎ Écraser v${currentVer}<br>
+              <span style="font-size:11px;font-weight:400;opacity:.8;">Remplace les données actuelles (correction de frappe...)</span>
+            </button>
+            <button id="btnCancel" style="background:transparent;color:#6B7C93;border:1px solid #D8E2EF;border-radius:6px;padding:10px 16px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">
+              Annuler
+            </button>
+          </div>
+        </div>
+      </div>`;
+    document.body.appendChild(overlay);
+    overlay.querySelector('#btnNewVer').onclick=()=>{document.body.removeChild(overlay);resolve('new');};
+    overlay.querySelector('#btnOverwrite').onclick=()=>{document.body.removeChild(overlay);resolve('overwrite');};
+    overlay.querySelector('#btnCancel').onclick=()=>{document.body.removeChild(overlay);resolve(null);};
+  });
 }
 
 async function loadDevis(id){
