@@ -6,9 +6,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <!-- ✅ SUPABASE SDK -->
-<script src="https://unpkg.com/@supabase/supabase-js@2"><script>
-  <script>
-  const _supa = supabase.createClient(
+<script type="module">
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+  window._supa = createClient(
     'https://fdgprtdivvdxqtvpmjud.supabase.co',
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkZ3BydGRpdnZkeHF0dnBtanVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5MTQyNTcsImV4cCI6MjA5MTQ5MDI1N30.qpYIbHfMkCqOAZg0xxTAAh36dr8HbfBl4sEx6GCIGys'
   );
@@ -1024,7 +1024,7 @@ async function initLogin(){
 
 document.getElementById('quoteDate').value=new Date().toISOString().split('T')[0];
 initExtras();
-initLogin();
+const _waitSupa = setInterval(()=>{ if(window._supa){ clearInterval(_waitSupa); initLogin(); } }, 100);
 
 // Ping Render toutes les 10 minutes
 setInterval(()=>{fetch('https://fitplanning.onrender.com/export-all-versions',{method:'HEAD'}).catch(()=>{});},10*60*1000);
