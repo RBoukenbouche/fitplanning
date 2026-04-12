@@ -1024,11 +1024,21 @@ async function initLogin(){
 
 document.getElementById('quoteDate').value=new Date().toISOString().split('T')[0];
 initExtras();
-const _waitSupa = setInterval(()=>{ if(window._supa){ clearInterval(_waitSupa); initLogin(); } }, 100);
-
-// Ping Render toutes les 10 minutes
-setInterval(()=>{fetch('https://fitplanning.onrender.com/export-all-versions',{method:'HEAD'}).catch(()=>{});},10*60*1000);
-fetch('https://fitplanning.onrender.com/export-all-versions',{method:'HEAD'}).catch(()=>{});
+const _waitSupa=setInterval(()=>{
+  if(window._supa){
+    clearInterval(_waitSupa);
+    initLogin();
+    setInterval(()=>{fetch('https://fitplanning.onrender.com/export-all-versions',{method:'HEAD'}).catch(()=>{});},10*60*1000);
+    fetch('https://fitplanning.onrender.com/export-all-versions',{method:'HEAD'}).catch(()=>{});
+    _supa.channel('devis-changes')
+      .on('postgres_changes',{event:'*',schema:'public',table:'devis'},()=>{
+        updateDevisCount();
+        const modal=document.getElementById('modalOverlay');
+        if(modal.classList.contains('open'))renderDevisList();
+      })
+      .subscribe();
+  }
+},100);
 
 // Realtime
 _supa.channel('devis-changes')
