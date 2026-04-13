@@ -468,7 +468,10 @@ function rebuildTrans(saved){const tbody=document.getElementById('transBody');co
 function recalcTrans(){let cost=0;for(let i=0;i<numDays;i++){const r=document.getElementById(`tr-${i}`);if(!r)continue;const inp=r.querySelectorAll('input');const t=((parseFloat(inp[1]?.value)||0)+(parseFloat(inp[2]?.value)||0))*(parseFloat(inp[3]?.value)||1);cost+=t;const el=document.getElementById(`tt-${i}`);if(el)el.textContent=fmt(t);}const m=parseFloat(document.getElementById('marginTrans').value)||0;document.getElementById('transSummary').textContent=`${fmt(cost)} → ${fmt(sell(cost,m))} MAD`;updateGT();}
 
 // ─── ACTIVITÉS — multi-lignes par jour ────────────────────────────────────────
-function rebuildAct(savedRows){
+// Calcul du nombre de jours entre startDate et endDate
+const numDays = Math.floor((endDate - startDate) / (1000*60*60*24)) + 1;
+  
+  function rebuildAct(savedRows){
   // savedRows: tableau [{dayIndex, rowId, desc, rate, qty}, ...]
   if(savedRows) actRows = savedRows.map(r=>({...r}));
   // Si aucune ligne sauvegardée, initialiser une ligne par jour
