@@ -210,7 +210,7 @@ function calcTotals(){
   let aC=0,tC=0,xC=0,eC=0;
   for(let i=0;i<Q.numDays;i++)for(let c=0;c<Q.numCats;c++){const r=(Q.accomData[i]||{})[c]||{};aC+=(parseFloat(r.units)||0)*(parseFloat(r.rate)||0);}
   for(let i=0;i<Q.numDays;i++){const r=(Q.transData[i]||[]);tC+=((parseFloat(r[1])||0)+(parseFloat(r[2])||0))*(parseFloat(r[3])||1);}
-  // actData est un tableau d'objets {dayIndex, desc, rate, qty}
+  // actData est maintenant un tableau d'objets {dayIndex, desc, rate, qty}
   if(Array.isArray(Q.actData)){
     Q.actData.forEach(r=>{xC+=(parseFloat(r.rate)||0)*(parseFloat(r.qty)||0);});
   }
@@ -264,14 +264,15 @@ function render(){
   }
   const transHTML=transRows.length?transRows.join(''):`<tr><td colspan="7" class="empty-row">No transport entered</td></tr>`;
 
-  // Meals & Experiences — tri chronologique par dayIndex
-  const actRowsSorted=[...(Array.isArray(Q.actData)?Q.actData:[])].sort((a,b)=>(parseInt(a.dayIndex)||0)-(parseInt(b.dayIndex)||0));
+  // Meals & Experiences (ex-Activities) — maintenant tableau d'objets
   const actRows=[];
-  actRowsSorted.forEach(r=>{
-    if(r.desc){
-      actRows.push(`<tr><td class="day-cell">Day ${(parseInt(r.dayIndex)||0)+1}</td><td class="date-cell">${dayDate(parseInt(r.dayIndex)||0)}</td><td>${r.desc}</td><td class="rt">${fmt(r.rate||0)}</td><td class="rt">${r.qty||0}</td><td class="rt" style="font-weight:600;">${fmt((parseFloat(r.rate)||0)*(parseFloat(r.qty)||0))}</td></tr>`);
-    }
-  });
+  if(Array.isArray(Q.actData)){
+    Q.actData.forEach(r=>{
+      if(r.desc){
+        actRows.push(`<tr><td class="day-cell">Day ${(r.dayIndex||0)+1}</td><td class="date-cell">${dayDate(r.dayIndex||0)}</td><td>${r.desc}</td><td class="rt">${fmt(r.rate||0)}</td><td class="rt">${r.qty||0}</td><td class="rt" style="font-weight:600;">${fmt((parseFloat(r.rate)||0)*(parseFloat(r.qty)||0))}</td></tr>`);
+      }
+    });
+  }
   const actHTML=actRows.length?actRows.join(''):`<tr><td colspan="6" class="empty-row">No activity entered</td></tr>`;
 
   // Other Services (ex-Extras) — affiché sur le preview mais pas dans le proposal
@@ -537,14 +538,13 @@ async function doGenerateProposal(){
     if(r[0]){const dt=new Date(QQ.arr||'');dt.setDate(dt.getDate()+i);transLines.push(`   Day ${i+1} (${dt.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}) : ${r[0]}`);}
   }
 
-  // 3. Meals & Experiences — trié chronologiquement par dayIndex
+  // 3. Meals & Experiences (actData — tableau d'objets)
   const mealsExpLines=[];
   if(Array.isArray(QQ.actData)){
-    const sorted=[...QQ.actData].sort((a,b)=>(parseInt(a.dayIndex)||0)-(parseInt(b.dayIndex)||0));
-    sorted.forEach(r=>{
+    QQ.actData.forEach(r=>{
       if(r.desc){
-        const dt=new Date(QQ.arr||'');dt.setDate(dt.getDate()+(parseInt(r.dayIndex)||0));
-        mealsExpLines.push(`   Day ${(parseInt(r.dayIndex)||0)+1} (${dt.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}) : ${r.desc}`);
+        const dt=new Date(QQ.arr||'');dt.setDate(dt.getDate()+(r.dayIndex||0));
+        mealsExpLines.push(`   Day ${(r.dayIndex||0)+1} (${dt.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}) : ${r.desc}`);
       }
     });
   }
@@ -573,21 +573,21 @@ async function doGenerateProposal(){
     '',
   ];
 
-  // PROPOSED ITINERARY — Transport (en premier)
-  if(transLines.length){
-    lines.push(`🚗 ${t.itinerary.toUpperCase()}:`);
-    lines.push(...transLines);
-    lines.push('');
-  }
-
-  // ACCOMMODATION
+  // PROPOSED ITINERARY — Accommodation
   if(accomText.length){
     lines.push(`🏨 ${t.accommodation.toUpperCase()}:`);
     lines.push(...accomText);
     lines.push('');
   }
 
-  // MEALS & EXPERIENCES — trié chronologiquement
+  // PROPOSED ITINERARY — Transport
+  if(transLines.length){
+    lines.push(`🚗 ${t.itinerary.toUpperCase()}:`);
+    lines.push(...transLines);
+    lines.push('');
+  }
+
+  // MEALS & EXPERIENCES
   if(mealsExpLines.length){
     lines.push(`🎭 ${t.mealsExp.toUpperCase()}:`);
     lines.push(...mealsExpLines);
