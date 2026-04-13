@@ -149,6 +149,24 @@ table.recap tr.total-row td{border-top:2px solid rgba(201,168,76,.5);font-weight
         <div class="lang-card" id="lc-es" onclick="selLang('es')"><div class="flag">🇪🇸</div><div class="lname">Español</div></div>
         <div class="lang-card" id="lc-pt" onclick="selLang('pt')"><div class="flag">🇧🇷</div><div class="lname">Português</div></div>
       </div>
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--tm);margin-bottom:9px;">Display format</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;">
+        <div class="lang-card active" id="dm-date" onclick="selDisplayMode('date')" style="padding:10px 6px;">
+          <div class="flag">📅</div><div class="lname">By Date</div>
+          <div style="font-size:9px;color:var(--tm);margin-top:2px;">Apr 23 - Apr 25</div>
+        </div>
+        <div class="lang-card" id="dm-day" onclick="selDisplayMode('day')" style="padding:10px 6px;">
+          <div class="flag">📆</div><div class="lname">By Day</div>
+          <div style="font-size:9px;color:var(--tm);margin-top:2px;">Day 1 - Day 2</div>
+        </div>
+        <div class="lang-card" id="dm-both" onclick="selDisplayMode('both')" style="padding:10px 6px;">
+          <div class="flag">🗓</div><div class="lname">Both</div>
+          <div style="font-size:9px;color:var(--tm);margin-top:2px;">Day 1 (Apr 23)</div>
+        </div>
+      </div>
+      <div id="noDateWarning" style="display:none;background:#FEF3C7;border:1px solid #F59E0B;border-radius:5px;padding:9px 12px;font-size:11px;color:#92400E;margin-bottom:12px;">
+        ⚠️ No arrival date set in this quotation — <strong>By Date</strong> may show incorrect dates. Consider using <strong>By Day</strong> instead.
+      </div>
       <div class="modal-actions">
         <button class="btn btn-proposal" id="btnGenProposal" onclick="doGenerateProposal()">📝 Generate Proposal</button>
         <button class="btn btn-cancel" onclick="closeMo('moProposal')">Cancel</button>
@@ -493,7 +511,25 @@ async function doGenerateInvoice(){
   finally{btn.innerHTML='📊 Generate Excel Invoice';btn.disabled=false;}
 }
 
-function openProposalModal(){openMo('moProposal');}
+function openProposalModal(){
+  // Vérifier si date d'arrivée présente
+  const QQ=window._QUOTE_FOR_INVOICE||Q;
+  const hasDate=QQ&&QQ.arr&&QQ.arr.length>0;
+  document.getElementById('noDateWarning').style.display=(!hasDate&&selDisplayMode_val==='date')?'block':'none';
+  openMo('moProposal');
+}
+
+let selDisplayMode_val='date';
+function selDisplayMode(mode){
+  selDisplayMode_val=mode;
+  ['date','day','both'].forEach(m=>{
+    document.getElementById('dm-'+m).classList.toggle('active',m===mode);
+  });
+  // Afficher warning si By Date sans date d'arrivée
+  const QQ=window._QUOTE_FOR_INVOICE||Q;
+  const hasDate=QQ&&QQ.arr&&QQ.arr.length>0;
+  document.getElementById('noDateWarning').style.display=(mode==='date'&&!hasDate)?'block':'none';
+}
 
 async function doGenerateProposal(){
   const QQ=window._QUOTE_FOR_INVOICE||Q;
@@ -512,6 +548,21 @@ async function doGenerateProposal(){
   const cur=QQ.currency;
   const fmtD=s=>{try{return new Date(s).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});}catch(e){return s||'';}};
 
+  // ── Helpers format selon mode ──────────────────────────────────────────────
+  const dm=selDisplayMode_val;
+  const fmtDay=(i)=>`Day ${i+1}`;
+  const fmtDate=(i)=>{const d=new Date(QQ.arr||'');d.setDate(d.getDate()+i);return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'});};
+  const fmtLabel=(i)=>{
+    if(dm==='date') return fmtDate(i);
+    if(dm==='day')  return fmtDay(i);
+    return `${fmtDay(i)} (${fmtDate(i)})`;
+  };
+  const fmtRangeLabel=(start,end)=>{
+    if(dm==='date') return `${fmtDate(start)} - ${fmtDate(end)}`;
+    if(dm==='day')  return `${fmtDay(start)} - ${fmtDay(end)}`;
+    return `${fmtDay(start)} (${fmtDate(start)}) - ${fmtDay(end)} (${fmtDate(end)})`;
+  };
+
   // 1. Hébergement
   const accomLines=[];let prev=null;
   for(let i=0;i<QQ.numDays;i++){
@@ -524,27 +575,23 @@ async function doGenerateProposal(){
     }
   }
   const accomText=accomLines.map(r=>{
-    const d1=new Date(QQ.arr||'');d1.setDate(d1.getDate()+r.start);
-    const d2=new Date(QQ.arr||'');d2.setDate(d2.getDate()+r.end+1);
-    const from=d1.toLocaleDateString('en-GB',{day:'2-digit',month:'short'});
-    const to=d2.toLocaleDateString('en-GB',{day:'2-digit',month:'short'});
-    return`   ${from} - ${to} : ${r.city} - ${r.hotel}${r.room?' ('+r.room+')':''}${r.units>0?' - '+r.units+' unit(s)':''}`;
+    const range=fmtRangeLabel(r.start,r.end+1);
+    return`   ${range} : ${r.city} - ${r.hotel}${r.room?' ('+r.room+')':''}${r.units>0?' - '+r.units+' unit(s)':''}`;
   });
 
   // 2. Transport (Proposed Itinerary)
   const transLines=[];
   for(let i=0;i<QQ.numDays;i++){
     const r=(QQ.transData[i]||[]);
-    if(r[0]){const dt=new Date(QQ.arr||'');dt.setDate(dt.getDate()+i);transLines.push(`   Day ${i+1} (${dt.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}) : ${r[0]}`);}
+    if(r[0]){transLines.push(`   ${fmtLabel(i)} : ${r[0]}`);}
   }
 
-  // 3. Meals & Experiences (actData — tableau d'objets)
+  // 3. Meals & Experiences
   const mealsExpLines=[];
   if(Array.isArray(QQ.actData)){
     QQ.actData.forEach(r=>{
       if(r.desc){
-        const dt=new Date(QQ.arr||'');dt.setDate(dt.getDate()+(r.dayIndex||0));
-        mealsExpLines.push(`   Day ${(r.dayIndex||0)+1} (${dt.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}) : ${r.desc}`);
+        mealsExpLines.push(`   ${fmtLabel(r.dayIndex||0)} : ${r.desc}`);
       }
     });
   }
@@ -573,17 +620,17 @@ async function doGenerateProposal(){
     '',
   ];
 
-  // PROPOSED ITINERARY — Transport
-  if(transLines.length){
-    lines.push(`🚗 ${t.itinerary.toUpperCase()}:`);
-    lines.push(...transLines);
-    lines.push('');
-  }
-
   // PROPOSED ITINERARY — Accommodation
   if(accomText.length){
     lines.push(`🏨 ${t.accommodation.toUpperCase()}:`);
     lines.push(...accomText);
+    lines.push('');
+  }
+
+  // PROPOSED ITINERARY — Transport
+  if(transLines.length){
+    lines.push(`🚗 ${t.itinerary.toUpperCase()}:`);
+    lines.push(...transLines);
     lines.push('');
   }
 
