@@ -292,7 +292,7 @@ def generate_invoice(data):
         s(ws, 15, 3, num_days)  # DAYS
         s(ws, 15, 4, per_pax)   # DAILY RATE
         s(ws, 15, 5, 0)         # VAT 0
-        s(ws, 15, 6, '=B15*C15*D15')
+        s(ws, 15, 6, '=B15*D15')
         s(ws, 15, 7, '=F15*E15')
         s(ws, 15, 8, '=F15+G15')
 
