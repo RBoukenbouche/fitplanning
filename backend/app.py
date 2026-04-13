@@ -152,14 +152,6 @@ def build_act_lines(act_data):
         lines.append(f"{date_lbl}: {desc}" if date_lbl else desc)
     return lines
 
-# ── CONSTRUCTION LIGNES EXTRAS ────────────────────────────────────────────────
-def build_extra_lines(extras_data):
-    lines = []
-    for e in extras_data:
-        desc = e.get('desc', '').strip()
-        if desc: lines.append(desc)
-    return lines
-
 # ── GÉNÉRATION FACTURE ────────────────────────────────────────────────────────
 def generate_invoice(data):
     currency  = data.get('currency', 'USD')
