@@ -429,7 +429,8 @@ function onDaysManualChange(){
 function rebuildAll(){rebuildAccom();rebuildTrans();refreshActDays();recalcAll();}
 
 function refreshActDays(){
-  // Si pas encore de lignes, initialiser
+  const tbody=document.getElementById('actBody');
+  if(!tbody) return; // page pas encore prête
   if(!actRows||actRows.length===0){
     actRows=[{dayIndex:0,rowId:actRowCount++,desc:'',rate:0,qty:0}];
   }
@@ -498,6 +499,7 @@ function rebuildAct(savedRows){
 
 function renderActTable(){
   const tbody=document.getElementById('actBody');
+  if(!tbody) return; // page pas encore prête
   tbody.innerHTML='';
   if(!actRows||actRows.length===0){
     actRows=[{dayIndex:0, rowId:actRowCount++, desc:'', rate:0, qty:0}];
