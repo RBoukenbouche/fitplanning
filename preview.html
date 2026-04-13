@@ -573,17 +573,17 @@ async function doGenerateProposal(){
     '',
   ];
 
-  // PROPOSED ITINERARY — Accommodation
-  if(accomText.length){
-    lines.push(`🏨 ${t.accommodation.toUpperCase()}:`);
-    lines.push(...accomText);
-    lines.push('');
-  }
-
   // PROPOSED ITINERARY — Transport
   if(transLines.length){
     lines.push(`🚗 ${t.itinerary.toUpperCase()}:`);
     lines.push(...transLines);
+    lines.push('');
+  }
+
+  // PROPOSED ITINERARY — Accommodation
+  if(accomText.length){
+    lines.push(`🏨 ${t.accommodation.toUpperCase()}:`);
+    lines.push(...accomText);
     lines.push('');
   }
 
