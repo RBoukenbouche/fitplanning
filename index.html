@@ -322,7 +322,7 @@
     <div class="section-header"><div class="section-title">🎭 Meals & Experiences</div></div>
     <div class="table-wrap"><table class="gen-table" id="actTable">
       <thead><tr>
-        <th colspan="2" style="width:175px">Jour / Date</th><th>Monument / Visite / Expérience</th>
+        <th style="width:52px">Jour</th><th style="width:87px">Date</th><th>Monument / Visite / Expérience</th>
         <th class="right" style="width:115px">Tarif (MAD)</th>
         <th class="right" style="width:55px">Qté</th>
         <th class="right" style="width:105px">Coût (MAD)</th>
@@ -330,7 +330,6 @@
       </tr></thead>
       <tbody id="actBody"></tbody>
     </table></div>
-    <button class="add-row-btn" onclick="addActRow()">＋ Ajouter une ligne</button>
     <div class="margin-row">
       <label>Marge :</label><input type="number" id="marginAct" value="20" min="0" max="100" oninput="recalcAct();markUnsaved()"> %
       <div class="margin-stat"><span>Coût → Vente</span><strong id="actSummary">0,00 → 0,00 MAD</strong></div>
@@ -394,7 +393,7 @@
     <label>Notes / Remarques</label>
     <textarea id="notes" placeholder="Conditions particulières, inclusions, exclusions..." oninput="markUnsaved()"></textarea>
   </div>
-  <div class="app-footer">Visit Morocco Travel & Events &nbsp;|&nbsp; <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2f46414c40424641486f59465c465b42405d404c4c404b424c014c4042">[email&#160;protected]</a> &nbsp;|&nbsp; www.visitmoroccodmc.com</div>
+  <div class="app-footer">Visit Morocco Travel & Events &nbsp;|&nbsp; incoming@visitmoroccodmc.com &nbsp;|&nbsp; www.visitmoroccodmc.com</div>
 </div>
 
 <script>
@@ -468,12 +467,16 @@ function recalcAccom(){let cost=0;for(let i=0;i<numDays;i++)for(let c=0;c<numCat
 function rebuildTrans(saved){const tbody=document.getElementById('transBody');const sv=saved||readGenRows('transBody');tbody.innerHTML='';for(let i=0;i<numDays;i++){const s=sv[i]||[];const tr=document.createElement('tr');tr.id=`tr-${i}`;tr.innerHTML=`<td class="td-day">${dayLbl(i)}</td><td class="td-date">${dateLbl(i)}</td><td><input type="text" placeholder="Route / Description" value="${s[0]||''}" oninput="markUnsaved()"></td><td style="text-align:right"><input type="number" min="0" step="0.01" value="${s[1]||0}" oninput="recalcTrans();markUnsaved()"></td><td style="text-align:right"><input type="number" min="0" step="0.01" value="${s[2]||0}" oninput="recalcTrans();markUnsaved()"></td><td style="text-align:right"><input type="number" min="0" value="${s[3]||1}" oninput="recalcTrans();markUnsaved()"></td><td class="gen-total" id="tt-${i}">0,00</td>`;tbody.appendChild(tr);}recalcTrans();}
 function recalcTrans(){let cost=0;for(let i=0;i<numDays;i++){const r=document.getElementById(`tr-${i}`);if(!r)continue;const inp=r.querySelectorAll('input');const t=((parseFloat(inp[1]?.value)||0)+(parseFloat(inp[2]?.value)||0))*(parseFloat(inp[3]?.value)||1);cost+=t;const el=document.getElementById(`tt-${i}`);if(el)el.textContent=fmt(t);}const m=parseFloat(document.getElementById('marginTrans').value)||0;document.getElementById('transSummary').textContent=`${fmt(cost)} → ${fmt(sell(cost,m))} MAD`;updateGT();}
 
-// ─── ACTIVITÉS — sélection jour par liste déroulante ─────────────────────────
+// ─── ACTIVITÉS — multi-lignes par jour ────────────────────────────────────────
 function rebuildAct(savedRows){
-  if(savedRows && Array.isArray(savedRows) && savedRows.length>0){
-    actRows=savedRows.map(r=>({...r, rowId:actRowCount++}));
-  } else if(!actRows || actRows.length===0){
-    actRows=[{dayIndex:0, rowId:actRowCount++, desc:'', rate:0, qty:0}];
+  // savedRows: tableau [{dayIndex, rowId, desc, rate, qty}, ...]
+  if(savedRows) actRows = savedRows.map(r=>({...r}));
+  // Si aucune ligne sauvegardée, initialiser une ligne par jour
+  if(!actRows || actRows.length===0){
+    actRows=[];
+    for(let i=0;i<numDays;i++){
+      actRows.push({dayIndex:i, rowId:actRowCount++, desc:'', rate:0, qty:0});
+    }
   }
   renderActTable();
 }
@@ -481,93 +484,48 @@ function rebuildAct(savedRows){
 function renderActTable(){
   const tbody=document.getElementById('actBody');
   tbody.innerHTML='';
-  actRows.forEach(function(row){
-    // Construire les options du select
-    var selectEl=document.createElement('select');
-    selectEl.style.cssText='width:100%;border:1px solid var(--border);border-radius:3px;padding:4px 5px;font-family:DM Sans,sans-serif;font-size:11px;color:var(--text);background:var(--surface);outline:none;';
-    selectEl.onchange=function(){updateActRow(row.rowId,'dayIndex',parseInt(this.value));markUnsaved();};
-    if(numDays===0){
-      var optEmpty=document.createElement('option');
-      optEmpty.value='0';
-      optEmpty.textContent='-- Saisir les dates d\'abord --';
-      selectEl.appendChild(optEmpty);
-    } else {
-      for(var i=0;i<numDays;i++){
-        var opt=document.createElement('option');
-        opt.value=String(i);
-        opt.textContent=dayLbl(i)+(arrivalDate?' — '+dateLbl(i):'');
-        if(i===row.dayIndex) opt.selected=true;
-        selectEl.appendChild(opt);
-      }
+  // Grouper par jour pour afficher séparateur
+  let lastDay=-1;
+  actRows.forEach((row,idx)=>{
+    if(row.dayIndex!==lastDay){
+      // Séparateur de jour
+      const sep=document.createElement('tr');
+      sep.className='day-sep';
+      sep.innerHTML=`<td colspan="7" style="display:flex;align-items:center;justify-content:space-between;">
+        <span>📅 ${dayLbl(row.dayIndex)} — ${dateLbl(row.dayIndex)}</span>
+        <button class="add-act-day-btn" onclick="addActRow(${row.dayIndex})">＋ Ajouter</button>
+      </td>`;
+      tbody.appendChild(sep);
+      lastDay=row.dayIndex;
     }
-    var tdSelect=document.createElement('td');
-    tdSelect.colSpan=2;
-    tdSelect.style.padding='4px 7px';
-    tdSelect.appendChild(selectEl);
-
-    var tdDesc=document.createElement('td');
-    var inputDesc=document.createElement('input');
-    inputDesc.type='text';
-    inputDesc.placeholder='Monument / Visite / Expérience';
-    inputDesc.value=row.desc||'';
-    inputDesc.oninput=function(){updateActRow(row.rowId,'desc',this.value);recalcAct();markUnsaved();};
-    tdDesc.appendChild(inputDesc);
-
-    var tdRate=document.createElement('td');
-    tdRate.style.textAlign='right';
-    var inputRate=document.createElement('input');
-    inputRate.type='number';
-    inputRate.min='0';
-    inputRate.step='0.01';
-    inputRate.value=row.rate||0;
-    inputRate.oninput=function(){updateActRow(row.rowId,'rate',this.value);recalcAct();markUnsaved();};
-    tdRate.appendChild(inputRate);
-
-    var tdQty=document.createElement('td');
-    tdQty.style.textAlign='right';
-    var inputQty=document.createElement('input');
-    inputQty.type='number';
-    inputQty.min='0';
-    inputQty.value=row.qty||0;
-    inputQty.oninput=function(){updateActRow(row.rowId,'qty',this.value);recalcAct();markUnsaved();};
-    tdQty.appendChild(inputQty);
-
-    var tdTotal=document.createElement('td');
-    tdTotal.className='gen-total';
-    tdTotal.id='act-total-'+row.rowId;
-    tdTotal.textContent='0,00';
-
-    var tdBtn=document.createElement('td');
-    tdBtn.style.textAlign='center';
-    var btnRemove=document.createElement('button');
-    btnRemove.className='remove-act-row-btn';
-    btnRemove.textContent='×';
-    btnRemove.onclick=function(){removeActRow(row.rowId);};
-    tdBtn.appendChild(btnRemove);
-
-    var tr=document.createElement('tr');
+    const tr=document.createElement('tr');
     tr.className='data-row';
-    tr.id='act-row-'+row.rowId;
-    tr.appendChild(tdSelect);
-    tr.appendChild(tdDesc);
-    tr.appendChild(tdRate);
-    tr.appendChild(tdQty);
-    tr.appendChild(tdTotal);
-    tr.appendChild(tdBtn);
+    tr.id=`act-row-${row.rowId}`;
+    tr.innerHTML=`
+      <td class="td-day" style="color:var(--text-muted);font-size:10px;">${dayLbl(row.dayIndex)}</td>
+      <td class="td-date" style="font-size:10px;">${dateLbl(row.dayIndex)}</td>
+      <td><input type="text" placeholder="Monument / Visite / Expérience" value="${row.desc||''}" oninput="updateActRow(${row.rowId},'desc',this.value);recalcAct();markUnsaved()"></td>
+      <td style="text-align:right"><input type="number" min="0" step="0.01" value="${row.rate||0}" oninput="updateActRow(${row.rowId},'rate',this.value);recalcAct();markUnsaved()"></td>
+      <td style="text-align:right"><input type="number" min="0" value="${row.qty||0}" oninput="updateActRow(${row.rowId},'qty',this.value);recalcAct();markUnsaved()"></td>
+      <td class="gen-total" id="act-total-${row.rowId}">0,00</td>
+      <td style="text-align:center"><button class="remove-act-row-btn" onclick="removeActRow(${row.rowId})">×</button></td>`;
     tbody.appendChild(tr);
   });
   recalcAct();
 }
 
-function addActRow(){
-  actRows.push({dayIndex:0, rowId:actRowCount++, desc:'', rate:0, qty:0});
+function addActRow(dayIndex){
+  actRows.push({dayIndex, rowId:actRowCount++, desc:'', rate:0, qty:0});
   renderActTable();
   markUnsaved();
 }
 
 function removeActRow(rowId){
-  if(actRows.length<=1){showToast('⚠ Au moins une ligne requise','error');return;}
-  actRows=actRows.filter(function(r){return r.rowId!==rowId;});
+  // Garder au moins une ligne par jour
+  const dayIndex=actRows.find(r=>r.rowId===rowId)?.dayIndex;
+  const dayRows=actRows.filter(r=>r.dayIndex===dayIndex);
+  if(dayRows.length<=1){showToast('⚠ Au moins une ligne par jour','error');return;}
+  actRows=actRows.filter(r=>r.rowId!==rowId);
   renderActTable();
   markUnsaved();
 }
@@ -1063,4 +1021,12 @@ fetch('https://fitplanning.onrender.com/export-all-versions',{method:'HEAD'}).ca
 
 // Realtime
 _supa.channel('devis-changes')
-  .on('postgres_chang
+  .on('postgres_changes',{event:'*',schema:'public',table:'devis'},()=>{
+    updateDevisCount();
+    const modal=document.getElementById('modalOverlay');
+    if(modal.classList.contains('open'))renderDevisList();
+  })
+  .subscribe();
+</script>
+</body>
+</html>
