@@ -484,20 +484,7 @@ function rebuildAct(savedRows){
 function renderActTable(){
   const tbody=document.getElementById('actBody');
   tbody.innerHTML='';
-  // Grouper par jour pour afficher séparateur
-  let lastDay=-1;
   actRows.forEach((row,idx)=>{
-    if(row.dayIndex!==lastDay){
-      // Séparateur de jour
-      const sep=document.createElement('tr');
-      sep.className='day-sep';
-      sep.innerHTML=`<td colspan="7" style="display:flex;align-items:center;justify-content:space-between;">
-        <span>📅 ${dayLbl(row.dayIndex)} — ${dateLbl(row.dayIndex)}</span>
-        <button class="add-act-day-btn" onclick="addActRow(${row.dayIndex})">＋ Ajouter</button>
-      </td>`;
-      tbody.appendChild(sep);
-      lastDay=row.dayIndex;
-    }
     const tr=document.createElement('tr');
     tr.className='data-row';
     tr.id=`act-row-${row.rowId}`;
