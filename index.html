@@ -260,7 +260,7 @@
       <div class="field"><label>Date de départ</label><input type="date" id="departureDate" onchange="onDatesChange();markUnsaved()"></div>
     </div>
     <div class="grid-4" style="margin-top:10px">
-      <div class="field"><label>Jours</label><input type="number" id="daysDisplay" min="1" placeholder="Ex: 5" oninput="onDaysManualChange();markUnsaved()" style="cursor:text;"></div>
+     <div class="field"><label>Jours</label><input type="number" id="daysDisplay" min="1" readonly style="cursor:default;background:var(--blue-pale);color:var(--blue);font-weight:700;"></div>
       <div class="field"><label>Devise finale</label>
         <select id="currency" onchange="updateGT();markUnsaved()"><option value="EUR">EUR — Euro</option><option value="USD">USD — Dollar</option></select>
       </div>
