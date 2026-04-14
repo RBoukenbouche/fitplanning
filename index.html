@@ -260,7 +260,7 @@
       <div class="field"><label>Date de départ</label><input type="date" id="departureDate" onchange="onDatesChange();markUnsaved()"></div>
     </div>
     <div class="grid-4" style="margin-top:10px">
-     <div class="field"><label>Jours</label><input type="number" id="daysDisplay" min="1" readonly style="cursor:default;background:var(--blue-pale);color:var(--blue);font-weight:700;"></div>
+      <div class="field"><label>Jours</label><input type="number" id="daysDisplay" min="1" placeholder="Ex: 5" oninput="onDaysManualChange();markUnsaved()" style="cursor:text;"></div>
       <div class="field"><label>Devise finale</label>
         <select id="currency" onchange="updateGT();markUnsaved()"><option value="EUR">EUR — Euro</option><option value="USD">USD — Dollar</option></select>
       </div>
@@ -419,9 +419,8 @@ function markSaved(lbl=''){isSaved=true;document.getElementById('saveDot').class
 function onDatesChange(){
   const a=document.getElementById('arrivalDate').value,d=document.getElementById('departureDate').value;
   if(a&&d){const diff=Math.round((new Date(d)-new Date(a))/86400000);
-  if(diff>0){numDays=diff;arrivalDate=a;document.getElementById('daysDisplay').value=diff+1;actRows=[];actRowCount=0;rebuildAll();}
+    if(diff>0){numDays=diff;arrivalDate=a;document.getElementById('daysDisplay').value=diff;rebuildAll();}
     else{document.getElementById('daysDisplay').value='';document.getElementById('daysDisplay').placeholder='⚠ Dates invalides';}}
-}
 }
 function onDaysManualChange(){
   const val=parseInt(document.getElementById('daysDisplay').value)||0;
@@ -465,8 +464,8 @@ function removeCategory(ci){if(numCats<=1)return;const d=readAccomData();const n
 function recalcAccom(){let cost=0;for(let i=0;i<numDays;i++)for(let c=0;c<numCats;c++){const r=document.getElementById(`ar-${i}-${c}`);if(!r)continue;const inp=r.querySelectorAll('input');const t=(parseFloat(inp[1]?.value)||0)*(parseFloat(inp[2]?.value)||0);cost+=t;const el=document.getElementById(`at-${i}-${c}`);if(el)el.textContent=fmt(t);}const m=parseFloat(document.getElementById('marginAccom').value)||0;document.getElementById('accomSummary').textContent=`${fmt(cost)} → ${fmt(sell(cost,m))} MAD`;updateGT();}
 
 // ─── TRANSPORT ────────────────────────────────────────────────────────────────
-function rebuildTrans(saved){const tbody=document.getElementById('transBody');const sv=saved||readGenRows('transBody');tbody.innerHTML='';for(let i=0;i<numDays+1;i++){const s=sv[i]||[];const tr=document.createElement('tr');tr.id=`tr-${i}`;tr.innerHTML=`<td class="td-day">${dayLbl(i)}</td><td class="td-date">${dateLbl(i)}</td><td><input type="text" placeholder="Route / Description" value="${s[0]||''}" oninput="markUnsaved()"></td><td style="text-align:right"><input type="number" min="0" step="0.01" value="${s[1]||0}" oninput="recalcTrans();markUnsaved()"></td><td style="text-align:right"><input type="number" min="0" step="0.01" value="${s[2]||0}" oninput="recalcTrans();markUnsaved()"></td><td style="text-align:right"><input type="number" min="0" value="${s[3]||1}" oninput="recalcTrans();markUnsaved()"></td><td class="gen-total" id="tt-${i}">0,00</td>`;tbody.appendChild(tr);}recalcTrans();}
-function recalcTrans(){let cost=0;for(let i=0;i<numDays+1;i++){const r=document.getElementById(`tr-${i}`);if(!r)continue;const inp=r.querySelectorAll('input');const t=((parseFloat(inp[1]?.value)||0)+(parseFloat(inp[2]?.value)||0))*(parseFloat(inp[3]?.value)||1);cost+=t;const el=document.getElementById(`tt-${i}`);if(el)el.textContent=fmt(t);}const m=parseFloat(document.getElementById('marginTrans').value)||0;document.getElementById('transSummary').textContent=`${fmt(cost)} → ${fmt(sell(cost,m))} MAD`;updateGT();}
+function rebuildTrans(saved){const tbody=document.getElementById('transBody');const sv=saved||readGenRows('transBody');tbody.innerHTML='';for(let i=0;i<numDays;i++){const s=sv[i]||[];const tr=document.createElement('tr');tr.id=`tr-${i}`;tr.innerHTML=`<td class="td-day">${dayLbl(i)}</td><td class="td-date">${dateLbl(i)}</td><td><input type="text" placeholder="Route / Description" value="${s[0]||''}" oninput="markUnsaved()"></td><td style="text-align:right"><input type="number" min="0" step="0.01" value="${s[1]||0}" oninput="recalcTrans();markUnsaved()"></td><td style="text-align:right"><input type="number" min="0" step="0.01" value="${s[2]||0}" oninput="recalcTrans();markUnsaved()"></td><td style="text-align:right"><input type="number" min="0" value="${s[3]||1}" oninput="recalcTrans();markUnsaved()"></td><td class="gen-total" id="tt-${i}">0,00</td>`;tbody.appendChild(tr);}recalcTrans();}
+function recalcTrans(){let cost=0;for(let i=0;i<numDays;i++){const r=document.getElementById(`tr-${i}`);if(!r)continue;const inp=r.querySelectorAll('input');const t=((parseFloat(inp[1]?.value)||0)+(parseFloat(inp[2]?.value)||0))*(parseFloat(inp[3]?.value)||1);cost+=t;const el=document.getElementById(`tt-${i}`);if(el)el.textContent=fmt(t);}const m=parseFloat(document.getElementById('marginTrans').value)||0;document.getElementById('transSummary').textContent=`${fmt(cost)} → ${fmt(sell(cost,m))} MAD`;updateGT();}
 
 // ─── ACTIVITÉS — multi-lignes par jour ────────────────────────────────────────
 function rebuildAct(savedRows){
@@ -475,7 +474,7 @@ function rebuildAct(savedRows){
   // Si aucune ligne sauvegardée, initialiser une ligne par jour
   if(!actRows || actRows.length===0){
     actRows=[];
-    for(let i=0;i<numDays+1;i++){
+    for(let i=0;i<numDays;i++){
       actRows.push({dayIndex:i, rowId:actRowCount++, desc:'', rate:0, qty:0});
     }
   }
@@ -485,7 +484,20 @@ function rebuildAct(savedRows){
 function renderActTable(){
   const tbody=document.getElementById('actBody');
   tbody.innerHTML='';
+  // Grouper par jour pour afficher séparateur
+  let lastDay=-1;
   actRows.forEach((row,idx)=>{
+    if(row.dayIndex!==lastDay){
+      // Séparateur de jour
+      const sep=document.createElement('tr');
+      sep.className='day-sep';
+      sep.innerHTML=`<td colspan="7" style="display:flex;align-items:center;justify-content:space-between;">
+        <span>📅 ${dayLbl(row.dayIndex)} — ${dateLbl(row.dayIndex)}</span>
+        <button class="add-act-day-btn" onclick="addActRow(${row.dayIndex})">＋ Ajouter</button>
+      </td>`;
+      tbody.appendChild(sep);
+      lastDay=row.dayIndex;
+    }
     const tr=document.createElement('tr');
     tr.className='data-row';
     tr.id=`act-row-${row.rowId}`;
