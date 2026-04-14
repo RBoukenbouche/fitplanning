@@ -358,9 +358,13 @@ def generate_quotation_sheet(wb, v):
     meals_end = cur_row - 1
     total_row_m = cur_row
     ws.cell(total_row_m, 2, 'TOTAL').font = bold_font()
-    ws.cell(total_row_m, 4, f'=SUM(D{meals_start}:D{meals_end})').font = bold_font()
+    if meals_end >= meals_start:
+        ws.cell(total_row_m, 4, f'=SUM(D{meals_start}:D{meals_end})').font = bold_font()
+        ws.cell(total_row_m, 5, f'=SUM(E{meals_start}:E{meals_end})').font = bold_font()
+    else:
+        ws.cell(total_row_m, 4, 0).font = bold_font()
+        ws.cell(total_row_m, 5, 0).font = bold_font()
     ws.cell(total_row_m, 4).fill = gold_fill(); ws.cell(total_row_m, 4).alignment = right()
-    ws.cell(total_row_m, 5, f'=SUM(E{meals_start}:E{meals_end})').font = bold_font()
     ws.cell(total_row_m, 5).fill = gold_fill(); ws.cell(total_row_m, 5).alignment = right()
     cur_row += 2
 
