@@ -393,7 +393,7 @@
     <label>Notes / Remarques</label>
     <textarea id="notes" placeholder="Conditions particulières, inclusions, exclusions..." oninput="markUnsaved()"></textarea>
   </div>
-  <div class="app-footer">Visit Morocco Travel & Events &nbsp;|&nbsp; incoming@visitmoroccodmc.com &nbsp;|&nbsp; www.visitmoroccodmc.com</div>
+  <div class="app-footer">Visit Morocco Travel & Events &nbsp;|&nbsp; <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d8b1b6bbb7b5b1b6bf98aeb1abb1acb5b7aab7bbbbb7bcb5bbf6bbb7b5">[email&#160;protected]</a> &nbsp;|&nbsp; www.visitmoroccodmc.com</div>
 </div>
 
 <script>
@@ -484,20 +484,7 @@ function rebuildAct(savedRows){
 function renderActTable(){
   const tbody=document.getElementById('actBody');
   tbody.innerHTML='';
-  // Grouper par jour pour afficher séparateur
-  let lastDay=-1;
   actRows.forEach((row,idx)=>{
-    if(row.dayIndex!==lastDay){
-      // Séparateur de jour
-      const sep=document.createElement('tr');
-      sep.className='day-sep';
-      sep.innerHTML=`<td colspan="7" style="display:flex;align-items:center;justify-content:space-between;">
-        <span>📅 ${dayLbl(row.dayIndex)} — ${dateLbl(row.dayIndex)}</span>
-        <button class="add-act-day-btn" onclick="addActRow(${row.dayIndex})">＋ Ajouter</button>
-      </td>`;
-      tbody.appendChild(sep);
-      lastDay=row.dayIndex;
-    }
     const tr=document.createElement('tr');
     tr.className='data-row';
     tr.id=`act-row-${row.rowId}`;
@@ -1021,12 +1008,4 @@ fetch('https://fitplanning.onrender.com/export-all-versions',{method:'HEAD'}).ca
 
 // Realtime
 _supa.channel('devis-changes')
-  .on('postgres_changes',{event:'*',schema:'public',table:'devis'},()=>{
-    updateDevisCount();
-    const modal=document.getElementById('modalOverlay');
-    if(modal.classList.contains('open'))renderDevisList();
-  })
-  .subscribe();
-</script>
-</body>
-</html>
+  .on('postgres_chang
