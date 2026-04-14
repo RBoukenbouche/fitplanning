@@ -419,8 +419,9 @@ function markSaved(lbl=''){isSaved=true;document.getElementById('saveDot').class
 function onDatesChange(){
   const a=document.getElementById('arrivalDate').value,d=document.getElementById('departureDate').value;
   if(a&&d){const diff=Math.round((new Date(d)-new Date(a))/86400000);
-    if(diff>0){numDays=diff;arrivalDate=a;document.getElementById('daysDisplay').value=diff;rebuildAll();}
+    if(diff>0){numDays=diff;arrivalDate=a;document.getElementById('daysDisplay').value=diff+1;actRows=[];rebuildAll();}
     else{document.getElementById('daysDisplay').value='';document.getElementById('daysDisplay').placeholder='⚠ Dates invalides';}}
+}
 }
 function onDaysManualChange(){
   const val=parseInt(document.getElementById('daysDisplay').value)||0;
