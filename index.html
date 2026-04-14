@@ -484,8 +484,8 @@ function rebuildAct(savedRows){
 function renderActTable(){
   const tbody=document.getElementById('actBody');
   tbody.innerHTML='';
-  // Grouper par jour pour afficher séparateur
-  let lastDay=-1;
+ lastDay=row.dayIndex;
+    }
   actRows.forEach((row,idx)=>{
     if(row.dayIndex!==lastDay){
       // Séparateur de jour
