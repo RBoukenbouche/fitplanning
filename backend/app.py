@@ -152,6 +152,14 @@ def build_act_lines(act_data):
         lines.append(f"{date_lbl}: {desc}" if date_lbl else desc)
     return lines
 
+# ── CONSTRUCTION LIGNES EXTRAS ────────────────────────────────────────────────
+def build_extra_lines(extras_data):
+    lines = []
+    for e in extras_data:
+        desc = e.get('desc', '').strip()
+        if desc: lines.append(desc)
+    return lines
+
 # ── GÉNÉRATION FACTURE ────────────────────────────────────────────────────────
 def generate_invoice(data):
     currency  = data.get('currency', 'USD')
@@ -316,6 +324,105 @@ def route_invoice():
             as_attachment=True,
             download_name=filename
         )
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/export-all-versions', methods=['POST', 'HEAD', 'GET'])
+def route_export_all():
+    if request.method in ('HEAD', 'GET'):
+        return '', 200
+    try:
+        data = request.get_json()
+        versions = data.get('versions', [])
+        if not versions:
+            return jsonify({'error': 'No versions provided'}), 400
+
+        # Générer un fichier Excel avec toutes les versions
+        from openpyxl import Workbook
+        wb = Workbook()
+        wb.remove(wb.active)
+
+        for v in versions:
+            sheet_name = f"{v.get('ref','QT')}-{v.get('version','v1')}"[:31]
+            ws = wb.create_sheet(title=sheet_name)
+            rate = float(v.get('rate', 10.5))
+            pax = int(v.get('pax', 1))
+            num_days = int(v.get('numDays', 0))
+            num_cats = int(v.get('numCats', 1))
+            arrival = v.get('arr', '')
+            departure = v.get('dep', '')
+            currency = v.get('currency', 'EUR')
+            period = fmt_period(arrival, departure)
+
+            margin_a = float(v.get('marginAccom', 0))
+            margin_t = float(v.get('marginTrans', 20))
+            margin_x = float(v.get('marginAct', 20))
+            margin_e = float(v.get('marginExtras', 20))
+
+            def sell(c, m): return c / (1 - m/100) if m < 100 else c
+
+            aC = tC = xC = eC = 0
+            ad = v.get('accomData', {})
+            for i in range(num_days):
+                for c in range(num_cats):
+                    dd = ad.get(str(i), ad.get(i, {}))
+                    cd = dd.get(str(c), dd.get(c, {}))
+                    aC += (float(cd.get('units', 0) or 0)) * (float(cd.get('rate', 0) or 0))
+            td = v.get('transData', {})
+            for i in range(num_days):
+                row_t = td.get(str(i), td.get(i, []))
+                if isinstance(row_t, list) and len(row_t) >= 4:
+                    tC += ((float(row_t[1] or 0)) + (float(row_t[2] or 0))) * (float(row_t[3] or 1))
+            for a in v.get('actData', []):
+                xC += (float(a.get('rate', 0) or 0)) * (float(a.get('qty', 0) or 0))
+            ed = v.get('extrasData', {})
+            for r in ed.values():
+                if isinstance(r, list) and len(r) >= 3:
+                    eC += (float(r[1] or 0)) * (float(r[2] or 0))
+
+            total_mad = sell(aC, margin_a) + sell(tC, margin_t) + sell(xC, margin_x) + sell(eC, margin_e)
+            total_f = round(total_mad / rate, 2)
+            per_pax = round(total_f / pax, 2) if pax > 0 else 0
+            words = amount_to_words(total_f, currency)
+
+            # En-tête simple
+            ws['A1'] = f"QUOTATION - {v.get('ref','')} {v.get('version','')}"
+            ws['A1'].font = Font(bold=True, size=14)
+            ws['A2'] = f"Client: {v.get('client','')}"
+            ws['A3'] = f"Contact: {v.get('contact','')}"
+            ws['A4'] = f"Period: {period}"
+            ws['A5'] = f"Pax: {pax}"
+            ws['A6'] = f"Currency: {currency}"
+            ws['A8'] = f"TOTAL: {total_f} {currency}"
+            ws['A8'].font = Font(bold=True, size=12)
+            ws['A9'] = f"Per Person: {per_pax} {currency}"
+            ws['A10'] = words
+
+            accom_lines = build_accom_lines(ad, arrival, num_days, num_cats)
+            trans_lines = build_trans_lines(td, arrival, num_days)
+            act_lines   = [f"Day {a.get('dayIndex',0)+1}: {a.get('desc','')}" for a in v.get('actData',[]) if a.get('desc','')]
+
+            r = 12
+            if accom_lines:
+                ws.cell(r, 1, 'Accommodation:').font = Font(bold=True); r+=1
+                for l in accom_lines: ws.cell(r, 1, l); r+=1
+                r+=1
+            if trans_lines:
+                ws.cell(r, 1, 'Guide & Transportation:').font = Font(bold=True); r+=1
+                for l in trans_lines: ws.cell(r, 1, l); r+=1
+                r+=1
+            if act_lines:
+                ws.cell(r, 1, 'Meals & Experiences:').font = Font(bold=True); r+=1
+                for l in act_lines: ws.cell(r, 1, l); r+=1
+
+        buf = io.BytesIO()
+        wb.save(buf)
+        buf.seek(0)
+        ref = versions[0].get('ref', 'QT') if versions else 'QT'
+        client = versions[0].get('client', 'Client').replace(' ', '_') if versions else 'Client'
+        filename = f"Quotation_{ref}_{client}_AllVersions.xlsx"
+        return send_file(buf, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                         as_attachment=True, download_name=filename)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
