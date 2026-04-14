@@ -160,6 +160,253 @@ def build_extra_lines(extras_data):
         if desc: lines.append(desc)
     return lines
 
+# ── GÉNÉRATION QUOTATION EXCEL (export-all-versions) ─────────────────────────
+def generate_quotation_sheet(wb, v):
+    from openpyxl.styles import PatternFill, Alignment, Border, Side
+    from openpyxl.utils import get_column_letter
+
+    NAVY   = 'FF1A2E4A'
+    GOLD   = 'FFC9A84C'
+    BLUE_L = 'FFE8EFF8'
+    WHITE  = 'FFFFFFFF'
+
+    def hdr_fill(): return PatternFill('solid', fgColor=NAVY)
+    def gold_fill(): return PatternFill('solid', fgColor=GOLD)
+    def blue_fill(): return PatternFill('solid', fgColor=BLUE_L)
+
+    def hdr_font(size=10): return Font(bold=True, color='FFFFFFFF', size=size)
+    def bold_font(size=10): return Font(bold=True, size=size)
+    def gold_bold(): return Font(bold=True, size=10)
+
+    def center(): return Alignment(horizontal='center')
+    def right():  return Alignment(horizontal='right')
+    def left():   return Alignment(horizontal='left')
+
+    sheet_name = f"{v.get('ref','QT')}-{v.get('version','v1')}"[:31]
+    ws = wb.create_sheet(title=sheet_name)
+
+    rate        = float(v.get('rate', 10.5))
+    pax         = int(v.get('pax', 1))
+    num_days    = int(v.get('numDays', 0))
+    num_cats    = int(v.get('numCats', 1))
+    arrival     = v.get('arr', '')
+    departure   = v.get('dep', '')
+    currency    = v.get('currency', 'EUR')
+    margin_a    = float(v.get('marginAccom', 0))
+    margin_t    = float(v.get('marginTrans', 20))
+    margin_x    = float(v.get('marginAct', 20))
+    margin_e    = float(v.get('marginExtras', 20))
+    accom_data  = v.get('accomData', {})
+    trans_data  = v.get('transData', {})
+    act_data    = v.get('actData', [])
+    extras_data = v.get('extrasData', {})
+
+    # Column widths
+    ws.column_dimensions['A'].width = 18
+    ws.column_dimensions['B'].width = 18
+    ws.column_dimensions['C'].width = 30
+    ws.column_dimensions['D'].width = 18
+    ws.column_dimensions['E'].width = 18
+    ws.column_dimensions['F'].width = 10
+    ws.column_dimensions['G'].width = 20
+    ws.column_dimensions['H'].width = 20
+
+    # ── ROW 1 : Title ────────────────────────────────────────────────────────
+    ws.merge_cells('A1:H1')
+    ws['A1'] = 'VISIT MOROCCO TRAVEL & EVENTS — QUOTATION'
+    ws['A1'].font = Font(bold=True, color='FFFFFFFF', size=14)
+    ws['A1'].fill = hdr_fill()
+    ws['A1'].alignment = Alignment(horizontal='center')
+
+    # ── ROW 2 : Ref / Version / Statut / Date ────────────────────────────────
+    for col, label, val in [(1,'Réf. Devis',v.get('ref','')), (3,'Version',v.get('version','v1')),
+                             (5,'Statut',v.get('status','draft')), (7,'Date',v.get('quoteDate',''))]:
+        ws.cell(2, col, label).font = bold_font()
+        ws.cell(2, col).fill = blue_fill()
+        ws.cell(2, col+1, val)
+
+    # ── ROW 3 : Client / Contact / Pax / Devise ──────────────────────────────
+    ws.cell(3,1,'Client').font = bold_font(); ws.cell(3,1).fill = blue_fill()
+    ws.cell(3,2, v.get('client',''))
+    ws.cell(3,3,'Contact').font = bold_font(); ws.cell(3,3).fill = blue_fill()
+    ws.cell(3,4, v.get('contact',''))
+    ws.cell(3,5,'Passagers').font = bold_font(); ws.cell(3,5).fill = blue_fill()
+    ws.cell(3,6, pax)
+    ws.cell(3,7,'Devise').font = bold_font(); ws.cell(3,7).fill = blue_fill()
+    ws.cell(3,8, currency)
+
+    # ── ROW 4 : Arrivée / Départ / Jours / Taux ──────────────────────────────
+    ws.cell(4,1,'Arrivée').font = bold_font(); ws.cell(4,1).fill = blue_fill()
+    ws.cell(4,2, arrival)
+    ws.cell(4,3,'Départ').font = bold_font(); ws.cell(4,3).fill = blue_fill()
+    ws.cell(4,4, departure)
+    ws.cell(4,5,'Jours').font = bold_font(); ws.cell(4,5).fill = blue_fill()
+    ws.cell(4,6, num_days)
+    ws.cell(4,7,'Taux').font = bold_font(); ws.cell(4,7).fill = blue_fill()
+    ws.cell(4,8, rate)
+
+    cur_row = 6
+
+    # ── HÉBERGEMENT ──────────────────────────────────────────────────────────
+    ws.merge_cells(f'A{cur_row}:H{cur_row}')
+    ws.cell(cur_row,1, f'🏨 HEBERGEMENT  (Marge: {margin_a}%)').font = hdr_font(11)
+    ws.cell(cur_row,1).fill = hdr_fill()
+    ws.cell(cur_row,1).alignment = left()
+    cur_row += 1
+
+    for col, lbl in enumerate(['Jour','Date','Hotel','Type Chambre','Unites','Tarif Unit. (MAD)','Total Achat (MAD)','Total Vente (MAD)'],1):
+        ws.cell(cur_row, col, lbl).font = hdr_font()
+        ws.cell(cur_row, col).fill = hdr_fill()
+        ws.cell(cur_row, col).alignment = center()
+    cur_row += 1
+
+    accom_start = cur_row
+    for i in range(num_days):
+        for c in range(num_cats):
+            dd = accom_data.get(str(i), accom_data.get(i, {}))
+            cd = dd.get(str(c), dd.get(c, {}))
+            hotel = cd.get('hotel','').strip()
+            city  = cd.get('city','').strip()
+            room  = cd.get('roomType','').strip()
+            units = int(float(cd.get('units',0) or 0))
+            rate_v = float(cd.get('rate',0) or 0)
+            if not hotel and not city: continue
+            date_lbl = fmt_short(add_days(arrival, i)) if arrival else f'J{i+1}'
+            ws.cell(cur_row,1, f'Jour {i+1}')
+            ws.cell(cur_row,2, date_lbl)
+            ws.cell(cur_row,3, f'{city} - {hotel}' if city else hotel)
+            ws.cell(cur_row,4, room)
+            ws.cell(cur_row,5, units)
+            ws.cell(cur_row,6, rate_v)
+            ws.cell(cur_row,7, f'=E{cur_row}*F{cur_row}')
+            ws.cell(cur_row,8, f'=CEILING(G{cur_row}/(1-{margin_a/100}),10)' if margin_a > 0 else f'=G{cur_row}')
+            cur_row += 1
+
+    accom_end = cur_row - 1
+    total_row_a = cur_row
+    ws.cell(total_row_a, 5, 'TOTAL').font = bold_font()
+    ws.cell(total_row_a, 7, f'=SUM(G{accom_start}:G{accom_end})').font = bold_font()
+    ws.cell(total_row_a, 7).fill = gold_fill(); ws.cell(total_row_a, 7).alignment = right()
+    ws.cell(total_row_a, 8, f'=SUM(H{accom_start}:H{accom_end})').font = bold_font()
+    ws.cell(total_row_a, 8).fill = gold_fill(); ws.cell(total_row_a, 8).alignment = right()
+    cur_row += 2
+
+    # ── GUIDE & TRANSPORT ────────────────────────────────────────────────────
+    ws.merge_cells(f'A{cur_row}:H{cur_row}')
+    ws.cell(cur_row,1, f'🚗 GUIDE & TRANSPORT  (Marge: {margin_t}%)').font = hdr_font(11)
+    ws.cell(cur_row,1).fill = hdr_fill(); ws.cell(cur_row,1).alignment = left()
+    cur_row += 1
+
+    for col, lbl in enumerate(['Jour','Date','Description','Vehicule (MAD)','Guide (MAD)','Qte','Total Achat (MAD)','Total Vente (MAD)'],1):
+        ws.cell(cur_row, col, lbl).font = hdr_font()
+        ws.cell(cur_row, col).fill = hdr_fill()
+        ws.cell(cur_row, col).alignment = center()
+    cur_row += 1
+
+    trans_start = cur_row
+    for i in range(num_days + 1):
+        row_t = trans_data.get(str(i), trans_data.get(i, []))
+        desc  = row_t[0].strip() if isinstance(row_t, list) and len(row_t) > 0 and row_t[0] else ''
+        veh   = float(row_t[1] or 0) if isinstance(row_t, list) and len(row_t) > 1 else 0
+        guide = float(row_t[2] or 0) if isinstance(row_t, list) and len(row_t) > 2 else 0
+        qty   = float(row_t[3] or 1) if isinstance(row_t, list) and len(row_t) > 3 else 1
+        date_lbl = fmt_short(add_days(arrival, i)) if arrival else f'J{i+1}'
+        ws.cell(cur_row,1, f'Jour {i+1}')
+        ws.cell(cur_row,2, date_lbl)
+        ws.cell(cur_row,3, desc)
+        ws.cell(cur_row,4, veh)
+        ws.cell(cur_row,5, guide)
+        ws.cell(cur_row,6, qty)
+        ws.cell(cur_row,7, f'=(D{cur_row}+E{cur_row})*F{cur_row}')
+        ws.cell(cur_row,8, f'=CEILING(G{cur_row}/(1-{margin_t/100}),10)')
+        cur_row += 1
+
+    trans_end = cur_row - 1
+    total_row_t = cur_row
+    ws.cell(total_row_t, 5, 'TOTAL').font = bold_font()
+    ws.cell(total_row_t, 7, f'=SUM(G{trans_start}:G{trans_end})').font = bold_font()
+    ws.cell(total_row_t, 7).fill = gold_fill(); ws.cell(total_row_t, 7).alignment = right()
+    ws.cell(total_row_t, 8, f'=SUM(H{trans_start}:H{trans_end})').font = bold_font()
+    ws.cell(total_row_t, 8).fill = gold_fill(); ws.cell(total_row_t, 8).alignment = right()
+    cur_row += 2
+
+    # ── MEALS & SERVICES ────────────────────────────────────────────────────
+    ws.merge_cells(f'A{cur_row}:H{cur_row}')
+    ws.cell(cur_row,1, f'🍽️ MEALS & SERVICES  (Marge: {margin_x}%)').font = hdr_font(11)
+    ws.cell(cur_row,1).fill = hdr_fill(); ws.cell(cur_row,1).alignment = left()
+    cur_row += 1
+
+    for col, lbl in enumerate(['Description','Tarif Unit. (MAD)','Qte','Total Achat (MAD)','Total Vente (MAD)'],1):
+        ws.cell(cur_row, col, lbl).font = hdr_font()
+        ws.cell(cur_row, col).fill = hdr_fill()
+        ws.cell(cur_row, col).alignment = center()
+    cur_row += 1
+
+    meals_start = cur_row
+    for a in act_data:
+        desc = a.get('desc','').strip()
+        rate_v = float(a.get('rate',0) or 0)
+        qty  = float(a.get('qty',0) or 0)
+        if not desc: continue
+        ws.cell(cur_row,1, desc)
+        ws.cell(cur_row,2, rate_v)
+        ws.cell(cur_row,3, qty)
+        ws.cell(cur_row,4, f'=B{cur_row}*C{cur_row}')
+        ws.cell(cur_row,5, f'=CEILING(D{cur_row}/(1-{margin_x/100}),10)')
+        cur_row += 1
+
+    meals_end = cur_row - 1
+    total_row_m = cur_row
+    ws.cell(total_row_m, 2, 'TOTAL').font = bold_font()
+    ws.cell(total_row_m, 4, f'=SUM(D{meals_start}:D{meals_end})').font = bold_font()
+    ws.cell(total_row_m, 4).fill = gold_fill(); ws.cell(total_row_m, 4).alignment = right()
+    ws.cell(total_row_m, 5, f'=SUM(E{meals_start}:E{meals_end})').font = bold_font()
+    ws.cell(total_row_m, 5).fill = gold_fill(); ws.cell(total_row_m, 5).alignment = right()
+    cur_row += 2
+
+    # ── RECAP FINAL ─────────────────────────────────────────────────────────
+    ws.merge_cells(f'A{cur_row}:H{cur_row}')
+    ws.cell(cur_row,1, '💰 RECAP FINAL').font = hdr_font(11)
+    ws.cell(cur_row,1).fill = hdr_fill(); ws.cell(cur_row,1).alignment = left()
+    cur_row += 1
+
+    for col, lbl in enumerate(['Section','Marge %',f'Total Achat (MAD)',f'Total Vente (MAD)',f'Total Vente ({currency})'],1):
+        ws.cell(cur_row, col, lbl).font = hdr_font()
+        ws.cell(cur_row, col).fill = hdr_fill()
+        ws.cell(cur_row, col).alignment = center()
+    cur_row += 1
+
+    recap_start = cur_row
+    ws.cell(cur_row,1,'Hebergement'); ws.cell(cur_row,2,f'{margin_a}%')
+    ws.cell(cur_row,3,f'=G{total_row_a}'); ws.cell(cur_row,4,f'=H{total_row_a}')
+    ws.cell(cur_row,5,f'=CEILING(D{cur_row}/H4,10)')
+    cur_row += 1
+    ws.cell(cur_row,1,'Transport'); ws.cell(cur_row,2,f'{margin_t}%')
+    ws.cell(cur_row,3,f'=G{total_row_t}'); ws.cell(cur_row,4,f'=H{total_row_t}')
+    ws.cell(cur_row,5,f'=CEILING(D{cur_row}/H4,10)')
+    cur_row += 1
+    ws.cell(cur_row,1,'Meals & Services'); ws.cell(cur_row,2,f'{margin_x}%')
+    ws.cell(cur_row,3,f'=D{total_row_m}'); ws.cell(cur_row,4,f'=E{total_row_m}')
+    ws.cell(cur_row,5,f'=CEILING(D{cur_row}/H4,10)')
+    recap_end = cur_row
+    cur_row += 1
+
+    total_row_f = cur_row
+    ws.cell(cur_row,1,'TOTAL GENERAL').font = bold_font()
+    ws.cell(cur_row,1).fill = gold_fill(); ws.cell(cur_row,1).alignment = right()
+    ws.cell(cur_row,3,f'=SUM(C{recap_start}:C{recap_end})').font = bold_font()
+    ws.cell(cur_row,3).fill = gold_fill(); ws.cell(cur_row,3).alignment = right()
+    ws.cell(cur_row,4,f'=SUM(D{recap_start}:D{recap_end})').font = bold_font()
+    ws.cell(cur_row,4).fill = gold_fill(); ws.cell(cur_row,4).alignment = right()
+    ws.cell(cur_row,5,f'=CEILING(SUM(D{recap_start}:D{recap_end})/H4,10)').font = bold_font()
+    ws.cell(cur_row,5).fill = gold_fill(); ws.cell(cur_row,5).alignment = right()
+    cur_row += 1
+
+    ws.cell(cur_row,1,f'PRIX PAR PERSONNE ({pax} pax)').font = bold_font()
+    ws.cell(cur_row,1).fill = gold_fill(); ws.cell(cur_row,1).alignment = right()
+    ws.cell(cur_row,5,f'=CEILING(E{total_row_f}/{pax},10)').font = bold_font()
+    ws.cell(cur_row,5).fill = gold_fill(); ws.cell(cur_row,5).alignment = right()
+
 # ── GÉNÉRATION FACTURE ────────────────────────────────────────────────────────
 def generate_invoice(data):
     currency  = data.get('currency', 'USD')
@@ -318,12 +565,8 @@ def route_invoice():
         ref = data.get('ref', 'QT')
         client = data.get('client', 'Client').replace(' ', '_')
         filename = f"Invoice_{ref}_{client}.xlsx"
-        return send_file(
-            buf,
-            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            as_attachment=True,
-            download_name=filename
-        )
+        return send_file(buf, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                         as_attachment=True, download_name=filename)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -332,89 +575,15 @@ def route_export_all():
     if request.method in ('HEAD', 'GET'):
         return '', 200
     try:
+        from openpyxl import Workbook
         data = request.get_json()
         versions = data.get('versions', [])
         if not versions:
             return jsonify({'error': 'No versions provided'}), 400
-
-        # Générer un fichier Excel avec toutes les versions
-        from openpyxl import Workbook
         wb = Workbook()
         wb.remove(wb.active)
-
         for v in versions:
-            sheet_name = f"{v.get('ref','QT')}-{v.get('version','v1')}"[:31]
-            ws = wb.create_sheet(title=sheet_name)
-            rate = float(v.get('rate', 10.5))
-            pax = int(v.get('pax', 1))
-            num_days = int(v.get('numDays', 0))
-            num_cats = int(v.get('numCats', 1))
-            arrival = v.get('arr', '')
-            departure = v.get('dep', '')
-            currency = v.get('currency', 'EUR')
-            period = fmt_period(arrival, departure)
-
-            margin_a = float(v.get('marginAccom', 0))
-            margin_t = float(v.get('marginTrans', 20))
-            margin_x = float(v.get('marginAct', 20))
-            margin_e = float(v.get('marginExtras', 20))
-
-            def sell(c, m): return c / (1 - m/100) if m < 100 else c
-
-            aC = tC = xC = eC = 0
-            ad = v.get('accomData', {})
-            for i in range(num_days):
-                for c in range(num_cats):
-                    dd = ad.get(str(i), ad.get(i, {}))
-                    cd = dd.get(str(c), dd.get(c, {}))
-                    aC += (float(cd.get('units', 0) or 0)) * (float(cd.get('rate', 0) or 0))
-            td = v.get('transData', {})
-            for i in range(num_days):
-                row_t = td.get(str(i), td.get(i, []))
-                if isinstance(row_t, list) and len(row_t) >= 4:
-                    tC += ((float(row_t[1] or 0)) + (float(row_t[2] or 0))) * (float(row_t[3] or 1))
-            for a in v.get('actData', []):
-                xC += (float(a.get('rate', 0) or 0)) * (float(a.get('qty', 0) or 0))
-            ed = v.get('extrasData', {})
-            for r in ed.values():
-                if isinstance(r, list) and len(r) >= 3:
-                    eC += (float(r[1] or 0)) * (float(r[2] or 0))
-
-            total_mad = sell(aC, margin_a) + sell(tC, margin_t) + sell(xC, margin_x) + sell(eC, margin_e)
-            total_f = round(total_mad / rate, 2)
-            per_pax = round(total_f / pax, 2) if pax > 0 else 0
-            words = amount_to_words(total_f, currency)
-
-            # En-tête simple
-            ws['A1'] = f"QUOTATION - {v.get('ref','')} {v.get('version','')}"
-            ws['A1'].font = Font(bold=True, size=14)
-            ws['A2'] = f"Client: {v.get('client','')}"
-            ws['A3'] = f"Contact: {v.get('contact','')}"
-            ws['A4'] = f"Period: {period}"
-            ws['A5'] = f"Pax: {pax}"
-            ws['A6'] = f"Currency: {currency}"
-            ws['A8'] = f"TOTAL: {total_f} {currency}"
-            ws['A8'].font = Font(bold=True, size=12)
-            ws['A9'] = f"Per Person: {per_pax} {currency}"
-            ws['A10'] = words
-
-            accom_lines = build_accom_lines(ad, arrival, num_days, num_cats)
-            trans_lines = build_trans_lines(td, arrival, num_days)
-            act_lines   = [f"Day {a.get('dayIndex',0)+1}: {a.get('desc','')}" for a in v.get('actData',[]) if a.get('desc','')]
-
-            r = 12
-            if accom_lines:
-                ws.cell(r, 1, 'Accommodation:').font = Font(bold=True); r+=1
-                for l in accom_lines: ws.cell(r, 1, l); r+=1
-                r+=1
-            if trans_lines:
-                ws.cell(r, 1, 'Guide & Transportation:').font = Font(bold=True); r+=1
-                for l in trans_lines: ws.cell(r, 1, l); r+=1
-                r+=1
-            if act_lines:
-                ws.cell(r, 1, 'Meals & Experiences:').font = Font(bold=True); r+=1
-                for l in act_lines: ws.cell(r, 1, l); r+=1
-
+            generate_quotation_sheet(wb, v)
         buf = io.BytesIO()
         wb.save(buf)
         buf.seek(0)
