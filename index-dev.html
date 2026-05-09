@@ -564,7 +564,7 @@ function updateGT(){
   document.getElementById('pax-cur-lbl').textContent=c;
   let aC=0,tC=0,xC=0,eC=0;
   for(let i=0;i<numDays;i++)for(let cc=0;cc<numCats;cc++){const r=document.getElementById(`ar-${i}-${cc}`);if(!r)continue;const inp=r.querySelectorAll('input');aC+=(parseFloat(inp[1]?.value)||0)*(parseFloat(inp[2]?.value)||0);}
-  for(let i=0;i<numDays;i++){const r=document.getElementById(`tr-${i}`);if(!r)continue;const inp=r.querySelectorAll('input');tC+=((parseFloat(inp[1]?.value)||0)+(parseFloat(inp[2]?.value)||0))*(parseFloat(inp[3]?.value)||1);}
+  for(let i=0;i<numDays+1;i++){const r=document.getElementById(`tr-${i}`);if(!r)continue;const inp=r.querySelectorAll('input');tC+=((parseFloat(inp[1]?.value)||0)+(parseFloat(inp[2]?.value)||0))*(parseFloat(inp[3]?.value)||1);}
   actRows.forEach(row=>{xC+=(parseFloat(row.rate)||0)*(parseFloat(row.qty)||0);});
   document.querySelectorAll('#extrasBody tr').forEach(tr=>{const inp=tr.querySelectorAll('input');eC+=(parseFloat(inp[1]?.value)||0)*(parseFloat(inp[2]?.value)||0);});
   const mA=parseFloat(document.getElementById('marginAccom').value)||0,mT=parseFloat(document.getElementById('marginTrans').value)||0,mX=parseFloat(document.getElementById('marginAct').value)||0,mE=parseFloat(document.getElementById('marginExtras').value)||0;
