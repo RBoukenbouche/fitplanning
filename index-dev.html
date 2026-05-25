@@ -293,7 +293,6 @@
       </table>
     </div>
     <button class="add-cat-btn" onclick="addCategory()">＋ Ajouter une catégorie de chambre (tous les jours)</button>
-    
     <div class="margin-row">
       <label>Marge :</label><input type="number" id="marginAccom" value="0" min="0" max="100" oninput="recalcAccom();markUnsaved()"> %
       <div class="margin-stat"><span>Coût → Vente</span><strong id="accomSummary">0,00 → 0,00 MAD</strong></div>
@@ -313,12 +312,6 @@
       </tr></thead>
       <tbody id="transBody"></tbody>
     </table></div>
-
-    <div style="padding:6px 13px;border-top:1px dashed var(--border);">
-  <button class="add-row-btn" onclick="replicateTransRow()">
-    ↕ Répliquer Jour 1 sur tous les jours
-  </button>
-</div>
     <div class="margin-row">
       <label>Marge :</label><input type="number" id="marginTrans" value="20" min="0" max="100" oninput="recalcTrans();markUnsaved()"> %
       <div class="margin-stat"><span>Coût → Vente</span><strong id="transSummary">0,00 → 0,00 MAD</strong></div>
@@ -472,28 +465,45 @@ function removeCategory(ci){if(numCats<=1)return;const d=readAccomData();const n
 function recalcAccom(){let cost=0;for(let i=0;i<numDays;i++)for(let c=0;c<numCats;c++){const r=document.getElementById(`ar-${i}-${c}`);if(!r)continue;const inp=r.querySelectorAll('input');const t=(parseFloat(inp[1]?.value)||0)*(parseFloat(inp[2]?.value)||0);cost+=t;const el=document.getElementById(`at-${i}-${c}`);if(el)el.textContent=fmt(t);}const m=parseFloat(document.getElementById('marginAccom').value)||0;document.getElementById('accomSummary').textContent=`${fmt(cost)} → ${fmt(sell(cost,m))} MAD`;updateGT();}
 
 // ─── TRANSPORT ────────────────────────────────────────────────────────────────
-function rebuildTrans(saved){const tbody=document.getElementById('transBody');const sv=saved||readGenRows('transBody');tbody.innerHTML='';for(let i=0;i<numDays+1;i++){const s=sv[i]||[];const tr=document.createElement('tr');tr.id=`tr-${i}`;tr.innerHTML=`<td class="td-day">${dayLbl(i)}</td><td class="td-date">${dateLbl(i)}</td><td><input type="text" placeholder="Route / Description" value="${s[0]||''}" oninput="markUnsaved()"></td><td style="text-align:right"><input type="number" min="0" step="0.01" value="${s[1]||0}" oninput="recalcTrans();markUnsaved()"></td><td style="text-align:right"><input type="number" min="0" step="0.01" value="${s[2]||0}" oninput="recalcTrans();markUnsaved()"></td><td style="text-align:right"><input type="number" min="0" value="${s[3]||1}" oninput="recalcTrans();markUnsaved()"></td><td class="gen-total" id="tt-${i}">0,00</td>`;tbody.appendChild(tr);}recalcTrans();}
-
- function replicateTransRow(){
-  const first=document.getElementById('tr-0');
-  if(!first)return;
-  const inp=first.querySelectorAll('input');
-  const vehicle=inp[1]?.value||0;
-  const guide=inp[2]?.value||0;
-  const qty=inp[3]?.value||1;
+function propagateTrans(){
+  const r0=document.getElementById('tr-0');if(!r0)return;
+  const inp0=r0.querySelectorAll('input');
+  const v=inp0[1]?.value||0, g=inp0[2]?.value||0;
   for(let i=1;i<numDays+1;i++){
-    const r=document.getElementById(`tr-${i}`);
-    if(!r)continue;
-    const rinp=r.querySelectorAll('input');
-    if(rinp[1])rinp[1].value=vehicle;
-    if(rinp[2])rinp[2].value=guide;
-    if(rinp[3])rinp[3].value=qty;
+    const r=document.getElementById(`tr-${i}`);if(!r)continue;
+    const inp=r.querySelectorAll('input');
+    if(inp[1])inp[1].value=v;
+    if(inp[2])inp[2].value=g;
+  }
+  recalcTrans();markUnsaved();
+}
+
+function rebuildTrans(saved){
+  const tbody=document.getElementById('transBody');
+  const sv=saved||readGenRows('transBody');
+  tbody.innerHTML='';
+  const v0=sv[0]?sv[0][1]||0:0, g0=sv[0]?sv[0][2]||0:0;
+  for(let i=0;i<numDays+1;i++){
+    const s=sv[i]||[];
+    const isFirst=(i===0);
+    const vVal=isFirst?(s[1]||0):v0;
+    const gVal=isFirst?(s[2]||0):g0;
+    const ro=isFirst?'':'readonly style="background:var(--blue-pale);color:var(--blue);font-weight:700;cursor:default;"';
+    const tr=document.createElement('tr');tr.id=`tr-${i}`;
+    tr.innerHTML=`
+      <td class="td-day">${dayLbl(i)}</td>
+      <td class="td-date">${dateLbl(i)}</td>
+      <td><input type="text" placeholder="Route / Description" value="${s[0]||''}" oninput="markUnsaved()"></td>
+      <td style="text-align:right"><input type="number" min="0" step="0.01" value="${vVal}" ${isFirst?`oninput="propagateTrans()"`:ro}></td>
+      <td style="text-align:right"><input type="number" min="0" step="0.01" value="${gVal}" ${isFirst?`oninput="propagateTrans()"`:ro}></td>
+      <td style="text-align:right"><input type="number" min="0" value="${s[3]||1}" oninput="recalcTrans();markUnsaved()"></td>
+      <td class="gen-total" id="tt-${i}">0,00</td>`;
+    tbody.appendChild(tr);
   }
   recalcTrans();
-  markUnsaved();
-  showToast('✅ Montants répliqués sur tous les jours','success');
-} 
-  function recalcTrans(){let cost=0;for(let i=0;i<numDays+1;i++){const r=document.getElementById(`tr-${i}`);if(!r)continue;const inp=r.querySelectorAll('input');const t=((parseFloat(inp[1]?.value)||0)+(parseFloat(inp[2]?.value)||0))*(parseFloat(inp[3]?.value)||1);cost+=t;const el=document.getElementById(`tt-${i}`);if(el)el.textContent=fmt(t);}const m=parseFloat(document.getElementById('marginTrans').value)||0;document.getElementById('transSummary').textContent=`${fmt(cost)} → ${fmt(sell(cost,m))} MAD`;updateGT();}
+}
+
+function recalcTrans(){let cost=0;for(let i=0;i<numDays+1;i++){const r=document.getElementById(`tr-${i}`);if(!r)continue;const inp=r.querySelectorAll('input');const t=((parseFloat(inp[1]?.value)||0)+(parseFloat(inp[2]?.value)||0))*(parseFloat(inp[3]?.value)||1);cost+=t;const el=document.getElementById(`tt-${i}`);if(el)el.textContent=fmt(t);}const m=parseFloat(document.getElementById('marginTrans').value)||0;document.getElementById('transSummary').textContent=`${fmt(cost)} → ${fmt(sell(cost,m))} MAD`;updateGT();}
 
 // ─── ACTIVITÉS — multi-lignes par jour ────────────────────────────────────────
 function rebuildAct(savedRows){
@@ -941,7 +951,7 @@ function syncToSheet(snap){
   const ad=snap.accomData||{};
   for(let i=0;i<snap.numDays;i++)for(let c=0;c<snap.numCats;c++){const r=(ad[i]||{})[c]||{};aC+=(parseFloat(r.units)||0)*(parseFloat(r.rate)||0);}
   const td=snap.transData||{};
-  for(let i=0;i<snap.numDays;i++){const r=td[i]||[];tC+=((parseFloat(r[1])||0)+(parseFloat(r[2])||0))*(parseFloat(r[3])||1);}
+  for(let i=0;i<snap.numDays+1;i++){const r=td[i]||[];tC+=((parseFloat(r[1])||0)+(parseFloat(r[2])||0))*(parseFloat(r[3])||1);}
   (snap.actData||[]).forEach(r=>{xC+=(parseFloat(r.rate)||0)*(parseFloat(r.qty)||0);});
   Object.values(snap.extrasData||{}).forEach(r=>{eC+=(parseFloat(r[1])||0)*(parseFloat(r[2])||0);});
   const totalMad=sellFn(aC,parseFloat(snap.marginAccom)||0)+sellFn(tC,parseFloat(snap.marginTrans)||20)+sellFn(xC,parseFloat(snap.marginAct)||20)+sellFn(eC,parseFloat(snap.marginExtras)||20);
@@ -991,7 +1001,30 @@ async function exportExcel(){
 
 function openPreview(){
   const snap=takeSnapshot();
-  const PREVIEW_URL='https://fitplanning-alpha.vercel.app/preview.html';
+  const PREVIEW_URL='https://fitplanning-alpha-git-dev-rboukenbouches-projects.vercel.app/preview-dev.html';
+
+  // ── Marges (fix : 0% ne doit pas devenir 20%) ──────────────────────────────
+  const mA=snap.marginAccom!==''?parseFloat(snap.marginAccom):0;
+  const mT=snap.marginTrans!==''?parseFloat(snap.marginTrans):20;
+  const mX=snap.marginAct!==''?parseFloat(snap.marginAct):20;
+  const mE=snap.marginExtras!==''?parseFloat(snap.marginExtras):20;
+
+  // ── Calcul totalSellMad réel ───────────────────────────────────────────────
+  const _sell=(c,m)=>m<100?c/(1-m/100):c;
+  let _aC=0,_tC=0,_xC=0,_eC=0;
+  const ad=snap.accomData||{};
+  for(let i=0;i<snap.numDays;i++)for(let c=0;c<snap.numCats;c++){const r=(ad[i]||{})[c]||{};_aC+=(parseFloat(r.units)||0)*(parseFloat(r.rate)||0);}
+  const td=snap.transData||{};
+  for(let i=0;i<snap.numDays+1;i++){const r=td[i]||[];_tC+=((parseFloat(r[1])||0)+(parseFloat(r[2])||0))*(parseFloat(r[3])||1);}
+  (snap.actData||[]).forEach(r=>{_xC+=(parseFloat(r.rate)||0)*(parseFloat(r.qty)||0);});
+  Object.values(snap.extrasData||{}).forEach(r=>{_eC+=(parseFloat(r[1])||0)*(parseFloat(r[2])||0);});
+  const totalSellMad=_sell(_aC,mA)+_sell(_tC,mT)+_sell(_xC,mX)+_sell(_eC,mE);
+
+  // ── Extras : conversion propre en objets ──────────────────────────────────
+  const extData=snap.extrasData?Object.values(snap.extrasData)
+    .filter(r=>r[0]&&r[0].trim()!=='')
+    .map(r=>({desc:r[0]||'',rate:parseFloat(r[1])||0,qty:parseFloat(r[2])||1})):[];
+
   const data={
     ref:snap.ref||'QT-001',version:snap.version||'v1',
     quoteDate:snap.quoteDate||new Date().toISOString().split('T')[0],
@@ -1000,22 +1033,19 @@ function openPreview(){
     pax:parseInt(snap.pax)||2,arr:snap.arrivalDate||'',dep:snap.departureDate||'',
     numDays:snap.numDays||0,numCats:snap.numCats||1,
     currency:snap.currency||'EUR',rate:parseFloat(snap.eurRate)||10.5,
-    totalSellMad:0,
+    totalSellMad,
     agent:currentAgent?currentAgent.name:'Agent Visit Morocco',
     agentEmail:currentAgent?currentAgent.email:'incoming@visitmoroccodmc.com',
     agentPhone:'+212 524 42 03 87',agentMobile:'+212 665 877 863',
     accomData:snap.accomData||{},mealsData:snap.mealsData||[],
     transData:snap.transData||{},
     actData:snap.actData||[],
-    extData:snap.extrasData?Object.values(snap.extrasData).map(r=>({desc:r[0]||'',rate:r[1]||0,qty:r[2]||1})):[],
+    extData,
     incLines:snap.incLines||[],
-    marginAccom:parseFloat(snap.marginAccom)||0,
-    marginTrans:parseFloat(snap.marginTrans)||20,
-    marginAct:parseFloat(snap.marginAct)||20,
-    marginExtras:parseFloat(snap.marginExtras)||20,
+    marginAccom:mA,marginTrans:mT,marginAct:mX,marginExtras:mE,
     notes:snap.notes||''
   };
-  localStorage.setItem('vm_preview_data',JSON.stringify(data));
+  localStorage.setItem('vm_preview_data_DEV',JSON.stringify(data));
   window.open(PREVIEW_URL,'_blank');
 }
 
