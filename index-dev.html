@@ -430,19 +430,44 @@ function onDaysManualChange(){
 function rebuildAll(){rebuildAccom();rebuildTrans();rebuildAct();recalcAll();}
 
 // ─── HÉBERGEMENT ──────────────────────────────────────────────────────────────
-function readAccomData(){const d={};for(let i=0;i<numDays-1;i++){d[i]={};for(let c=0;c<numCats;c++){const r=document.getElementById(`ar-${i}-${c}`);if(r){const inputs=r.querySelectorAll('input');const sel=r.querySelector('select');d[i][c]={hotel:inputs[0]?.value||'',roomType:sel?.value||'',units:inputs[1]?.value||'0',rate:inputs[2]?.value||'0'};}}}return d;}
+function readAccomData(){const d={};for(let i=0;i<numDays+1;i++){d[i]={};for(let c=0;c<numCats;c++){const r=document.getElementById(`ar-${i}-${c}`);if(r){const inputs=r.querySelectorAll('input');const sel=r.querySelector('select');d[i][c]={hotel:inputs[0]?.value||'',roomType:sel?.value||'',units:inputs[1]?.value||'0',rate:inputs[2]?.value||'0'};}}}return d;}
+
+function copyAccomToNext(i){
+  for(let c=0;c<numCats;c++){
+    const src=document.getElementById(`ar-${i}-${c}`);
+    const dst=document.getElementById(`ar-${i+1}-${c}`);
+    if(!src||!dst)continue;
+    const si=src.querySelectorAll('input');
+    const ss=src.querySelector('select');
+    const di=dst.querySelectorAll('input');
+    const ds=dst.querySelector('select');
+    if(di[0])di[0].value=si[0]?.value||'';
+    if(ds&&ss)ds.value=ss.value;
+    if(di[1])di[1].value=si[1]?.value||0;
+    if(di[2])di[2].value=si[2]?.value||0;
+  }
+  recalcAccom();markUnsaved();
+}
 
 function rebuildAccom(savedData){
   const data=savedData||readAccomData();
   const tbody=document.getElementById('accomBody');tbody.innerHTML='';
-  for(let i=0;i<numDays-1;i++){
-    const sep=document.createElement('tr');sep.className='day-sep';sep.innerHTML=`<td colspan="9">📅 ${dayLbl(i)} — ${dateLbl(i)}</td>`;tbody.appendChild(sep);
+  for(let i=0;i<numDays+1;i++){
+    const isLast=(i===numDays);
+    const sep=document.createElement('tr');sep.className='day-sep';
+    sep.innerHTML=`<td colspan="10">📅 ${dayLbl(i)} — ${dateLbl(i)}${isLast?' <span style="color:var(--orange);font-size:11px;margin-left:8px;">⛔ Pas d\'hébergement</span>':''}</td>`;
+    tbody.appendChild(sep);
+    if(isLast)continue;
     for(let c=0;c<numCats;c++){
       const s=(data[i]&&data[i][c])?data[i][c]:{};
+      const canCopy=(i<numDays-1);
       const tr=document.createElement('tr');tr.className='data-row';tr.id=`ar-${i}-${c}`;
-      tr.innerHTML=`<td></td><td></td><td><span class="cat-badge">Cat.${c+1}</span></td>
+      tr.innerHTML=`
+        <td style="text-align:center">${canCopy?`<input type="checkbox" title="Copier vers jour suivant" onchange="if(this.checked){copyAccomToNext(${i});this.checked=false;}">`:''}</td>
+        <td></td>
+        <td><span class="cat-badge">Cat.${c+1}</span></td>
         <td><input type="text" placeholder="Hôtel" value="${s.hotel||''}" oninput="recalcAccom();markUnsaved()"></td>
-        <td><select onchange="markUnsaved()" style="width:100%;border:1px solid transparent;border-radius:3px;padding:4px 5px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text);background:transparent;outline:none;">
+        <td><select onchange="recalcAccom();markUnsaved()" style="width:100%;border:1px solid transparent;border-radius:3px;padding:4px 5px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text);background:transparent;outline:none;">
           <option value="">-- Type --</option>
           <option value="Single" ${s.roomType==='Single'?'selected':''}>Single</option>
           <option value="Double" ${s.roomType==='Double'?'selected':''}>Double</option>
@@ -461,11 +486,11 @@ function rebuildAccom(savedData){
   recalcAccom();
 }
 function addCategory(){if(!numDays){alert('Saisissez le nombre de jours d\'abord.');return;}const d=readAccomData();numCats++;rebuildAccom(d);}
-function removeCategory(ci){if(numCats<=1)return;const d=readAccomData();const nd={};for(let i=0;i<numDays-1;i++){nd[i]={};let nc=0;for(let c=0;c<numCats;c++){if(c===ci)continue;nd[i][nc]=(d[i]&&d[i][c])?d[i][c]:{};nc++;}}numCats--;rebuildAccom(nd);}
-function recalcAccom(){let cost=0;for(let i=0;i<numDays-1;i++)for(let c=0;c<numCats;c++){const r=document.getElementById(`ar-${i}-${c}`);if(!r)continue;const inp=r.querySelectorAll('input');const t=(parseFloat(inp[1]?.value)||0)*(parseFloat(inp[2]?.value)||0);cost+=t;const el=document.getElementById(`at-${i}-${c}`);if(el)el.textContent=fmt(t);}const m=parseFloat(document.getElementById('marginAccom').value)||0;document.getElementById('accomSummary').textContent=`${fmt(cost)} → ${fmt(sell(cost,m))} MAD`;updateGT();}
+function removeCategory(ci){if(numCats<=1)return;const d=readAccomData();const nd={};for(let i=0;i<numDays+1;i++){nd[i]={};let nc=0;for(let c=0;c<numCats;c++){if(c===ci)continue;nd[i][nc]=(d[i]&&d[i][c])?d[i][c]:{};nc++;}}numCats--;rebuildAccom(nd);}
+function recalcAccom(){let cost=0;for(let i=0;i<numDays;i++)for(let c=0;c<numCats;c++){const r=document.getElementById(`ar-${i}-${c}`);if(!r)continue;const inp=r.querySelectorAll('input');const t=(parseFloat(inp[1]?.value)||0)*(parseFloat(inp[2]?.value)||0);cost+=t;const el=document.getElementById(`at-${i}-${c}`);if(el)el.textContent=fmt(t);}const m=parseFloat(document.getElementById('marginAccom').value)||0;document.getElementById('accomSummary').textContent=`${fmt(cost)} → ${fmt(sell(cost,m))} MAD`;updateGT();}
 
 // ─── TRANSPORT ────────────────────────────────────────────────────────────────
-function propagateTrans(){
+function applyTransToAll(){
   const r0=document.getElementById('tr-0');if(!r0)return;
   const inp0=r0.querySelectorAll('input');
   const v=inp0[1]?.value||0, g=inp0[2]?.value||0;
@@ -482,22 +507,19 @@ function rebuildTrans(saved){
   const tbody=document.getElementById('transBody');
   const sv=saved||readGenRows('transBody');
   tbody.innerHTML='';
-  const v0=sv[0]?sv[0][1]||0:0, g0=sv[0]?sv[0][2]||0:0;
   for(let i=0;i<numDays+1;i++){
     const s=sv[i]||[];
     const isFirst=(i===0);
-    const vVal=isFirst?(s[1]||0):v0;
-    const gVal=isFirst?(s[2]||0):g0;
-    const ro=isFirst?'':'readonly style="background:var(--blue-pale);color:var(--blue);font-weight:700;cursor:default;"';
     const tr=document.createElement('tr');tr.id=`tr-${i}`;
     tr.innerHTML=`
       <td class="td-day">${dayLbl(i)}</td>
       <td class="td-date">${dateLbl(i)}</td>
       <td><input type="text" placeholder="Route / Description" value="${s[0]||''}" oninput="markUnsaved()"></td>
-      <td style="text-align:right"><input type="number" min="0" step="0.01" value="${vVal}" ${isFirst?`oninput="propagateTrans()"`:ro}></td>
-      <td style="text-align:right"><input type="number" min="0" step="0.01" value="${gVal}" ${isFirst?`oninput="propagateTrans()"`:ro}></td>
+      <td style="text-align:right"><input type="number" min="0" step="0.01" value="${s[1]||0}" oninput="recalcTrans();markUnsaved()"></td>
+      <td style="text-align:right"><input type="number" min="0" step="0.01" value="${s[2]||0}" oninput="recalcTrans();markUnsaved()"></td>
       <td style="text-align:right"><input type="number" min="0" value="${s[3]||1}" oninput="recalcTrans();markUnsaved()"></td>
-      <td class="gen-total" id="tt-${i}">0,00</td>`;
+      <td class="gen-total" id="tt-${i}">0,00</td>
+      <td>${isFirst?`<button onclick="applyTransToAll()" style="font-size:11px;padding:3px 8px;background:var(--blue);color:#fff;border:none;border-radius:4px;cursor:pointer;" title="Copier véhicule+guide sur tous les jours">↓ Tous</button>`:''}</td>`;
     tbody.appendChild(tr);
   }
   recalcTrans();
@@ -600,7 +622,7 @@ function updateGT(){
   document.getElementById('gt-cur-head').textContent=`Vente (${c})`;
   document.getElementById('pax-cur-lbl').textContent=c;
   let aC=0,tC=0,xC=0,eC=0;
-  for(let i=0;i<numDays-1;i++)for(let cc=0;cc<numCats;cc++){const r=document.getElementById(`ar-${i}-${cc}`);if(!r)continue;const inp=r.querySelectorAll('input');aC+=(parseFloat(inp[1]?.value)||0)*(parseFloat(inp[2]?.value)||0);}
+  for(let i=0;i<numDays;i++)for(let cc=0;cc<numCats;cc++){const r=document.getElementById(`ar-${i}-${cc}`);if(!r)continue;const inp=r.querySelectorAll('input');aC+=(parseFloat(inp[1]?.value)||0)*(parseFloat(inp[2]?.value)||0);}
   for(let i=0;i<numDays+1;i++){const r=document.getElementById(`tr-${i}`);if(!r)continue;const inp=r.querySelectorAll('input');tC+=((parseFloat(inp[1]?.value)||0)+(parseFloat(inp[2]?.value)||0))*(parseFloat(inp[3]?.value)||1);}
   actRows.forEach(row=>{xC+=(parseFloat(row.rate)||0)*(parseFloat(row.qty)||0);});
   document.querySelectorAll('#extrasBody tr').forEach(tr=>{const inp=tr.querySelectorAll('input');eC+=(parseFloat(inp[1]?.value)||0)*(parseFloat(inp[2]?.value)||0);});
@@ -949,7 +971,7 @@ function syncToSheet(snap){
   const sellFn=(c,m)=>m<100?c/(1-m/100):c;
   let aC=0,tC=0,xC=0,eC=0;
   const ad=snap.accomData||{};
-  for(let i=0;i<snap.numDays-1;i++)for(let c=0;c<snap.numCats;c++){const r=(ad[i]||{})[c]||{};aC+=(parseFloat(r.units)||0)*(parseFloat(r.rate)||0);}
+  for(let i=0;i<snap.numDays;i++)for(let c=0;c<snap.numCats;c++){const r=(ad[i]||{})[c]||{};aC+=(parseFloat(r.units)||0)*(parseFloat(r.rate)||0);}
   const td=snap.transData||{};
   for(let i=0;i<snap.numDays+1;i++){const r=td[i]||[];tC+=((parseFloat(r[1])||0)+(parseFloat(r[2])||0))*(parseFloat(r[3])||1);}
   (snap.actData||[]).forEach(r=>{xC+=(parseFloat(r.rate)||0)*(parseFloat(r.qty)||0);});
@@ -1013,7 +1035,7 @@ function openPreview(){
   const _sell=(c,m)=>m<100?c/(1-m/100):c;
   let _aC=0,_tC=0,_xC=0,_eC=0;
   const ad=snap.accomData||{};
-  for(let i=0;i<snap.numDays-1;i++)for(let c=0;c<snap.numCats;c++){const r=(ad[i]||{})[c]||{};_aC+=(parseFloat(r.units)||0)*(parseFloat(r.rate)||0);}
+  for(let i=0;i<snap.numDays;i++)for(let c=0;c<snap.numCats;c++){const r=(ad[i]||{})[c]||{};_aC+=(parseFloat(r.units)||0)*(parseFloat(r.rate)||0);}
   const td=snap.transData||{};
   for(let i=0;i<snap.numDays+1;i++){const r=td[i]||[];_tC+=((parseFloat(r[1])||0)+(parseFloat(r[2])||0))*(parseFloat(r[3])||1);}
   (snap.actData||[]).forEach(r=>{_xC+=(parseFloat(r.rate)||0)*(parseFloat(r.qty)||0);});
@@ -1046,7 +1068,10 @@ function openPreview(){
     notes:snap.notes||''
   };
   localStorage.setItem('vm_preview_data_DEV',JSON.stringify(data));
-  window.open(PREVIEW_URL,'_blank');
+  const pw=window.open(PREVIEW_URL,'_blank');
+  if(!pw||pw.closed||typeof pw.closed==='undefined'){
+    alert('Le preview est bloqué par votre navigateur. Autorisez les popups pour ce site et réessayez.');
+  }
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
