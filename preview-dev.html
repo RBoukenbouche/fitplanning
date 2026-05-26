@@ -217,26 +217,24 @@ const Q={
   extData:d.extData||[],
   mealsData:d.mealsData||[],
   incLines:d.incLines||[],
-  marginAccom:d.marginAccom!==undefined&&d.marginAccom!==''?parseFloat(d.marginAccom):0,
-  marginTrans:d.marginTrans!==undefined&&d.marginTrans!==''?parseFloat(d.marginTrans):20,
-  marginAct:d.marginAct!==undefined&&d.marginAct!==''?parseFloat(d.marginAct):20,
-  marginExtras:d.marginExtras!==undefined&&d.marginExtras!==''?parseFloat(d.marginExtras):20,
+  marginAccom:parseFloat(d.marginAccom)||0,
+  marginTrans:parseFloat(d.marginTrans)||20,
+  marginAct:parseFloat(d.marginAct)||20,
+  marginExtras:parseFloat(d.marginExtras)||20,
   notes:d.notes||'',
 };
 
 function calcTotals(){
   let aC=0,tC=0,xC=0,eC=0;
   for(let i=0;i<Q.numDays;i++)for(let c=0;c<Q.numCats;c++){const r=(Q.accomData[i]||{})[c]||{};aC+=(parseFloat(r.units)||0)*(parseFloat(r.rate)||0);}
-  for(let i=0;i<Q.numDays+1;i++){const r=(Q.transData[i]||[]);tC+=((parseFloat(r[1])||0)+(parseFloat(r[2])||0))*(parseFloat(r[3])||1);}
+  for(let i=0;i<Q.numDays;i++){const r=(Q.transData[i]||[]);tC+=((parseFloat(r[1])||0)+(parseFloat(r[2])||0))*(parseFloat(r[3])||1);}
   // actData est maintenant un tableau d'objets {dayIndex, desc, rate, qty}
   if(Array.isArray(Q.actData)){
     Q.actData.forEach(r=>{xC+=(parseFloat(r.rate)||0)*(parseFloat(r.qty)||0);});
   }
   Q.extData.forEach(e=>{eC+=(parseFloat(e.rate)||0)*(parseFloat(e.qty)||1);});
   const aS=sell(aC,Q.marginAccom),tS=sell(tC,Q.marginTrans),xS=sell(xC,Q.marginAct),eS=sell(eC,Q.marginExtras);
-  const totS=aS+tS+xS+eS;
-  const totDevise=Math.ceil(totS/Q.rate/10)*10;
-  return{aC,tC,xC,eC,aS,tS,xS,eS,totS,totDevise};
+  return{aC,tC,xC,eC,aS,tS,xS,eS,totS:aS+tS+xS+eS};
 }
 
 function buildAccomRows(){
@@ -245,7 +243,7 @@ function buildAccomRows(){
     for(let c=0;c<Q.numCats;c++){
       const r=(Q.accomData[i]||{})[c]||{};
       if(!r.hotel&&!r.city)continue;
-      const key=`${r.hotel}|${r.city}|${r.roomType}|${r.units}|${r.rate}`;
+      const key=`${r.hotel}|${r.city}|${r.roomType}|${r.units}`;
       if(prev&&prev.key===key){prev.endDay=i;}
       else{prev={key,hotel:r.hotel||'',city:r.city||'',roomType:r.roomType||'',units:r.units||0,rate:r.rate||0,startDay:i,endDay:i};rows.push(prev);}
     }
@@ -275,7 +273,7 @@ function render(){
 
   // Transport (renommé PROPOSED ITINERARY)
   const transRows=[];
-  for(let i=0;i<Q.numDays+1;i++){
+  for(let i=0;i<Q.numDays;i++){
     const r=(Q.transData[i]||[]);
     if(r[0]){
       const total=((parseFloat(r[1])||0)+(parseFloat(r[2])||0))*(parseFloat(r[3])||1);
@@ -307,7 +305,7 @@ function render(){
     `<div style="width:100%;margin-top:8px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--rd);">Not included</div>`+
     DEFAULT_EXCL.map(l=>`<div class="inc-chip" style="border-color:#FECACA;background:#FFF5F5;"><span style="color:var(--rd)">✗</span> ${l}</div>`).join('');
 
-  const perPax=T.totDevise/Q.pax;
+  const perPax=T.totS/Q.rate/Q.pax;
 
   document.getElementById('quotation-page').innerHTML=`
     <div class="qh">
@@ -349,7 +347,7 @@ function render(){
       </tr></thead><tbody>${accomHTML}</tbody></table>
       <div class="sec-totals">
         <div class="st-block"><span class="st-label">Total Cost</span><span class="st-value">${fmt(T.aC)} MAD</span></div>
-        <div class="st-block"><span class="st-label">Margin</span><div class="st-margin"><input type="number" value="${Q.marginAccom}" min="0" max="100" oninput="onMarginChange('accom',this.value)"><span>%</span></div></div>
+        <div class="st-block"><span class="st-label">Margin</span><div class="st-margin"><input type="number" value="${Q.marginAccom}" min="0" max="100"><span>%</span></div></div>
         <div class="st-block"><span class="st-label">Selling (MAD)</span><span class="st-value sell">${fmt(T.aS)}</span></div>
         <div class="st-block"><span class="st-label">Selling (${cur})</span><span class="st-value sell">${fmtR(T.aS/Q.rate)}</span></div>
       </div>
@@ -366,7 +364,7 @@ function render(){
       </tr></thead><tbody>${transHTML}</tbody></table>
       <div class="sec-totals">
         <div class="st-block"><span class="st-label">Total Cost</span><span class="st-value">${fmt(T.tC)} MAD</span></div>
-        <div class="st-block"><span class="st-label">Margin</span><div class="st-margin"><input type="number" value="${Q.marginTrans}" min="0" max="100" oninput="onMarginChange('trans',this.value)"><span>%</span></div></div>
+        <div class="st-block"><span class="st-label">Margin</span><div class="st-margin"><input type="number" value="${Q.marginTrans}" min="0" max="100"><span>%</span></div></div>
         <div class="st-block"><span class="st-label">Selling (MAD)</span><span class="st-value sell">${fmt(T.tS)}</span></div>
         <div class="st-block"><span class="st-label">Selling (${cur})</span><span class="st-value sell">${fmtR(T.tS/Q.rate)}</span></div>
       </div>
@@ -382,7 +380,7 @@ function render(){
       </tr></thead><tbody>${actHTML}</tbody></table>
       <div class="sec-totals">
         <div class="st-block"><span class="st-label">Total Cost</span><span class="st-value">${fmt(T.xC)} MAD</span></div>
-        <div class="st-block"><span class="st-label">Margin</span><div class="st-margin"><input type="number" value="${Q.marginAct}" min="0" max="100" oninput="onMarginChange('act',this.value)"><span>%</span></div></div>
+        <div class="st-block"><span class="st-label">Margin</span><div class="st-margin"><input type="number" value="${Q.marginAct}" min="0" max="100"><span>%</span></div></div>
         <div class="st-block"><span class="st-label">Selling (MAD)</span><span class="st-value sell">${fmt(T.xS)}</span></div>
         <div class="st-block"><span class="st-label">Selling (${cur})</span><span class="st-value sell">${fmtR(T.xS/Q.rate)}</span></div>
       </div>
@@ -398,7 +396,7 @@ function render(){
       </tr></thead><tbody>${extHTML}</tbody></table>
       <div class="sec-totals">
         <div class="st-block"><span class="st-label">Total Cost</span><span class="st-value">${fmt(T.eC)} MAD</span></div>
-        <div class="st-block"><span class="st-label">Margin</span><div class="st-margin"><input type="number" value="${Q.marginExtras}" min="0" max="100" oninput="onMarginChange('extras',this.value)"><span>%</span></div></div>
+        <div class="st-block"><span class="st-label">Margin</span><div class="st-margin"><input type="number" value="${Q.marginExtras}" min="0" max="100"><span>%</span></div></div>
         <div class="st-block"><span class="st-label">Selling (MAD)</span><span class="st-value sell">${fmt(T.eS)}</span></div>
         <div class="st-block"><span class="st-label">Selling (${cur})</span><span class="st-value sell">${fmtR(T.eS/Q.rate)}</span></div>
       </div>
@@ -418,7 +416,7 @@ function render(){
           <tr><td>🚗 Proposed Itinerary</td><td style="color:rgba(255,255,255,.45);">${Q.marginTrans}%</td><td>${fmt(T.tC)}</td><td>${fmt(T.tS)}</td><td class="cv">${fmtR(T.tS/Q.rate)}</td></tr>
           <tr><td>🎭 Meals & Experiences</td><td style="color:rgba(255,255,255,.45);">${Q.marginAct}%</td><td>${fmt(T.xC)}</td><td>${fmt(T.xS)}</td><td class="cv">${fmtR(T.xS/Q.rate)}</td></tr>
           <tr><td>➕ Other Services</td><td style="color:rgba(255,255,255,.45);">${Q.marginExtras}%</td><td>${fmt(T.eC)}</td><td>${fmt(T.eS)}</td><td class="cv">${fmtR(T.eS/Q.rate)}</td></tr>
-          <tr class="total-row"><td>TOTAL</td><td>—</td><td>${fmt(T.aC+T.tC+T.xC+T.eC)}</td><td>${fmt(T.totS)}</td><td class="cv">${fmtR(T.totDevise)}</td></tr>
+          <tr class="total-row"><td>TOTAL</td><td>—</td><td>${fmt(T.aC+T.tC+T.xC+T.eC)}</td><td>${fmt(T.totS)}</td><td class="cv">${fmtR(T.totS/Q.rate)}</td></tr>
         </tbody>
       </table>
       <div class="pax-banner">
@@ -429,7 +427,7 @@ function render(){
         <div class="pax-right">
           <div class="pax-block"><div class="pcur">MAD</div><div class="pval">${fmtR(T.totS)}</div></div>
           <div class="pax-div"></div>
-          <div class="pax-block"><div class="pcur">${cur}</div><div class="pval">${fmtR(T.totDevise)}</div></div>
+          <div class="pax-block"><div class="pcur">${cur}</div><div class="pval">${fmtR(T.totS/Q.rate)}</div></div>
           <div class="pax-div"></div>
           <div class="pax-block"><div class="pcur">Per Person</div><div class="pval-sm">${fmtR(perPax)} ${cur}</div></div>
         </div>
@@ -450,43 +448,6 @@ function render(){
 }
 
 if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',render);}else{render();}
-
-function onMarginChange(section,value){
-  const v=parseFloat(value)||0;
-  if(section==='accom') Q.marginAccom=v;
-  if(section==='trans') Q.marginTrans=v;
-  if(section==='act')   Q.marginAct=v;
-  if(section==='extras')Q.marginExtras=v;
-  const T=calcTotals();
-  const cur=Q.currency;
-  const perPax=T.totDevise/Q.pax;
-  // Mise à jour sections
-  const upd=(selSell,selCur,aS,rate)=>{
-    const el1=document.querySelector(selSell);const el2=document.querySelector(selCur);
-    if(el1)el1.textContent=fmt(aS);if(el2)el2.textContent=fmtR(aS/rate);
-  };
-  // Selling MAD + devise par section
-  const sects=document.querySelectorAll('.sec-totals');
-  if(sects[0]){sects[0].querySelectorAll('.st-value.sell')[0].textContent=fmt(T.aS);sects[0].querySelectorAll('.st-value.sell')[1].textContent=fmtR(T.aS/Q.rate);}
-  if(sects[1]){sects[1].querySelectorAll('.st-value.sell')[0].textContent=fmt(T.tS);sects[1].querySelectorAll('.st-value.sell')[1].textContent=fmtR(T.tS/Q.rate);}
-  if(sects[2]){sects[2].querySelectorAll('.st-value.sell')[0].textContent=fmt(T.xS);sects[2].querySelectorAll('.st-value.sell')[1].textContent=fmtR(T.xS/Q.rate);}
-  if(sects[3]){sects[3].querySelectorAll('.st-value.sell')[0].textContent=fmt(T.eS);sects[3].querySelectorAll('.st-value.sell')[1].textContent=fmtR(T.eS/Q.rate);}
-  // Recap table
-  const rows=document.querySelectorAll('table.recap tbody tr');
-  if(rows[0]){rows[0].cells[3].textContent=fmt(T.aS);rows[0].cells[4].textContent=fmtR(T.aS/Q.rate);}
-  if(rows[1]){rows[1].cells[3].textContent=fmt(T.tS);rows[1].cells[4].textContent=fmtR(T.tS/Q.rate);}
-  if(rows[2]){rows[2].cells[3].textContent=fmt(T.xS);rows[2].cells[4].textContent=fmtR(T.xS/Q.rate);}
-  if(rows[3]){rows[3].cells[3].textContent=fmt(T.eS);rows[3].cells[4].textContent=fmtR(T.eS/Q.rate);}
-  if(rows[4]){rows[4].cells[3].textContent=fmt(T.totS);rows[4].cells[4].textContent=fmtR(T.totDevise);}
-  // Pax banner
-  const pvals=document.querySelectorAll('.pax-block .pval');
-  const pvalSm=document.querySelector('.pax-block .pval-sm');
-  if(pvals[0])pvals[0].textContent=fmtR(T.totS);
-  if(pvals[1])pvals[1].textContent=fmtR(T.totDevise);
-  if(pvalSm)pvalSm.textContent=`${fmtR(perPax)} ${cur}`;
-  // Sync invoice ref
-  window._QUOTE_FOR_INVOICE={...Q,totalSellMad:T.totS};
-}
 
 // ── MODAL INVOICE ─────────────────────────────────────────────────────────────
 const API_URL='https://fitplanning.onrender.com';
@@ -605,6 +566,10 @@ async function doGenerateProposal(){
   // 1. Hébergement
   const accomLines=[];let prev=null;
   for(let i=0;i<QQ.numDays;i++){
+    for(let c=0;c<(QQ.numCats||1);c++){
+      const r=((QQ.accomData||{})[i]||{})[c]||{};
+      if(!r.hotel&&!r.city)continue;
+      const key=`${r.hotel}|${r.city}|${r.roomType}`;
       if(prev&&prev.key===key){prev.end=i;}
       else{prev={key,hotel:r.hotel||'',city:r.city||'',room:r.roomType||'',units:r.units||'',start:i,end:i};accomLines.push(prev);}
     }
@@ -616,7 +581,7 @@ async function doGenerateProposal(){
 
   // 2. Transport (Proposed Itinerary)
   const transLines=[];
-  for(let i=0;i<QQ.numDays+1;i++){
+  for(let i=0;i<QQ.numDays;i++){
     const r=(QQ.transData[i]||[]);
     if(r[0]){transLines.push(`   ${fmtLabel(i)} : ${r[0]}`);}
   }
