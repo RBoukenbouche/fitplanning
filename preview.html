@@ -226,7 +226,7 @@ const Q={
 
 function calcTotals(){
   let aC=0,tC=0,xC=0,eC=0;
-  for(let i=0;i<Q.numDays;i++)for(let c=0;c<Q.numCats;c++){const r=(Q.accomData[i]||{})[c]||{};aC+=(parseFloat(r.units)||0)*(parseFloat(r.rate)||0);}
+  for(let i=0;i<Q.numDays-1;i++)for(let c=0;c<Q.numCats;c++){const r=(Q.accomData[i]||{})[c]||{};aC+=(parseFloat(r.units)||0)*(parseFloat(r.rate)||0);}
   for(let i=0;i<Q.numDays+1;i++){const r=(Q.transData[i]||[]);tC+=((parseFloat(r[1])||0)+(parseFloat(r[2])||0))*(parseFloat(r[3])||1);}
   // actData est maintenant un tableau d'objets {dayIndex, desc, rate, qty}
   if(Array.isArray(Q.actData)){
@@ -241,7 +241,7 @@ function calcTotals(){
 
 function buildAccomRows(){
   const rows=[];let prev=null;
-  for(let i=0;i<Q.numDays;i++){
+  for(let i=0;i<Q.numDays-1;i++){
     for(let c=0;c<Q.numCats;c++){
       const r=(Q.accomData[i]||{})[c]||{};
       if(!r.hotel&&!r.city)continue;
@@ -604,11 +604,7 @@ async function doGenerateProposal(){
 
   // 1. Hébergement
   const accomLines=[];let prev=null;
-  for(let i=0;i<QQ.numDays;i++){
-    for(let c=0;c<(QQ.numCats||1);c++){
-      const r=((QQ.accomData||{})[i]||{})[c]||{};
-      if(!r.hotel&&!r.city)continue;
-      const key=`${r.hotel}|${r.city}|${r.roomType}`;
+  for(let i=0;i<QQ.numDays-1;i++){
       if(prev&&prev.key===key){prev.end=i;}
       else{prev={key,hotel:r.hotel||'',city:r.city||'',room:r.roomType||'',units:r.units||'',start:i,end:i};accomLines.push(prev);}
     }

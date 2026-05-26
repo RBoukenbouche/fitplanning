@@ -430,12 +430,12 @@ function onDaysManualChange(){
 function rebuildAll(){rebuildAccom();rebuildTrans();rebuildAct();recalcAll();}
 
 // ─── HÉBERGEMENT ──────────────────────────────────────────────────────────────
-function readAccomData(){const d={};for(let i=0;i<numDays;i++){d[i]={};for(let c=0;c<numCats;c++){const r=document.getElementById(`ar-${i}-${c}`);if(r){const inputs=r.querySelectorAll('input');const sel=r.querySelector('select');d[i][c]={hotel:inputs[0]?.value||'',roomType:sel?.value||'',units:inputs[1]?.value||'0',rate:inputs[2]?.value||'0'};}}}return d;}
+function readAccomData(){const d={};for(let i=0;i<numDays-1;i++){d[i]={};for(let c=0;c<numCats;c++){const r=document.getElementById(`ar-${i}-${c}`);if(r){const inputs=r.querySelectorAll('input');const sel=r.querySelector('select');d[i][c]={hotel:inputs[0]?.value||'',roomType:sel?.value||'',units:inputs[1]?.value||'0',rate:inputs[2]?.value||'0'};}}}return d;}
 
 function rebuildAccom(savedData){
   const data=savedData||readAccomData();
   const tbody=document.getElementById('accomBody');tbody.innerHTML='';
-  for(let i=0;i<numDays;i++){
+  for(let i=0;i<numDays-1;i++){
     const sep=document.createElement('tr');sep.className='day-sep';sep.innerHTML=`<td colspan="9">📅 ${dayLbl(i)} — ${dateLbl(i)}</td>`;tbody.appendChild(sep);
     for(let c=0;c<numCats;c++){
       const s=(data[i]&&data[i][c])?data[i][c]:{};
@@ -461,8 +461,8 @@ function rebuildAccom(savedData){
   recalcAccom();
 }
 function addCategory(){if(!numDays){alert('Saisissez le nombre de jours d\'abord.');return;}const d=readAccomData();numCats++;rebuildAccom(d);}
-function removeCategory(ci){if(numCats<=1)return;const d=readAccomData();const nd={};for(let i=0;i<numDays;i++){nd[i]={};let nc=0;for(let c=0;c<numCats;c++){if(c===ci)continue;nd[i][nc]=(d[i]&&d[i][c])?d[i][c]:{};nc++;}}numCats--;rebuildAccom(nd);}
-function recalcAccom(){let cost=0;for(let i=0;i<numDays;i++)for(let c=0;c<numCats;c++){const r=document.getElementById(`ar-${i}-${c}`);if(!r)continue;const inp=r.querySelectorAll('input');const t=(parseFloat(inp[1]?.value)||0)*(parseFloat(inp[2]?.value)||0);cost+=t;const el=document.getElementById(`at-${i}-${c}`);if(el)el.textContent=fmt(t);}const m=parseFloat(document.getElementById('marginAccom').value)||0;document.getElementById('accomSummary').textContent=`${fmt(cost)} → ${fmt(sell(cost,m))} MAD`;updateGT();}
+function removeCategory(ci){if(numCats<=1)return;const d=readAccomData();const nd={};for(let i=0;i<numDays-1;i++){nd[i]={};let nc=0;for(let c=0;c<numCats;c++){if(c===ci)continue;nd[i][nc]=(d[i]&&d[i][c])?d[i][c]:{};nc++;}}numCats--;rebuildAccom(nd);}
+function recalcAccom(){let cost=0;for(let i=0;i<numDays-1;i++)for(let c=0;c<numCats;c++){const r=document.getElementById(`ar-${i}-${c}`);if(!r)continue;const inp=r.querySelectorAll('input');const t=(parseFloat(inp[1]?.value)||0)*(parseFloat(inp[2]?.value)||0);cost+=t;const el=document.getElementById(`at-${i}-${c}`);if(el)el.textContent=fmt(t);}const m=parseFloat(document.getElementById('marginAccom').value)||0;document.getElementById('accomSummary').textContent=`${fmt(cost)} → ${fmt(sell(cost,m))} MAD`;updateGT();}
 
 // ─── TRANSPORT ────────────────────────────────────────────────────────────────
 function propagateTrans(){
@@ -600,7 +600,7 @@ function updateGT(){
   document.getElementById('gt-cur-head').textContent=`Vente (${c})`;
   document.getElementById('pax-cur-lbl').textContent=c;
   let aC=0,tC=0,xC=0,eC=0;
-  for(let i=0;i<numDays;i++)for(let cc=0;cc<numCats;cc++){const r=document.getElementById(`ar-${i}-${cc}`);if(!r)continue;const inp=r.querySelectorAll('input');aC+=(parseFloat(inp[1]?.value)||0)*(parseFloat(inp[2]?.value)||0);}
+  for(let i=0;i<numDays-1;i++)for(let cc=0;cc<numCats;cc++){const r=document.getElementById(`ar-${i}-${cc}`);if(!r)continue;const inp=r.querySelectorAll('input');aC+=(parseFloat(inp[1]?.value)||0)*(parseFloat(inp[2]?.value)||0);}
   for(let i=0;i<numDays+1;i++){const r=document.getElementById(`tr-${i}`);if(!r)continue;const inp=r.querySelectorAll('input');tC+=((parseFloat(inp[1]?.value)||0)+(parseFloat(inp[2]?.value)||0))*(parseFloat(inp[3]?.value)||1);}
   actRows.forEach(row=>{xC+=(parseFloat(row.rate)||0)*(parseFloat(row.qty)||0);});
   document.querySelectorAll('#extrasBody tr').forEach(tr=>{const inp=tr.querySelectorAll('input');eC+=(parseFloat(inp[1]?.value)||0)*(parseFloat(inp[2]?.value)||0);});
@@ -949,7 +949,7 @@ function syncToSheet(snap){
   const sellFn=(c,m)=>m<100?c/(1-m/100):c;
   let aC=0,tC=0,xC=0,eC=0;
   const ad=snap.accomData||{};
-  for(let i=0;i<snap.numDays;i++)for(let c=0;c<snap.numCats;c++){const r=(ad[i]||{})[c]||{};aC+=(parseFloat(r.units)||0)*(parseFloat(r.rate)||0);}
+  for(let i=0;i<snap.numDays-1;i++)for(let c=0;c<snap.numCats;c++){const r=(ad[i]||{})[c]||{};aC+=(parseFloat(r.units)||0)*(parseFloat(r.rate)||0);}
   const td=snap.transData||{};
   for(let i=0;i<snap.numDays+1;i++){const r=td[i]||[];tC+=((parseFloat(r[1])||0)+(parseFloat(r[2])||0))*(parseFloat(r[3])||1);}
   (snap.actData||[]).forEach(r=>{xC+=(parseFloat(r.rate)||0)*(parseFloat(r.qty)||0);});
@@ -980,10 +980,10 @@ async function exportExcel(){
       numDays:d.data?.numDays,numCats:d.data?.numCats||1,
       currency:d.data?.currency,rate:parseFloat(d.data?.eurRate)||10.5,
       quoteDate:d.data?.quoteDate,
-      marginAccom:parseFloat(d.data?.marginAccom)||0,
-      marginTrans:parseFloat(d.data?.marginTrans)||20,
-      marginAct:parseFloat(d.data?.marginAct)||20,
-      marginExtras:parseFloat(d.data?.marginExtras)||20,
+      marginAccom:d.data?.marginAccom!==undefined&&d.data?.marginAccom!==''?parseFloat(d.data.marginAccom):0,
+      marginTrans:d.data?.marginTrans!==undefined&&d.data?.marginTrans!==''?parseFloat(d.data.marginTrans):20,
+      marginAct:d.data?.marginAct!==undefined&&d.data?.marginAct!==''?parseFloat(d.data.marginAct):20,
+      marginExtras:d.data?.marginExtras!==undefined&&d.data?.marginExtras!==''?parseFloat(d.data.marginExtras):20,
       accomData:d.data?.accomData||{},
       transData:d.data?.transData||{},
       actData:d.data?.actData||[],
@@ -1013,7 +1013,7 @@ function openPreview(){
   const _sell=(c,m)=>m<100?c/(1-m/100):c;
   let _aC=0,_tC=0,_xC=0,_eC=0;
   const ad=snap.accomData||{};
-  for(let i=0;i<snap.numDays;i++)for(let c=0;c<snap.numCats;c++){const r=(ad[i]||{})[c]||{};_aC+=(parseFloat(r.units)||0)*(parseFloat(r.rate)||0);}
+  for(let i=0;i<snap.numDays-1;i++)for(let c=0;c<snap.numCats;c++){const r=(ad[i]||{})[c]||{};_aC+=(parseFloat(r.units)||0)*(parseFloat(r.rate)||0);}
   const td=snap.transData||{};
   for(let i=0;i<snap.numDays+1;i++){const r=td[i]||[];_tC+=((parseFloat(r[1])||0)+(parseFloat(r[2])||0))*(parseFloat(r[3])||1);}
   (snap.actData||[]).forEach(r=>{_xC+=(parseFloat(r.rate)||0)*(parseFloat(r.qty)||0);});
