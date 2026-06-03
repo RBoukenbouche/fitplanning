@@ -913,7 +913,7 @@ function syncToSheet(snap){
   const ad=snap.accomData||{};
   for(let i=0;i<snap.numDays;i++)for(let c=0;c<snap.numCats;c++){const r=(ad[i]||{})[c]||{};aC+=(parseFloat(r.units)||0)*(parseFloat(r.rate)||0);}
   const td=snap.transData||{};
-  for(let i=0;i<snap.numDays;i++){const r=td[i]||[];tC+=((parseFloat(r[1])||0)+(parseFloat(r[2])||0))*(parseFloat(r[3])||1);}
+  for(let i=0;i<snap.numDays+1;i++){const r=td[i]||[];tC+=((parseFloat(r[1])||0)+(parseFloat(r[2])||0))*(parseFloat(r[3])||1);}
   (snap.actData||[]).forEach(r=>{xC+=(parseFloat(r.rate)||0)*(parseFloat(r.qty)||0);});
   Object.values(snap.extrasData||{}).forEach(r=>{eC+=(parseFloat(r[1])||0)*(parseFloat(r[2])||0);});
   const totalMad=sellFn(aC,parseFloat(snap.marginAccom)||0)+sellFn(tC,parseFloat(snap.marginTrans)||20)+sellFn(xC,parseFloat(snap.marginAct)||20)+sellFn(eC,parseFloat(snap.marginExtras)||20);
